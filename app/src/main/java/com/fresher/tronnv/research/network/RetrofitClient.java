@@ -37,13 +37,4 @@ public class RetrofitClient {
         }
         return retrofit;
     }
-    public static RequestLyricInterface loadLyrics(String baseUrl){
-
-        return
-        new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build().create(RequestLyricInterface.class);
-    }
 }

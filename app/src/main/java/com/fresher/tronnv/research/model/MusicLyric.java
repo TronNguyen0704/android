@@ -5,11 +5,14 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by NGUYEN VAN TRON on 05/16/18.
  */
-public class MusicLyrics {
+public class MusicLyric {
 
     @SerializedName("id")
     @Expose
     private Integer id;
+    @SerializedName("lyricId")
+    @Expose
+    private Integer lyricId;
     @SerializedName("name")
     @Expose
     private String name;
@@ -26,6 +29,14 @@ public class MusicLyrics {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getLyricId() {
+        return lyricId;
+    }
+
+    public void setLyricId(Integer lyricId) {
+        this.lyricId = lyricId;
     }
 
     public String getName() {

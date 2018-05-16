@@ -1,5 +1,7 @@
 package com.fresher.tronnv.research.network;
-import com.fresher.tronnv.research.model.MusicLyrics;
+import com.fresher.tronnv.research.model.MusicLyric;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -7,6 +9,8 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import io.reactivex.Observable;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
 /**
  * Created by NGUYEN VAN TRON on 05/16/18.
  */
@@ -19,16 +23,6 @@ import io.reactivex.Observable;
  * For instance, the interface defines each endpoint in the following way
  * */
 public interface RequestLyricInterface {
-    @GET("lyrics")
-    Observable<MusicLyrics> register();
-    @POST("/posts")
-    @FormUrlEncoded
-    Call<MusicLyrics> savePost(@Field("name") String name,
-                               @Field("author") String author,
-                               @Field("lyric") String lyric);
-    @POST("rxjava/posts")
-    @FormUrlEncoded
-    Observable<MusicLyrics> savePostRxJava(@Field("name") String title,
-                              @Field("author") String body,
-                              @Field("lyric") String userId);
+    @GET("5afbf2c631000087007c5bb9")
+    Observable<List<MusicLyric>> register();
 }
