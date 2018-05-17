@@ -2,4 +2,8 @@
 <resources>
     <dimen name="activity_vertical_margin">10dp</dimen>
     <dimen name="activity_horizontal_margin">10dp</dimen>
+    <dimen name="text">20dp</dimen>
+    <dimen name="textTitle">15dp</dimen>
+    <dimen name="icon">52dp</dimen>
+    <dimen name="five">5dp</dimen>
 </resources>

@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">MusicLyric</string>
+    <string name="app_name">Music Lyric</string>
+    <string name="query_hint">Keyword</string>
 </resources>

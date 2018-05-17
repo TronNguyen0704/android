@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.fresher.tronnv.research.R;
+import com.fresher.tronnv.research.Utils;
 import com.fresher.tronnv.research.data.DataManager;
 import com.fresher.tronnv.research.ui.LyricsFragment;
 
@@ -18,7 +19,7 @@ public class LyricActivity extends AppCompatActivity {
         //Create LyricsFrament
         LyricsFragment lyricsFragment = new LyricsFragment();
         //Add set data
-        lyricsFragment.setMusicLyrics(DataManager.musicLyrics);
+        lyricsFragment.setMusicLyrics(Utils.musicLyrics);
         //Get data from Intent
         int index = getIntent().getIntExtra("Index",0);
         //Set Index
@@ -29,7 +30,6 @@ public class LyricActivity extends AppCompatActivity {
         fragmentManager.beginTransaction()
                 .add(R.id.layout_lyric_container, lyricsFragment)
                 .commit();
-
 
     }
 }

@@ -1,22 +1,40 @@
 package com.fresher.tronnv.research.ui;
 
 import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.fresher.tronnv.research.R;
+import com.fresher.tronnv.research.data.DataManager;
 import com.fresher.tronnv.research.model.MusicLyric;
 
+import java.util.ArrayList;
 import java.util.List;
-public class PlayListAdapter extends BaseAdapter {
+/**
+ * Created by NGUYEN VAN TRON on 05/16/18.
+ */
+public class PlayListAdapter extends BaseAdapter{
 
     private Context context;
     private List<MusicLyric> musicLyrics;
+    private List<String> names;
+    private List<String> authors;
     public PlayListAdapter(Context context, List<MusicLyric> lyrics){
         this.context = context;
-        this.musicLyrics = lyrics;
+        if(lyrics!= null) {
+            this.musicLyrics = lyrics;
+            names = new ArrayList<>();
+            authors = new ArrayList<>();
+            for (int i = 0; i < lyrics.size(); i++) {
+                names.add(lyrics.get(i).getName());
+                authors.add(lyrics.get(i).getAuthor());
+            }
+        }
     }
     @Override
     public int getCount() {
@@ -38,14 +56,32 @@ public class PlayListAdapter extends BaseAdapter {
             return musicLyrics.get(position).getId();
         return 0;
     }
+    public void getFilter(String filter){
+        names.clear();
+        authors.clear();
+        for(int i = 0; i < musicLyrics.size(); i++){
+            MusicLyric musicLyric = musicLyrics.get(i);
+            if(musicLyric.getName().toLowerCase().contains(filter.toLowerCase())){
+                names.add(musicLyric.getName());
+                authors.add(musicLyric.getAuthor());
+            }
 
+        }
+    }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        TextView author = convertView.findViewById(R.id.txt_author);
-        TextView name = convertView.findViewById(R.id.txt_name);
-        author.setText(musicLyrics.get(position).getAuthor());
-        name.setText(musicLyrics.get(position).getName());
-        return convertView;
+        View view = LayoutInflater.from(context).inflate(R.layout.row_item, parent, false);
+
+        TextView author = view.findViewById(R.id.txt_author);
+        TextView name = view.findViewById(R.id.txt_name);
+        if(authors!= null && authors.size() != 0 && authors.size() > position) {
+            author.setText(authors.get(position ));
+            name.setText(names.get(position));
+        }
+        else{
+            view.setVisibility(View.GONE);
+        }
+        return view;
     }
 }

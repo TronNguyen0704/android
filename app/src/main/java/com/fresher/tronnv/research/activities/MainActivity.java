@@ -1,6 +1,7 @@
 package com.fresher.tronnv.research.activities;
 
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,19 +32,13 @@ public class MainActivity extends AppCompatActivity implements PlayListFragment.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
-
         //UI
-
-
-
-
     }
 
     @Override
     public void onItemSelected(int position) {
-        Toast.makeText(this, "Position clicked = " + position, Toast.LENGTH_SHORT).show();
+        Log.i("Position clicked = " , "" +position);
         Bundle b = new Bundle();
         b.putInt("Index", position);
         final Intent intent = new Intent(this, LyricActivity.class);

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +15,9 @@ import com.fresher.tronnv.research.data.DataManager;
 import com.fresher.tronnv.research.model.MusicLyric;
 
 import java.util.List;
-
+/**
+ * Created by NGUYEN VAN TRON on 05/16/18.
+ */
 public class LyricsFragment extends Fragment{
     private int mIndex;
     private List<MusicLyric> musicLyrics;
@@ -34,7 +37,7 @@ public class LyricsFragment extends Fragment{
         final TextView textViewName = rootView.findViewById(R.id.txt_name);
         final TextView textViewAuthor = rootView.findViewById(R.id.txt_author);
         final TextView textViewLyric = rootView.findViewById(R.id.txt_lyric);
-        if(DataManager.musicLyrics!= null){
+        if(musicLyrics!= null){
             textViewName.setText(musicLyrics.get(mIndex).getName());
             textViewAuthor.setText(musicLyrics.get(mIndex).getAuthor());
             textViewLyric.setText(musicLyrics.get(mIndex).getLyric());
