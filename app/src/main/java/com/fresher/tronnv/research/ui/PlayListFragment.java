@@ -24,6 +24,10 @@ import java.util.List;
 /**
  * Created by NGUYEN VAN TRON on 05/16/18.
  */
+
+/**
+ * A class PlayListFragment
+ */
 public class PlayListFragment extends Fragment {
     public interface OnItemLyricClickListener {
         void onItemSelected(int position);
@@ -31,7 +35,6 @@ public class PlayListFragment extends Fragment {
     OnItemLyricClickListener mCallback;
     List<MusicLyric> lyrics;
     public PlayListFragment(){
-        //Request API and GetData
     }
 
     @Override

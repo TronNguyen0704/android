@@ -15,6 +15,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RetrofitClient {
     private static Retrofit retrofit = null;
 
+    public RetrofitClient(){
+
+    }
     /* To send out network requests to an API,
      * we need to use the Retrofit builder class and specify the base URL for the service.
      */

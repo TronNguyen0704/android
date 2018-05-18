@@ -18,7 +18,9 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * Created by NGUYEN VAN TRON on 05/16/18.
  */
+
 public class Utils {
     public static final String BASE_URL = "http://www.mocky.io/v2/";
+    //Save data temporarily
     public static List<MusicLyric> musicLyrics;
 }

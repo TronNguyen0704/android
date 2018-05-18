@@ -38,15 +38,8 @@ public class DataManager {
          musicLyrics = lyrics;
     }
 
-    public RequestLyricInterface getRequestLyricInterface() {
-        return requestLyricInterface;
-    }
-
-    public RequestLyricInterface getAPIServiceRxJava() {
-
-        return RetrofitClient.getClientRxJava(BASE_URL).create(RequestLyricInterface.class);
-    }
-    public void loadJSONUseRxJava(RetrofitClient retrofit) {
+    //Use RxJava and Retrofit to get data from server
+    public void getData(RetrofitClient retrofit) {
 
         requestLyricInterface = retrofit.getClientRxJava(BASE_URL).create(RequestLyricInterface.class);
         requestLyricInterface.register()
