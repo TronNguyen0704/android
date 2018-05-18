@@ -39,7 +39,7 @@ public class DataManager {
     }
 
     //Use RxJava and Retrofit to get data from server
-    public void getData(RetrofitClient retrofit) {
+    public void restAPIToGetData(RetrofitClient retrofit) {
 
         requestLyricInterface = retrofit.getClientRxJava(BASE_URL).create(RequestLyricInterface.class);
         requestLyricInterface.register()

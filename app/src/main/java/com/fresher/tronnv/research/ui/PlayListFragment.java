@@ -20,6 +20,7 @@ import com.fresher.tronnv.research.data.DataManager;
 import com.fresher.tronnv.research.model.MusicLyric;
 import com.fresher.tronnv.research.network.RequestLyricInterface;
 
+import java.util.ArrayList;
 import java.util.List;
 /**
  * Created by NGUYEN VAN TRON on 05/16/18.
@@ -29,19 +30,25 @@ import java.util.List;
  * A class PlayListFragment
  */
 public class PlayListFragment extends Fragment {
+    //Interface to transfer data between two fragment
     public interface OnItemLyricClickListener {
-        void onItemSelected(int position);
+        void onItemSelected(int position, int idSong);
     }
     OnItemLyricClickListener mCallback;
-    List<MusicLyric> lyrics;
+    List<MusicLyric> lyrics ;
     public PlayListFragment(){
+        lyrics = new ArrayList<>();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        lyrics =  Utils.musicLyrics;
+        if(Utils.musicLyricsShow.size() > 0) {
+            lyrics.addAll(Utils.musicLyricsShow);
+        }
+        else
+            lyrics.addAll(Utils.musicLyrics);
     }
 
     @Override
@@ -61,10 +68,11 @@ public class PlayListFragment extends Fragment {
 
         final View rootView = inflater.inflate(R.layout.fragment_play_list,container,false);
 
-        SearchView searchView = rootView.findViewById(R.id.search_view);
+        final SearchView searchView = rootView.findViewById(R.id.search_view);
         searchView.setActivated(true);
         searchView.onActionViewExpanded();
         searchView.setIconified(false);
+        searchView.setFocusable(false);
         searchView.clearFocus();
 
         ListView listView = rootView.findViewById(R.id.list_item);
@@ -76,6 +84,7 @@ public class PlayListFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+
                 return true;
             }
 
@@ -89,7 +98,8 @@ public class PlayListFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mCallback.onItemSelected(position);
+                mCallback.onItemSelected(position,Utils.musicLyricsShow.get(position).getId());
+
             }
         });
         return rootView;

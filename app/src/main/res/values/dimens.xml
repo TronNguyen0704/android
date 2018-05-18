@@ -6,4 +6,6 @@
     <dimen name="textTitle">15dp</dimen>
     <dimen name="icon">52dp</dimen>
     <dimen name="five">5dp</dimen>
+    <dimen name="mediamargin">20dp</dimen>
+    <dimen name="ten">10dp</dimen>
 </resources>

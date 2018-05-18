@@ -33,16 +33,22 @@ public class MainActivity extends AppCompatActivity implements PlayListFragment.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //UI
     }
 
+    //Event when click on a item in playlist
     @Override
-    public void onItemSelected(int position) {
+    public void onItemSelected(int position, int idSong) {
         Log.i("Position clicked = " , "" +position);
         Bundle b = new Bundle();
         b.putInt("Index", position);
+        b.putInt("ID", idSong);
         final Intent intent = new Intent(this, LyricActivity.class);
         intent.putExtras(b);
         startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed() {
+        System.exit(0);
     }
 }

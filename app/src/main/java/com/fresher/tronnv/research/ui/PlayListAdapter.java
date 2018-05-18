@@ -15,6 +15,9 @@ import com.fresher.tronnv.research.model.MusicLyric;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.fresher.tronnv.research.Utils.musicLyricsShow;
+
 /**
  * Created by NGUYEN VAN TRON on 05/16/18.
  */
@@ -27,12 +30,14 @@ public class PlayListAdapter extends BaseAdapter{
     public PlayListAdapter(Context context, List<MusicLyric> lyrics){
         this.context = context;
         if(lyrics!= null) {
-            this.musicLyrics = lyrics;
+            this.musicLyrics = new ArrayList<>();
             names = new ArrayList<>();
             authors = new ArrayList<>();
             for (int i = 0; i < lyrics.size(); i++) {
                 names.add(lyrics.get(i).getName());
                 authors.add(lyrics.get(i).getAuthor());
+                this.musicLyrics.add(lyrics.get(i));
+                musicLyricsShow.add(lyrics.get(i));
             }
         }
     }
@@ -59,11 +64,13 @@ public class PlayListAdapter extends BaseAdapter{
     public void getFilter(String filter){
         names.clear();
         authors.clear();
+        musicLyricsShow.clear();
         for(int i = 0; i < musicLyrics.size(); i++){
             MusicLyric musicLyric = musicLyrics.get(i);
             if(musicLyric.getName().toLowerCase().contains(filter.toLowerCase())){
                 names.add(musicLyric.getName());
                 authors.add(musicLyric.getAuthor());
+                musicLyricsShow.add(musicLyric);
             }
 
         }
