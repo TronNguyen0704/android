@@ -8,6 +8,10 @@ Description: Show the music lyric
 
 - Show Playlist and lyric of all song 
 
+- Play song
+
+- Check network connection
+
 
 Tool: Android Studio 3.1
 
