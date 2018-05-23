@@ -7,16 +7,17 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.fresher.tronnv.research.R;
 import com.fresher.tronnv.research.data.DataManager;
 import com.fresher.tronnv.research.model.MusicLyric;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.fresher.tronnv.research.Utils.musicLyricsShow;
 
 /**
  * Created by NGUYEN VAN TRON on 05/16/18.
@@ -25,12 +26,14 @@ public class PlayListAdapter extends BaseAdapter{
 
     private Context context;
     private List<MusicLyric> musicLyrics;
+    private List<MusicLyric> musicLyricsShow;
     private List<String> names;
     private List<String> authors;
     public PlayListAdapter(Context context, List<MusicLyric> lyrics){
         this.context = context;
         if(lyrics!= null) {
             this.musicLyrics = new ArrayList<>();
+            musicLyricsShow = new ArrayList<>();
             names = new ArrayList<>();
             authors = new ArrayList<>();
             for (int i = 0; i < lyrics.size(); i++) {
@@ -61,7 +64,7 @@ public class PlayListAdapter extends BaseAdapter{
             return musicLyrics.get(position).getId();
         return 0;
     }
-    public void getFilter(String filter){
+    public List<MusicLyric> getFilter(String filter){
         names.clear();
         authors.clear();
         musicLyricsShow.clear();
@@ -74,6 +77,7 @@ public class PlayListAdapter extends BaseAdapter{
             }
 
         }
+        return musicLyricsShow;
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -82,9 +86,14 @@ public class PlayListAdapter extends BaseAdapter{
 
         TextView author = view.findViewById(R.id.txt_author);
         TextView name = view.findViewById(R.id.txt_name);
+        ImageView avatar = view.findViewById(R.id.image_avatar);
         if(authors!= null && authors.size() != 0 && authors.size() > position) {
             author.setText(authors.get(position ));
             name.setText(names.get(position));
+            Glide.with(view)
+                    .load(musicLyricsShow.get(position).getAvatar())
+                    .apply(RequestOptions.centerCropTransform())
+                    .into(avatar);
         }
         else{
             view.setVisibility(View.GONE);

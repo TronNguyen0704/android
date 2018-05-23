@@ -47,7 +47,8 @@ public class WelcomeActivity extends AppCompatActivity{
                         .builder()
                         .netModule(new NetModule(retrofitClient))
                         .build();
-                netComponent.getDataManager().restAPIToGetData(retrofitClient);
+                dataManager = netComponent.getDataManager();
+                dataManager.restAPIToGetData(retrofitClient,getBaseContext());
 
             }
         }
@@ -56,6 +57,12 @@ public class WelcomeActivity extends AppCompatActivity{
     @Override
     protected void onStop() {
         super.onStop();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
         unregisterReceiver(receiver);
     }
 
@@ -68,18 +75,25 @@ public class WelcomeActivity extends AppCompatActivity{
                         .builder()
                         .netModule(new NetModule(retrofitClient))
                         .build();
-                netComponent.getDataManager().restAPIToGetData(retrofitClient);
-
+                dataManager = netComponent.getDataManager();
+                dataManager.restAPIToGetData(retrofitClient,getBaseContext());
             }
-            if(netComponent.getDataManager().getMusicLyrics() != null) {
-                Utils.musicLyrics = netComponent.getDataManager().getMusicLyrics();
+            if(dataManager.getDataFromDatabase("null") != null) {
+                //Utils.musicLyrics = dataManager.getDataFromDatabase();
                 startActivity(new Intent(this, MainActivity.class));
             }else{
                 Toast.makeText(this,"Data is loading...",Toast.LENGTH_SHORT).show();
             }
         }
         else{
-            Toast.makeText(this,"No Internet connection",Toast.LENGTH_SHORT).show();
+            dataManager = new DataManager(getBaseContext());
+            if(dataManager.isNull()) {
+                Toast.makeText(this,"No Internet connection",Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(this,"Loading local data",Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, MainActivity.class));
+            }
         }
     }
 

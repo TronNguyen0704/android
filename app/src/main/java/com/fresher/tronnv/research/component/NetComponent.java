@@ -1,5 +1,7 @@
 package com.fresher.tronnv.research.component;
 
+import android.content.Context;
+
 import com.fresher.tronnv.research.data.DataManager;
 import com.fresher.tronnv.research.mudule.NetModule;
 

@@ -3,41 +3,72 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <SeekBar
-        android:id="@+id/seekbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <LinearLayout
-        android:layout_below="@+id/seekbar"
+    <RelativeLayout
+        android:id="@+id/layout_seekbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
+        <TextView
+            android:id="@+id/txt_time_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="@color/White"
+            android:layout_centerVertical="true"/>
+        <SeekBar
+            android:id="@+id/seekbar"
+            android:layout_toRightOf="@+id/txt_time_count"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            />
+        <TextView
+            android:layout_toRightOf="@+id/seekbar"
+            android:id="@+id/txt_total_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="@color/White"
+            android:layout_centerVertical="true"/>
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_below="@+id/layout_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="5">
+
         <ImageButton
             android:id="@+id/btn_pre"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/pre"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="40dp"
+            android:layout_weight="2"
             android:background="@color/transparent"
+            android:paddingBottom="@dimen/textTitle"
             android:paddingTop="@dimen/ten"
-            android:paddingBottom="@dimen/textTitle"/>
+            android:src="@drawable/pre" />
         <ImageButton
             android:id="@+id/btn_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/pause"
             android:background="@color/transparent"
+            android:layout_weight="1"
             android:paddingTop="@dimen/ten"
             android:paddingBottom="@dimen/textTitle"/>
+
         <ImageButton
             android:id="@+id/btn_next"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/next"
+            android:layout_height="match_parent"
+            android:layout_marginRight="40dp"
+            android:layout_weight="2"
             android:background="@color/transparent"
+            android:paddingBottom="@dimen/textTitle"
             android:paddingTop="@dimen/ten"
-            android:paddingBottom="@dimen/textTitle"/>
+            android:src="@drawable/next" />
     </LinearLayout>
 
 </RelativeLayout>

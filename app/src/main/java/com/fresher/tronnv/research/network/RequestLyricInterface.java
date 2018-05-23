@@ -23,6 +23,6 @@ import retrofit2.http.Path;
  * For instance, the interface defines each endpoint in the following way
  * */
 public interface RequestLyricInterface {
-    @GET("5afcf5593200004900f1a9a5")
+    @GET("5b04d1942f00003232e7aaa4")
     Observable<List<MusicLyric>> register();
 }

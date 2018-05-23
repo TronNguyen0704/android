@@ -22,6 +22,9 @@ public class MusicLyric {
     @SerializedName("lyric")
     @Expose
     private String lyric;
+    @SerializedName("avatar")
+    @Expose
+    private String avatar;
 
     public Integer getId() {
         return id;
@@ -62,7 +65,13 @@ public class MusicLyric {
     public void setLyric(String lyric) {
         this.lyric = lyric;
     }
+    public String getAvatar() {
+        return avatar;
+    }
 
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
     @Override
     public String toString() {
         return name;

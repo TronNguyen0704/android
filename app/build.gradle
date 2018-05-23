@@ -43,4 +43,6 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.16'
     compileOnly 'javax.annotation:jsr250-api:1.0'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
+    implementation 'com.github.bumptech.glide:glide:4.7.1'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
 }

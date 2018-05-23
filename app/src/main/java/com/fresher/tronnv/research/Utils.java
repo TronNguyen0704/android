@@ -21,7 +21,4 @@ import io.reactivex.schedulers.Schedulers;
 
 public class Utils {
     public static final String BASE_URL = "http://www.mocky.io/v2/";
-    //Save data temporarily
-    public static List<MusicLyric> musicLyrics;
-    public static List<MusicLyric> musicLyricsShow = new ArrayList<>();
 }

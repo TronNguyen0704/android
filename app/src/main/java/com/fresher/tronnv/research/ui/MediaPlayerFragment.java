@@ -7,15 +7,18 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.format.Time;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.fresher.tronnv.research.R;
 
 import java.util.PriorityQueue;
+import java.util.concurrent.TimeUnit;
 /**
  * Created by NGUYEN VAN TRON on 05/18/18.
  */
@@ -48,20 +51,23 @@ public class MediaPlayerFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mediaPlayer.start();
-        mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
+        if(mediaPlayer != null) {
+            mediaPlayer.start();
+
+            mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        mediaPlayer.stop();
+        //mediaPlayer.stop();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mediaPlayer.pause();
+        //mediaPlayer.pause();
         isPause = true;
     }
 
@@ -76,13 +82,23 @@ public class MediaPlayerFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_mediaplayer,container,false);
         final SeekBar seekBar = rootView.findViewById(R.id.seekbar);
-        seekBar.setMax(mediaPlayer.getDuration());
+        final TextView timeCount = rootView.findViewById(R.id.txt_time_count);
+        final TextView totalTime = rootView.findViewById(R.id.txt_total_time);
+        int timeReTotal = 0;
+        if(mediaPlayer!= null) {
+            timeReTotal = mediaPlayer.getDuration();
+            seekBar.setMax(timeReTotal);
+        }
+        totalTime.setText(String.format(" %d:%d", TimeUnit.MILLISECONDS.toMinutes((long) timeReTotal), TimeUnit.MILLISECONDS.toSeconds((long) timeReTotal) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) timeReTotal))));
         //Run thread update UI of seek bar
         mUpdateSeekbar = new Runnable() {
             @Override
             public void run() {
                 if(mediaPlayer!= null && !isPause) {
-                    seekBar.setProgress(mediaPlayer.getCurrentPosition());
+
+                    int timeRemaining = mediaPlayer.getCurrentPosition();
+                    seekBar.setProgress(timeRemaining);
+                    timeCount.setText(String.format("%d:%d", TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining), TimeUnit.MILLISECONDS.toSeconds((long) timeRemaining) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining))));
                     mSeekbarUpdateHandler.postDelayed(this, 50);
                 }
             }

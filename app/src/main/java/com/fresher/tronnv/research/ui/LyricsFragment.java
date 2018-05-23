@@ -40,13 +40,13 @@ public class LyricsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_lyric,container,false);
-        textViewName = rootView.findViewById(R.id.txt_name);
-        textViewAuthor = rootView.findViewById(R.id.txt_author);
+//        textViewName = rootView.findViewById(R.id.txt_name);
+//        textViewAuthor = rootView.findViewById(R.id.txt_author);
         textViewLyric = rootView.findViewById(R.id.txt_lyric);
 
-        if(musicLyrics!= null){
-            textViewName.setText(musicLyrics.get(mIndex).getName());
-            textViewAuthor.setText(musicLyrics.get(mIndex).getAuthor());
+        if(musicLyrics!= null && musicLyrics.size() > 0){
+//            textViewName.setText(musicLyrics.get(mIndex).getName());
+//            textViewAuthor.setText(musicLyrics.get(mIndex).getAuthor());
             textViewLyric.setText(musicLyrics.get(mIndex).getLyric());
         }
         return rootView;

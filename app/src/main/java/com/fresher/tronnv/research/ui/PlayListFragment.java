@@ -32,23 +32,29 @@ import java.util.List;
 public class PlayListFragment extends Fragment {
     //Interface to transfer data between two fragment
     public interface OnItemLyricClickListener {
-        void onItemSelected(int position, int idSong);
+        void onItemSelected(int position, int idSong, String filter);
     }
     OnItemLyricClickListener mCallback;
     List<MusicLyric> lyrics ;
+    List<MusicLyric> musicLyricsShow ;
+    DataManager dataManager;
     public PlayListFragment(){
         lyrics = new ArrayList<>();
+        musicLyricsShow = new ArrayList<>();
+
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if(Utils.musicLyricsShow.size() > 0) {
-            lyrics.addAll(Utils.musicLyricsShow);
+        dataManager = new DataManager(getContext());
+        if(musicLyricsShow.size() > 0) {
+            lyrics.addAll(musicLyricsShow);
         }
-        else
-            lyrics.addAll(Utils.musicLyrics);
+        else {
+            lyrics.addAll(dataManager.getDataFromDatabase("null"));
+            musicLyricsShow.addAll(dataManager.getDataFromDatabase("null"));
+        }
     }
 
     @Override
@@ -80,7 +86,7 @@ public class PlayListFragment extends Fragment {
         final PlayListAdapter playListAdapter = new PlayListAdapter(getContext(), lyrics);
         listView.setDivider(null);
         listView.setAdapter(playListAdapter);
-
+        final String[] filter = {""};
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -90,7 +96,9 @@ public class PlayListFragment extends Fragment {
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                playListAdapter.getFilter(newText);
+                filter[0] = newText;
+                musicLyricsShow.clear();
+                musicLyricsShow.addAll(playListAdapter.getFilter(newText));
                 playListAdapter.notifyDataSetChanged();
                 return true;
             }
@@ -98,7 +106,7 @@ public class PlayListFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mCallback.onItemSelected(position,Utils.musicLyricsShow.get(position).getId());
+                mCallback.onItemSelected(position,musicLyricsShow.get(position).getId(),filter[0]);
 
             }
         });
