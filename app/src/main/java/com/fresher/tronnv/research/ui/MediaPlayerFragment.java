@@ -31,6 +31,7 @@ public class MediaPlayerFragment extends Fragment {
     private Handler mSeekbarUpdateHandler = new Handler();
     private Runnable mUpdateSeekbar;
     private boolean isPause = false;
+    private boolean isResume = false;
     private Context context;
     private int ID;
     private OnSongChange onSongChange;
@@ -46,14 +47,14 @@ public class MediaPlayerFragment extends Fragment {
         }
     }
     public MediaPlayerFragment(){
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(mediaPlayer != null) {
+        if(mediaPlayer != null && !isResume) {
             mediaPlayer.start();
-
             mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
         }
     }
@@ -68,7 +69,6 @@ public class MediaPlayerFragment extends Fragment {
     public void onPause() {
         super.onPause();
         //mediaPlayer.pause();
-        isPause = true;
     }
 
     @Override
@@ -89,17 +89,26 @@ public class MediaPlayerFragment extends Fragment {
             timeReTotal = mediaPlayer.getDuration();
             seekBar.setMax(timeReTotal);
         }
-        totalTime.setText(String.format(" %d:%d", TimeUnit.MILLISECONDS.toMinutes((long) timeReTotal), TimeUnit.MILLISECONDS.toSeconds((long) timeReTotal) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) timeReTotal))));
+        long min = TimeUnit.MILLISECONDS.toMinutes((long) timeReTotal);
+        long sec = TimeUnit.MILLISECONDS.toSeconds((long) timeReTotal) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) timeReTotal));
+        totalTime.setText((min>=10)? String.valueOf(min) : "0"+ min +":" +( (sec>=10)? String.valueOf(sec) : "0"+ sec));
         //Run thread update UI of seek bar
         mUpdateSeekbar = new Runnable() {
             @Override
             public void run() {
                 if(mediaPlayer!= null && !isPause) {
+                    try {
+                        int timeRemaining = mediaPlayer.getCurrentPosition();
+                        seekBar.setProgress(timeRemaining);
+                        long min = TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining);
+                        long sec = TimeUnit.MILLISECONDS.toSeconds((long) timeRemaining) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining));
+                        timeCount.setText((min>=10)? String.valueOf(min) : "0"+ min +":" +( (sec>=10)? String.valueOf(sec) : "0"+ sec));
+                        mSeekbarUpdateHandler.postDelayed(this, 50);
+                    }
+                    catch (IllegalStateException e){
+                        System.out.print(e.toString());
+                    }
 
-                    int timeRemaining = mediaPlayer.getCurrentPosition();
-                    seekBar.setProgress(timeRemaining);
-                    timeCount.setText(String.format("%d:%d", TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining), TimeUnit.MILLISECONDS.toSeconds((long) timeRemaining) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining))));
-                    mSeekbarUpdateHandler.postDelayed(this, 50);
                 }
             }
         };
@@ -123,17 +132,22 @@ public class MediaPlayerFragment extends Fragment {
 
 
         final ImageButton playBtn = rootView.findViewById(R.id.btn_play);
+        playBtn.setImageResource(R.drawable.pause);
         ImageButton preBtn = rootView.findViewById(R.id.btn_pre);
+        preBtn.setImageResource(R.drawable.pre);
         ImageButton nextBtn = rootView.findViewById(R.id.btn_next);
+        nextBtn.setImageResource(R.drawable.next);
         playBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mediaPlayer.isPlaying()){
                     mediaPlayer.pause();
+                    isResume = true;
                     playBtn.setImageResource(R.drawable.play);
                 }
                 else{
                     mediaPlayer.start();
+                    isResume = false;
                     playBtn.setImageResource(R.drawable.pause);
                 }
             }
@@ -141,8 +155,10 @@ public class MediaPlayerFragment extends Fragment {
         preBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playBtn.setImageResource(R.drawable.pause);
-                mediaPlayer.release();
+                if(!isResume) {
+                    playBtn.setImageResource(R.drawable.pause);
+                    mediaPlayer.release();
+                }
                 if(ID == 1){
                     ID = 11;
                 }
@@ -154,21 +170,34 @@ public class MediaPlayerFragment extends Fragment {
                     @Override
                     public void run() {
                         if(mediaPlayer!= null && !isPause) {
-                            seekBar.setProgress(mediaPlayer.getCurrentPosition());
-                            mSeekbarUpdateHandler.postDelayed(this, 50);
+                            try {
+                                int timeRemaining = mediaPlayer.getCurrentPosition();
+                                seekBar.setProgress(timeRemaining);
+                                long min = TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining);
+                                long sec = TimeUnit.MILLISECONDS.toSeconds((long) timeRemaining) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining));
+                                timeCount.setText((min >= 10) ? String.valueOf(min) : "0" + min + ":" + ((sec >= 10) ? String.valueOf(sec) : "0" + sec));
+                                mSeekbarUpdateHandler.postDelayed(this, 50);
+                            }
+                            catch (IllegalStateException e){
+                                System.out.print(e.toString());
+                            }
                         }
                     }
                 };
-                mediaPlayer.start();
-                mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
+                if(!isResume) {
+                    mediaPlayer.start();
+                    mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
+                }
+
             }
         });
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                playBtn.setImageResource(R.drawable.pause);
-
-                mediaPlayer.release();
+                if(!isResume) {
+                    playBtn.setImageResource(R.drawable.pause);
+                    mediaPlayer.release();
+                }
                 if(ID == 10){
                     ID = 0;
                 }
@@ -180,13 +209,25 @@ public class MediaPlayerFragment extends Fragment {
                     @Override
                     public void run() {
                         if(mediaPlayer!= null && !isPause) {
-                            seekBar.setProgress(mediaPlayer.getCurrentPosition());
-                            mSeekbarUpdateHandler.postDelayed(this, 50);
+                            try {
+                                int timeRemaining = mediaPlayer.getCurrentPosition();
+                                seekBar.setProgress(timeRemaining);
+                                long min = TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining);
+                                long sec = TimeUnit.MILLISECONDS.toSeconds((long) timeRemaining) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining));
+                                timeCount.setText((min >= 10) ? String.valueOf(min) : "0" + min + ":" + ((sec >= 10) ? String.valueOf(sec) : "0" + sec));
+                                mSeekbarUpdateHandler.postDelayed(this, 50);
+                            }
+                            catch (IllegalStateException e){
+                                System.out.print(e.toString());
+                            }
                         }
                     }
                 };
-                mediaPlayer.start();
-                mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
+                if(!isResume) {
+                    mediaPlayer.start();
+                    mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
+                }
+
             }
         });
         return rootView;

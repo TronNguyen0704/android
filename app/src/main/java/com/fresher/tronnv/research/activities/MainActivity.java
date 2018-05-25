@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity implements PlayListFragment.
         startActivity(intent);
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        System.exit(0);
-//    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }

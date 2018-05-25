@@ -21,14 +21,14 @@ public class NetworkChangeReceiver extends BroadcastReceiver {
     }
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(isConnected()) {
+        if(context != null && isConnected(context)) {
             Toast.makeText(context, "Network is turned ON", Toast.LENGTH_SHORT).show();
         }
         else {
             Toast.makeText(context,"Network is turned OFF",Toast.LENGTH_SHORT).show();
         }
     }
-    public boolean isConnected() {
+    public boolean isConnected(Context context) {
         ConnectivityManager cm =
                 (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();

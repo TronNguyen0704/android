@@ -8,8 +8,11 @@ import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.fresher.tronnv.research.R;
 import com.fresher.tronnv.research.Utils;
 import com.fresher.tronnv.research.component.DaggerNetComponent;
@@ -35,12 +38,14 @@ public class WelcomeActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_welcome);
         receiver = new NetworkChangeReceiver();
         receiver.setContext(this);
         final IntentFilter filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
         registerReceiver(receiver, filter);
-        if(receiver.isConnected()) {
+
+        if(receiver.isConnected(getBaseContext())) {
             if (netComponent == null) {
                 RetrofitClient retrofitClient = new RetrofitClient();
                 netComponent = DaggerNetComponent
@@ -68,7 +73,7 @@ public class WelcomeActivity extends AppCompatActivity{
 
     public void goToMain(View v) {
         //Checking network
-        if(receiver.isConnected()) {
+        if(receiver.isConnected(getBaseContext())) {
             if (netComponent == null) {
                 RetrofitClient retrofitClient = new RetrofitClient();
                 netComponent = DaggerNetComponent

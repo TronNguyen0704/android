@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">Music Lyric</string>
+    <string name="app_name">Music 74</string>
     <string name="query_hint">Keyword</string>
     <string name="volume">Volume</string>
     <string name="back">Back</string>
+    <string name="start">Start</string>
 </resources>

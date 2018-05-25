@@ -12,7 +12,6 @@
             android:id="@+id/txt_time_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="00:00"
             android:textColor="@color/White"
             android:layout_centerVertical="true"/>
         <SeekBar
@@ -27,7 +26,6 @@
             android:id="@+id/txt_total_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="00:00"
             android:textColor="@color/White"
             android:layout_centerVertical="true"/>
     </RelativeLayout>
@@ -47,13 +45,11 @@
             android:layout_weight="2"
             android:background="@color/transparent"
             android:paddingBottom="@dimen/textTitle"
-            android:paddingTop="@dimen/ten"
-            android:src="@drawable/pre" />
+            android:paddingTop="@dimen/ten" />
         <ImageButton
             android:id="@+id/btn_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/pause"
             android:background="@color/transparent"
             android:layout_weight="1"
             android:paddingTop="@dimen/ten"
@@ -67,8 +63,7 @@
             android:layout_weight="2"
             android:background="@color/transparent"
             android:paddingBottom="@dimen/textTitle"
-            android:paddingTop="@dimen/ten"
-            android:src="@drawable/next" />
+            android:paddingTop="@dimen/ten" />
     </LinearLayout>
 
 </RelativeLayout>
