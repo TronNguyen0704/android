@@ -18,9 +18,6 @@ import retrofit2.http.Path;
 /**
  * With Retrofit 2, endpoints are defined inside of an interface using special retrofit annotations
  * to encode details about the parameters and request method.
- * In addition, the return value is always a parameterized Call<T> object such as Call<User>.
- * If you do not need any type-specific response, you can specify return value as simply Call<ResponseBody>.
- * For instance, the interface defines each endpoint in the following way
  * */
 public interface RequestLyricInterface {
     @GET("5b04d1942f00003232e7aaa4")
