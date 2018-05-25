@@ -12,6 +12,8 @@ Description: Show the music lyric
 
 - Check network connection
 
+- Load local data when No internet connection
+
 
 Tool: Android Studio 3.1
 
@@ -24,8 +26,19 @@ Library:
          Retrofit2 :http://square.github.io/retrofit/
          
          Dagger2: https://google.github.io/dagger/users-guide
+         
+         Glide : https://github.com/bumptech/glide
+ 
+Demo: 
 
 Reference : 
+
+* Android Developer : https://developer.android.com
+    + BroadCastReceive
+    + Fragment
+    + Toolbar
+    + Mediaplayer
+
 * Author: Daniyar Nurgaliyev
 
   Title: JSON “object arrays” parsing using Retrofit, RecycleView and CardView
