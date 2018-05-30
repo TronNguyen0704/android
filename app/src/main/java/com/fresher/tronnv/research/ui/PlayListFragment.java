@@ -15,10 +15,10 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.fresher.tronnv.research.R;
-import com.fresher.tronnv.research.Utils;
 import com.fresher.tronnv.research.data.DataManager;
 import com.fresher.tronnv.research.model.MusicLyric;
-import com.fresher.tronnv.research.network.RequestLyricInterface;
+import com.fresher.tronnv.research.presenters.ApplicationPresenter;
+import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,23 +37,22 @@ public class PlayListFragment extends Fragment {
     OnItemLyricClickListener mCallback;
     List<MusicLyric> lyrics ;
     List<MusicLyric> musicLyricsShow ;
-    DataManager dataManager;
+    private ApplicationPresenter applicationPresenter;
     public PlayListFragment(){
         lyrics = new ArrayList<>();
         musicLyricsShow = new ArrayList<>();
-
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        dataManager = new DataManager(getContext());
+        applicationPresenter = new ApplicationPresenterImpl();
         if(musicLyricsShow.size() > 0) {
             lyrics.addAll(musicLyricsShow);
         }
         else {
-            lyrics.addAll(dataManager.getDataFromDatabase("null"));
-            musicLyricsShow.addAll(dataManager.getDataFromDatabase("null"));
+            lyrics.addAll(applicationPresenter.requestMusic());
+            musicLyricsShow.addAll(applicationPresenter.requestMusic());
         }
     }
 

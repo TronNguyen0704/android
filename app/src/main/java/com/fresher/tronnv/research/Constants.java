@@ -19,6 +19,6 @@ import io.reactivex.schedulers.Schedulers;
  * Created by NGUYEN VAN TRON on 05/16/18.
  */
 
-public class Utils {
+public class Constants {
     public static final String BASE_URL = "http://www.mocky.io/v2/";
 }

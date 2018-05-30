@@ -4,7 +4,7 @@ android {
     compileSdkVersion 27
     defaultConfig {
         applicationId "com.fresher.tronnv.research"
-        minSdkVersion 21
+        minSdkVersion 22
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
@@ -20,7 +20,9 @@ android {
         exclude 'META-INF/rxjava.properties'
     }
     sourceSets {
-        main { res.srcDirs = ['src/main/res', 'src/main/res/mp3', 'src/main/res/drawable/buttons'] }
+        main {
+            res.srcDirs = ['src/main/res', 'src/main/res/mp3', 'src/main/res/drawable/buttons', 'src/main/res/anim']
+        }
     }
 }
 
@@ -45,4 +47,5 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
     implementation 'com.github.bumptech.glide:glide:4.7.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
+    implementation 'com.google.code.gson:gson:2.8.4'
 }

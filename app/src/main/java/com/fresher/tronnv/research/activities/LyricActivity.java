@@ -1,6 +1,9 @@
 package com.fresher.tronnv.research.activities;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -9,11 +12,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.fresher.tronnv.research.R;
 import com.fresher.tronnv.research.data.DataManager;
+import com.fresher.tronnv.research.presenters.ApplicationPresenter;
+import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
 import com.fresher.tronnv.research.ui.LyricsFragment;
 import com.fresher.tronnv.research.ui.MediaPlayerFragment;
 
@@ -21,28 +27,41 @@ import com.fresher.tronnv.research.ui.MediaPlayerFragment;
 
 public class LyricActivity extends AppCompatActivity implements MediaPlayerFragment.OnSongChange{
     private MediaPlayer mPlayer;
-    private DataManager dataManager;
     private Toolbar toolbar;
+    private ApplicationPresenter applicationPresenter;
+    private BroadcastReceiver mReceiver;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lyrics);
-        dataManager = new DataManager(getBaseContext());
+        applicationPresenter = new ApplicationPresenterImpl();
         toolbar = findViewById(R.id.tool_bar);
 
+
+        //Add Broadcast receiver to close app when touch down notification
+//        mReceiver = new BroadcastReceiver() {
+//            @Override
+//            public void onReceive(Context context, Intent intent) {
+//                Log.d("TAG" ,"onReceive ");
+//                finish();
+//            }
+//        };
+//        IntentFilter filterNotif = new IntentFilter();
+//        filterNotif.addAction("Kill_app");
+//        registerReceiver(mReceiver, filterNotif);
         //Create LyricsFrament
         LyricsFragment lyricsFragment = new LyricsFragment();
         //Add set data
         String filter = getIntent().getStringExtra("Filter");
-        lyricsFragment.setMusicLyrics(dataManager.getDataFromDatabase(filter));
+        lyricsFragment.setMusicLyrics(applicationPresenter.requestMusic(filter));
         //Get data from Intent
         int index = getIntent().getIntExtra("Index",0);
         int ID = getIntent().getIntExtra("ID",0);
         mPlayer = MediaPlayer.create(this,getRawIDByName("mp" +String.valueOf(3100 + ID)));
 
         //SetupToolBar
-        toolbar.setSubtitle(dataManager.getSongById(ID).getAuthor());
-        toolbar.setTitle(dataManager.getSongById(ID).getName());
+        toolbar.setSubtitle(applicationPresenter.getSongById(ID).getAuthor());
+        toolbar.setTitle(applicationPresenter.getSongById(ID).getName());
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -84,6 +103,7 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //unregisterReceiver(mReceiver);
         if(mPlayer!= null)
             mPlayer.release();
     }
@@ -96,9 +116,9 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
         LyricsFragment lyricsFragment = new LyricsFragment();
 
         //Add set data
-        lyricsFragment.setMusicLyrics(dataManager.getDataFromDatabase("null"));//Utils.musicLyrics);
-        toolbar.setSubtitle(dataManager.getSongById(id).getAuthor());
-        toolbar.setTitle(dataManager.getSongById(id).getName());
+        lyricsFragment.setMusicLyrics(applicationPresenter.requestMusic());
+        toolbar.setSubtitle(applicationPresenter.getSongById(id).getAuthor());
+        toolbar.setTitle(applicationPresenter.getSongById(id).getName());
         //Set Index
         lyricsFragment.setmIndex(id - 1);
         lyricsFragment.setRetainInstance(true);
@@ -151,8 +171,8 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
 //
 //            }
             case R.id.action_volume: {
-                AudioManager a=(AudioManager)getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-                a.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_SAME,AudioManager.FLAG_SHOW_UI| AudioManager.FLAG_PLAY_SOUND);
+                AudioManager audioManager =(AudioManager)getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+                audioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC,AudioManager.ADJUST_SAME,AudioManager.FLAG_SHOW_UI| AudioManager.FLAG_PLAY_SOUND);
                 return true;
             }
             default:

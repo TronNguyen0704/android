@@ -11,8 +11,5 @@ public final class MusicReaderContract {
         public static final String COLUMN_NAME_AUTHOR = "author";
         public static final String COLUMN_NAME_LYRIC = "lyric";
         public static final String COLUMN_NAME_AVATAR = "avatar";
-
-
-
     }
 }

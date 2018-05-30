@@ -18,6 +18,12 @@
             android:id="@+id/seekbar"
             android:layout_toRightOf="@+id/txt_time_count"
             android:layout_width="280dp"
+            android:minHeight="5dp"
+            android:minWidth="5dp"
+            android:maxHeight="5dp"
+            android:maxWidth="5dp"
+            android:thumbTint="@color/colorAccent"
+            android:progressDrawable="@drawable/volume_seekbar"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             />

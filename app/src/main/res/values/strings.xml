@@ -4,4 +4,9 @@
     <string name="volume">Volume</string>
     <string name="back">Back</string>
     <string name="start">Start</string>
+    <string name="pause">Pause</string>
+    <string name="play">Playing</string>
+    <string name="restart">Restart</string>
+    <string name="content">Click to close this app</string>
+    <string name="title">This app is running</string>
 </resources>

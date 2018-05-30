@@ -74,6 +74,11 @@ public class MusicLyric {
     }
     @Override
     public String toString() {
-        return name;
+        return "{\"id\": " + id +
+                ",\"name\": \"" + name +
+                "\",\"author\": \"" + author +
+                "\",\"lyric\": \"" + lyric +
+                "\",\"avatar\": \"" + avatar +
+                "\",\"lyricId\": " + lyricId + "}";
     }
 }

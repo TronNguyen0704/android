@@ -1,26 +1,30 @@
 package com.fresher.tronnv.research.activities;
 
-import android.content.Context;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageButton;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.fresher.tronnv.research.R;
-import com.fresher.tronnv.research.Utils;
 import com.fresher.tronnv.research.component.DaggerNetComponent;
 import com.fresher.tronnv.research.component.NetComponent;
 import com.fresher.tronnv.research.data.DataManager;
+import com.fresher.tronnv.research.data.Database;
+import com.fresher.tronnv.research.model.MusicLyric;
 import com.fresher.tronnv.research.mudule.NetModule;
 import com.fresher.tronnv.research.network.NetworkChangeReceiver;
 import com.fresher.tronnv.research.network.RetrofitClient;
+import com.fresher.tronnv.research.presenters.ApplicationPresenter;
+import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -31,10 +35,10 @@ import javax.inject.Inject;
 public class WelcomeActivity extends AppCompatActivity{
 
     private NetworkChangeReceiver receiver;
-    private NetComponent netComponent;
-    @Inject
-    DataManager dataManager;
-
+    //private NetComponent netComponent;
+//    @Inject
+//    DataManager dataManager;
+    private ApplicationPresenter applicationPresenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,20 +47,17 @@ public class WelcomeActivity extends AppCompatActivity{
         receiver = new NetworkChangeReceiver();
         receiver.setContext(this);
         final IntentFilter filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+        //Broadcast receiver
         registerReceiver(receiver, filter);
 
-        if(receiver.isConnected(getBaseContext())) {
-            if (netComponent == null) {
-                RetrofitClient retrofitClient = new RetrofitClient();
-                netComponent = DaggerNetComponent
-                        .builder()
-                        .netModule(new NetModule(retrofitClient))
-                        .build();
-                dataManager = netComponent.getDataManager();
-                dataManager.restAPIToGetData(retrofitClient,getBaseContext());
+        applicationPresenter = new ApplicationPresenterImpl();
+        applicationPresenter.requestMusic();
+        Animation shake = AnimationUtils.loadAnimation(this, R.anim.scale);
+        shake.setRepeatCount(ObjectAnimator.INFINITE);
+        shake.setRepeatMode(ObjectAnimator.REVERSE);
+        Button startBtn = findViewById(R.id.btn_start);
+        startBtn.setAnimation(shake);
 
-            }
-        }
     }
 
     @Override
@@ -74,25 +75,15 @@ public class WelcomeActivity extends AppCompatActivity{
     public void goToMain(View v) {
         //Checking network
         if(receiver.isConnected(getBaseContext())) {
-            if (netComponent == null) {
-                RetrofitClient retrofitClient = new RetrofitClient();
-                netComponent = DaggerNetComponent
-                        .builder()
-                        .netModule(new NetModule(retrofitClient))
-                        .build();
-                dataManager = netComponent.getDataManager();
-                dataManager.restAPIToGetData(retrofitClient,getBaseContext());
-            }
-            if(dataManager.getDataFromDatabase("null") != null) {
-                //Utils.musicLyrics = dataManager.getDataFromDatabase();
+            if(applicationPresenter.requestMusic() != null) {
                 startActivity(new Intent(this, MainActivity.class));
             }else{
                 Toast.makeText(this,"Data is loading...",Toast.LENGTH_SHORT).show();
             }
         }
         else{
-            dataManager = new DataManager(getBaseContext());
-            if(dataManager.isNull()) {
+
+            if(applicationPresenter.requestMusic() == null ||(applicationPresenter.requestMusic().size() ==0) ) {
                 Toast.makeText(this,"No Internet connection",Toast.LENGTH_SHORT).show();
             }
             else {

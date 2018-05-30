@@ -1,24 +1,33 @@
 package com.fresher.tronnv.research.ui;
 
+import android.animation.ObjectAnimator;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.format.Time;
+import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
 import com.fresher.tronnv.research.R;
+import com.fresher.tronnv.research.activities.LyricActivity;
 
-import java.util.PriorityQueue;
 import java.util.concurrent.TimeUnit;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 /**
  * Created by NGUYEN VAN TRON on 05/18/18.
  */
@@ -35,10 +44,39 @@ public class MediaPlayerFragment extends Fragment {
     private Context context;
     private int ID;
     private OnSongChange onSongChange;
+    private NotificationManager mNotificationManager;
+    private void showNotification() {
+        mNotificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+        String CHANNEL_ID = "my_channel_01";
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
 
+            CharSequence name = "my_channel";
+            String Description = "This is my channel";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+            mChannel.setDescription(Description);
+            mChannel.enableLights(true);
+            mChannel.setLightColor(Color.RED);
+            mChannel.enableVibration(true);
+            mChannel.setVibrationPattern(new long[]{100, 200, 300, 400, 500, 400, 300, 200, 400});
+            mChannel.setShowBadge(false);
+            mNotificationManager.createNotificationChannel(mChannel);
+        }
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,CHANNEL_ID);
+        PendingIntent contentPendingIntent = PendingIntent.getActivity
+                (context, (int)System.currentTimeMillis(), new Intent("Kill_app"), PendingIntent.FLAG_UPDATE_CURRENT);
+
+        builder.setContentTitle(getString(R.string.title))
+                .setContentText(getString(R.string.content))
+                .setContentIntent(contentPendingIntent)
+                .setSmallIcon(R.drawable.icon_lyrics)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+        mNotificationManager.notify(0, builder.build());
+    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        //showNotification();
         try {
             onSongChange = (OnSongChange) context;
         }
@@ -53,6 +91,7 @@ public class MediaPlayerFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+
         if(mediaPlayer != null && !isResume) {
             mediaPlayer.start();
             mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
@@ -133,7 +172,7 @@ public class MediaPlayerFragment extends Fragment {
 
         final ImageButton playBtn = rootView.findViewById(R.id.btn_play);
         playBtn.setImageResource(R.drawable.pause);
-        ImageButton preBtn = rootView.findViewById(R.id.btn_pre);
+        final ImageButton preBtn = rootView.findViewById(R.id.btn_pre);
         preBtn.setImageResource(R.drawable.pre);
         ImageButton nextBtn = rootView.findViewById(R.id.btn_next);
         nextBtn.setImageResource(R.drawable.next);
@@ -155,6 +194,7 @@ public class MediaPlayerFragment extends Fragment {
         preBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if(!isResume) {
                     playBtn.setImageResource(R.drawable.pause);
                     mediaPlayer.release();
