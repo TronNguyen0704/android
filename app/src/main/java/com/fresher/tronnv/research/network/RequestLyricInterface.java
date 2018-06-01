@@ -1,4 +1,5 @@
 package com.fresher.tronnv.research.network;
+import com.fresher.tronnv.research.data.source.RecordChart;
 import com.fresher.tronnv.research.model.MusicLyric;
 
 import java.util.List;
@@ -22,4 +23,6 @@ import retrofit2.http.Path;
 public interface RequestLyricInterface {
     @GET("5b04d1942f00003232e7aaa4")
     Observable<List<MusicLyric>> register();
+    @GET("5b110c532f0000730034f1fe")
+    Observable<List<RecordChart>> recorchart();
 }

@@ -19,18 +19,18 @@ import static org.junit.Assert.*;
 public class RequsetAPIUnitTest {
     @Test
     public void retroClient1_isNotNull() {
-        assertNotNull(RetrofitClient.getClientRxJava(Utils.BASE_URL));
+        assertNotNull(RetrofitClient.getClientRxJava(Constants.BASE_URL));
     }
     @Test
     public void retroClient2_isNotNull() {
-        assertNotNull(RetrofitClient.getClient(Utils.BASE_URL));
+        assertNotNull(RetrofitClient.getClient(Constants.BASE_URL));
     }
     @Test
     public void requestLyricInterface_isNotNull(){
-        assertNotNull(RetrofitClient.getClient(Utils.BASE_URL).create(RequestLyricInterface.class));
+        assertNotNull(RetrofitClient.getClient(Constants.BASE_URL).create(RequestLyricInterface.class));
     }
     @Test
     public void requestLyricInterface2_isNotNull(){
-        assertNotNull(RetrofitClient.getClientRxJava(Utils.BASE_URL).create(RequestLyricInterface.class));
+        assertNotNull(RetrofitClient.getClientRxJava(Constants.BASE_URL).create(RequestLyricInterface.class));
     }
 }

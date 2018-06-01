@@ -46,7 +46,7 @@ public class PlayListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        applicationPresenter = new ApplicationPresenterImpl();
+        applicationPresenter = new ApplicationPresenterImpl(getContext());
         if(musicLyricsShow.size() > 0) {
             lyrics.addAll(musicLyricsShow);
         }
@@ -80,10 +80,10 @@ public class PlayListFragment extends Fragment {
         searchView.setFocusable(false);
         searchView.clearFocus();
 
-        ListView listView = rootView.findViewById(R.id.list_item);
+        final ListView listView = rootView.findViewById(R.id.list_item);
 
         final PlayListAdapter playListAdapter = new PlayListAdapter(getContext(), lyrics);
-        listView.setDivider(null);
+        //listView.setDivider(null);
         listView.setAdapter(playListAdapter);
         final String[] filter = {""};
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

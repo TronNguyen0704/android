@@ -1,5 +1,7 @@
 package com.fresher.tronnv.research.domain.impl;
 
+import android.content.Context;
+
 import com.fresher.tronnv.research.data.base.MusicDao;
 import com.fresher.tronnv.research.data.impl.MusicDaoImpl;
 import com.fresher.tronnv.research.domain.base.MusicBusiness;
@@ -9,9 +11,9 @@ import java.util.List;
 
 public class MusicBusinessImpl implements MusicBusiness{
     private MusicDao dao;
-    public MusicBusinessImpl(){
+    public MusicBusinessImpl(Context context){
         if(dao == null)
-            dao = new MusicDaoImpl();
+            dao = new MusicDaoImpl(context);
     }
 
     @Override

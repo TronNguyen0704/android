@@ -1,6 +1,7 @@
 package com.fresher.tronnv.research.ui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,10 +88,11 @@ public class PlayListAdapter extends BaseAdapter{
         if(authors!= null && authors.size() != 0 && authors.size() > position) {
             author.setText(authors.get(position ));
             name.setText(names.get(position));
-            Glide.with(view)
+            Glide.with(view.getContext())
                     .load(musicLyricsShow.get(position).getAvatar())
-                    .apply(RequestOptions.centerCropTransform())
+                    .apply(RequestOptions.circleCropTransform())
                     .into(avatar);
+            Glide.get(view.getContext()).clearMemory();
         }
         else{
             view.setVisibility(View.GONE);

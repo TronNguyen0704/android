@@ -12,21 +12,10 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.fresher.tronnv.research.R;
-import com.fresher.tronnv.research.component.DaggerNetComponent;
-import com.fresher.tronnv.research.component.NetComponent;
-import com.fresher.tronnv.research.data.DataManager;
-import com.fresher.tronnv.research.data.Database;
-import com.fresher.tronnv.research.model.MusicLyric;
-import com.fresher.tronnv.research.mudule.NetModule;
 import com.fresher.tronnv.research.network.NetworkChangeReceiver;
-import com.fresher.tronnv.research.network.RetrofitClient;
 import com.fresher.tronnv.research.presenters.ApplicationPresenter;
 import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
 
 
 /**
@@ -35,9 +24,6 @@ import javax.inject.Inject;
 public class WelcomeActivity extends AppCompatActivity{
 
     private NetworkChangeReceiver receiver;
-    //private NetComponent netComponent;
-//    @Inject
-//    DataManager dataManager;
     private ApplicationPresenter applicationPresenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +36,7 @@ public class WelcomeActivity extends AppCompatActivity{
         //Broadcast receiver
         registerReceiver(receiver, filter);
 
-        applicationPresenter = new ApplicationPresenterImpl();
+        applicationPresenter = new ApplicationPresenterImpl(getBaseContext());
         applicationPresenter.requestMusic();
         Animation shake = AnimationUtils.loadAnimation(this, R.anim.scale);
         shake.setRepeatCount(ObjectAnimator.INFINITE);

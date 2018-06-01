@@ -2,8 +2,6 @@ package com.fresher.tronnv.research.activities;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -12,12 +10,10 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.fresher.tronnv.research.R;
-import com.fresher.tronnv.research.data.DataManager;
 import com.fresher.tronnv.research.presenters.ApplicationPresenter;
 import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
 import com.fresher.tronnv.research.ui.LyricsFragment;
@@ -34,7 +30,7 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lyrics);
-        applicationPresenter = new ApplicationPresenterImpl();
+        applicationPresenter = new ApplicationPresenterImpl(getBaseContext());
         toolbar = findViewById(R.id.tool_bar);
 
 

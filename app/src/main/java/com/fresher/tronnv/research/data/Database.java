@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.provider.BaseColumns;
 
+import com.fresher.tronnv.research.data.json.JSONManager;
 import com.fresher.tronnv.research.model.MusicLyric;
 
 import java.util.ArrayList;
@@ -15,13 +16,15 @@ public class Database {
     private MusicReaderDbHelper mDbHelper ;
     private Context context;
     private List<MusicLyric> musicLyrics;
-    public Database(Context context, List<MusicLyric> musicLyrics){
+    public Database(Context context){
+        mDbHelper = new MusicReaderDbHelper(context);
         this.context = context;
         this.musicLyrics = new ArrayList<>();
         if(musicLyrics != null)
             this.musicLyrics.addAll(musicLyrics);
     }
     public void saveDataBase(){
+        musicLyrics = JSONManager.JsonSimpleReader();//Read data from temp file
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         db.delete(MusicReaderContract.MusicEntry.TABLE_NAME,null,null);
         // Create a new map of values, where column names are the keys
@@ -111,6 +114,9 @@ public class Database {
         return null;
     }
     public MusicLyric getSongById(int id){
+        if(!isNull() && !(musicLyrics.size() >0)){
+            musicLyrics.addAll(getDataFromDatabase("null"));
+        }
         for (MusicLyric musicLyric : musicLyrics){
             if(musicLyric.getId() == id){
                 return musicLyric;

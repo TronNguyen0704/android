@@ -11,4 +11,7 @@
         <item name="android:background">@drawable/btn_bgr</item>
         <item name="android:textColor">#ffffff</item>
     </style>
+    <style name="customfontstyle" parent="@android:style/TextAppearance.Small">
+        <item name="android:fontFamily">@font/vagrundschriftbq</item>
+    </style>
 </resources>

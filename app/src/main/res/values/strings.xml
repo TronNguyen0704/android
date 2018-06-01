@@ -9,4 +9,10 @@
     <string name="restart">Restart</string>
     <string name="content">Click to close this app</string>
     <string name="title">This app is running</string>
+    <string name="title_my_music">My Music</string>
+    <string name="title_more">More</string>
+    <string name="title_home">Home</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 </resources>

@@ -11,9 +11,9 @@ import java.util.List;
 
 public class ApplicationPresenterImpl implements ApplicationPresenter{
     private MainUseCases mainUseCases;
-    public ApplicationPresenterImpl(){
+    public ApplicationPresenterImpl(Context context){
         if(mainUseCases == null)
-            this.mainUseCases = new MainUseCases();
+            this.mainUseCases = new MainUseCases(context);
     }
     public List<MusicLyric> requestMusic() {
         return  mainUseCases.getAllMusic();

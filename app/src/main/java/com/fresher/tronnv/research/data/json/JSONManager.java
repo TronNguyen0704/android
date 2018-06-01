@@ -1,6 +1,7 @@
 package com.fresher.tronnv.research.data.json;
 
 
+import com.fresher.tronnv.research.data.source.RecordChart;
 import com.fresher.tronnv.research.model.MusicLyric;
 import com.google.gson.Gson;
 
@@ -66,5 +67,51 @@ public class JSONManager {
         }
 
         System.out.print(json);
+    }
+    public static void JsonRecordChartWriter(List<RecordChart> list){
+        Gson gson = new Gson();
+        String json = gson.toJson(list);
+        try (FileWriter file = new FileWriter( "/data/data/com.fresher.tronnv.research/data-rank.json")) {
+            file.write(json);
+            file.flush();
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.print(json);
+    }
+    public static List<RecordChart> JsonRecordChartReader() {
+        CharBuffer charBuffer = CharBuffer.allocate(100000);
+        try {
+            FileReader file = new FileReader("/data/data/com.fresher.tronnv.research/data-rank.json");
+            file.read(charBuffer);
+            file.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        Gson gson = new Gson();
+        List<RecordChart> list = new ArrayList<>();
+        String test = String.copyValueOf(charBuffer.array());
+        JSONArray jsonObject = null;
+        try {
+            jsonObject = new JSONArray(test);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        int i = 0;
+        while(!jsonObject.isNull(i)){
+            try {
+                list.add(gson.fromJson(jsonObject.getString(i), RecordChart.class));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            i++;
+        }
+        return list;
     }
 }
