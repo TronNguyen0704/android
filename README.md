@@ -38,6 +38,7 @@ Reference :
     + Fragment
     + Toolbar
     + Mediaplayer
+    + Lifecycle, including LiveData and ViewModel.
 
 * Author: Daniyar Nurgaliyev
 
@@ -50,3 +51,9 @@ Reference :
   Title: How-to Dagger 2 with Android
  
   Link: https://proandroiddev.com/how-to-dagger-2-with-android-part-1-18b5b941453f
+  
+* Author: Google
+  
+  Title: Android Architecture Components samples
+  
+  Link: https://github.com/googlesamples/android-architecture-components/
