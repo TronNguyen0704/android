@@ -1,10 +1,12 @@
 # Android Developer
 Create by Nguyen Van Tron on 05/16/18
 
-AppName: MusicLyric
+AppName: MP3Dev
 
-Description: Show the music lyric
+Description:
 - Get data from server
+
+- Show record chart and highlights
 
 - Show Playlist and lyric of all song 
 
@@ -13,7 +15,6 @@ Description: Show the music lyric
 - Check network connection
 
 - Load local data when No internet connection
-
 
 Tool: Android Studio 3.1
 
@@ -29,8 +30,8 @@ Library:
          
          Glide : https://github.com/bumptech/glide
  
-Demo: 
 
+         
 Reference : 
 
 * Android Developer : https://developer.android.com
@@ -38,7 +39,7 @@ Reference :
     + Fragment
     + Toolbar
     + Mediaplayer
-    + Lifecycle, including LiveData and ViewModel.
+    + Lifecycle, including LiveData and ViewModel, Room.
 
 * Author: Daniyar Nurgaliyev
 
