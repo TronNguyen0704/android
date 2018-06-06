@@ -9,14 +9,14 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true">
         <TextView
-            android:id="@+id/txt_time_count"
+            android:id="@+id/tv_time_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/White"
             android:layout_centerVertical="true"/>
         <SeekBar
             android:id="@+id/seekbar"
-            android:layout_toRightOf="@+id/txt_time_count"
+            android:layout_toRightOf="@+id/tv_time_count"
             android:layout_width="280dp"
             android:minHeight="5dp"
             android:minWidth="5dp"
@@ -29,7 +29,7 @@
             />
         <TextView
             android:layout_toRightOf="@+id/seekbar"
-            android:id="@+id/txt_total_time"
+            android:id="@+id/tv_total_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/White"
@@ -51,14 +51,14 @@
             android:layout_weight="2"
             android:background="@color/transparent"
             android:paddingBottom="@dimen/textTitle"
-            android:paddingTop="@dimen/ten" />
+            android:paddingTop="@dimen/dimen_temp" />
         <ImageButton
             android:id="@+id/btn_play"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/transparent"
             android:layout_weight="1"
-            android:paddingTop="@dimen/ten"
+            android:paddingTop="@dimen/dimen_temp"
             android:paddingBottom="@dimen/textTitle"/>
 
         <ImageButton
@@ -69,7 +69,7 @@
             android:layout_weight="2"
             android:background="@color/transparent"
             android:paddingBottom="@dimen/textTitle"
-            android:paddingTop="@dimen/ten" />
+            android:paddingTop="@dimen/dimen_temp" />
     </LinearLayout>
 
 </RelativeLayout>

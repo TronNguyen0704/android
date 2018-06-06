@@ -1,4 +1,4 @@
-package com.fresher.tronnv.research.ui;
+package com.fresher.tronnv.research.ui.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -98,10 +98,10 @@ public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.
         TextView txtAuthor;
         public RecyclerViewHolder(View itemView) {
             super(itemView);
-            txtRank  = itemView.findViewById(R.id.txt_rank);
-            iv_avatar  = itemView.findViewById(R.id.image_avatar);
-            txtSongName = itemView.findViewById(R.id.txt_name);
-            txtAuthor = itemView.findViewById(R.id.txt_author);
+            txtRank  = itemView.findViewById(R.id.tv_rank);
+            iv_avatar  = itemView.findViewById(R.id.img_avatar);
+            txtSongName = itemView.findViewById(R.id.tv_name);
+            txtAuthor = itemView.findViewById(R.id.tv_author);
 
         }
     }

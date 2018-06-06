@@ -49,7 +49,6 @@ public class WelcomeActivity extends AppCompatActivity{
     @Override
     protected void onStop() {
         super.onStop();
-
     }
 
     @Override

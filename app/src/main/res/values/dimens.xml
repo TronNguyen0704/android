@@ -5,8 +5,8 @@
     <dimen name="text">20dp</dimen>
     <dimen name="textTitle">15dp</dimen>
     <dimen name="icon">64dp</dimen>
-    <dimen name="five">5dp</dimen>
-    <dimen name="mediamargin">20dp</dimen>
-    <dimen name="ten">10dp</dimen>
+    <dimen name="dimen_temp1">5dp</dimen>
+    <dimen name="media_margin">20dp</dimen>
+    <dimen name="dimen_temp">10dp</dimen>
     <dimen name="avatar">64dp</dimen>
 </resources>

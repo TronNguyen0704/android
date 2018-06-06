@@ -40,6 +40,7 @@ public class Database {
                 long newRowId = db.insert(MusicReaderContract.MusicEntry.TABLE_NAME, null, values);
             }
         }
+        db.close();
     }
     public Cursor getDataTable(String name){
         if(mDbHelper == null){
@@ -111,6 +112,7 @@ public class Database {
             musicLyrics.addAll(itemIds);
             return itemIds;
         }
+        mDbHelper.getReadableDatabase().close();
         return null;
     }
     public MusicLyric getSongById(int id){
@@ -132,6 +134,7 @@ public class Database {
         mcursor.moveToFirst();
         int icount = mcursor.getInt(0);
         if(icount>0){
+            db.close();
             return false;
         }else{
             return true;

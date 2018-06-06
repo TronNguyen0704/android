@@ -7,10 +7,10 @@
     android:background="@color/transparent">
 
     <ImageView
-        android:id="@+id/image_avatar"
+        android:id="@+id/img_avatar"
         android:layout_width="@dimen/avatar"
         android:layout_height="@dimen/avatar"
-        android:padding="@dimen/five"
+        android:padding="@dimen/dimen_temp1"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_74"
         android:layout_weight="1"/>
@@ -18,11 +18,11 @@
         android:layout_width="match_parent"
         android:orientation="vertical"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/five"
-        android:layout_marginTop="@dimen/five"
+        android:layout_marginLeft="@dimen/dimen_temp1"
+        android:layout_marginTop="@dimen/dimen_temp1"
         android:layout_weight="6">
         <TextView
-            android:id="@+id/txt_name"
+            android:id="@+id/tv_name"
             android:textStyle="bold"
             android:textColor="@color/White"
             android:textSize="@dimen/text"
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:maxLines="1"/>
         <TextView
-            android:id="@+id/txt_author"
+            android:id="@+id/tv_author"
             android:textSize="@dimen/textTitle"
             android:textColor="@color/White"
             android:layout_width="wrap_content"

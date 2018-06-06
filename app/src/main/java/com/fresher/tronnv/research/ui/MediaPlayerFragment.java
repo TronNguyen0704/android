@@ -1,6 +1,5 @@
 package com.fresher.tronnv.research.ui;
 
-import android.animation.ObjectAnimator;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -17,13 +16,10 @@ import android.support.v4.app.NotificationCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.fresher.tronnv.research.R;
-import com.fresher.tronnv.research.activities.LyricActivity;
 
 import java.util.concurrent.TimeUnit;
 
@@ -121,8 +117,8 @@ public class MediaPlayerFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_mediaplayer,container,false);
         final SeekBar seekBar = rootView.findViewById(R.id.seekbar);
-        final TextView timeCount = rootView.findViewById(R.id.txt_time_count);
-        final TextView totalTime = rootView.findViewById(R.id.txt_total_time);
+        final TextView timeCount = rootView.findViewById(R.id.tv_time_count);
+        final TextView totalTime = rootView.findViewById(R.id.tv_total_time);
         int timeReTotal = 0;
         if(mediaPlayer!= null) {
             timeReTotal = mediaPlayer.getDuration();

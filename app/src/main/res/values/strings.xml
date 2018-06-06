@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">Music 74</string>
+    <string name="app_name">MP3Dev</string>
     <string name="query_hint">Keyword</string>
+    <string name="query_hint_main">Search for songs,...</string>
     <string name="volume">Volume</string>
     <string name="back">Back</string>
     <string name="start">Start</string>
@@ -15,4 +16,9 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="image1">https://zmp3-photo.zadn.vn/banner/6/7/c/8/67c8eb984cea318df1e97d5530ff1962.jpg</string>
+    <string name="image2">https://zmp3-photo.zadn.vn/banner/e/d/1/f/ed1fb87236c9fba1fcb1fc1e2dec2e7a.jpg</string>
+    <string name="image3">https://zmp3-photo.zadn.vn/banner/8/1/d/9/81d95747338935636a525de0d17ccd39.jpg</string>
+    <string name="image4">https://zmp3-photo.zadn.vn/banner/5/7/4/b/574b36824103a43e51ec7721ad705f9a.jpg</string>
+    <string name="image5">https://zmp3-photo.zadn.vn/banner/b/5/3/6/b53667f4f3659a76d7d3d82da6526171.jpg</string>
 </resources>

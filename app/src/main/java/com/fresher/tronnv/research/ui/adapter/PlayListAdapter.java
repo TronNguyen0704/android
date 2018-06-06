@@ -1,7 +1,6 @@
-package com.fresher.tronnv.research.ui;
+package com.fresher.tronnv.research.ui.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,9 +81,9 @@ public class PlayListAdapter extends BaseAdapter{
 
         View view = LayoutInflater.from(context).inflate(R.layout.row_item, parent, false);
 
-        TextView author = view.findViewById(R.id.txt_author);
-        TextView name = view.findViewById(R.id.txt_name);
-        ImageView avatar = view.findViewById(R.id.image_avatar);
+        TextView author = view.findViewById(R.id.tv_author);
+        TextView name = view.findViewById(R.id.tv_name);
+        ImageView avatar = view.findViewById(R.id.img_avatar);
         if(authors!= null && authors.size() != 0 && authors.size() > position) {
             author.setText(authors.get(position ));
             name.setText(names.get(position));

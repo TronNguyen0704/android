@@ -3,7 +3,6 @@ package com.fresher.tronnv.research.ui;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,10 +14,10 @@ import android.widget.ListView;
 import android.widget.SearchView;
 
 import com.fresher.tronnv.research.R;
-import com.fresher.tronnv.research.data.DataManager;
 import com.fresher.tronnv.research.model.MusicLyric;
 import com.fresher.tronnv.research.presenters.ApplicationPresenter;
 import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
+import com.fresher.tronnv.research.ui.adapter.PlayListAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -80,7 +79,7 @@ public class PlayListFragment extends Fragment {
         searchView.setFocusable(false);
         searchView.clearFocus();
 
-        final ListView listView = rootView.findViewById(R.id.list_item);
+        final ListView listView = rootView.findViewById(R.id.recycler_view);
 
         final PlayListAdapter playListAdapter = new PlayListAdapter(getContext(), lyrics);
         //listView.setDivider(null);
