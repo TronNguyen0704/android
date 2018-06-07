@@ -6,9 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
 import com.fresher.tronnv.research.R;
-import com.fresher.tronnv.research.presenters.ApplicationPresenter;
-import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
-import com.fresher.tronnv.research.ui.RecordChartFragment;
+import com.fresher.tronnv.research.ui.HomeFragment;
 
 public class RecordChartActivity extends AppCompatActivity {
     @Override
@@ -16,7 +14,7 @@ public class RecordChartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_record_chard);
 
-        RecordChartFragment recordChartFragment = new RecordChartFragment();
+        HomeFragment recordChartFragment = new HomeFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         fragmentManager.beginTransaction()

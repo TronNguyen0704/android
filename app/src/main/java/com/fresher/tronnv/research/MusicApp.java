@@ -3,8 +3,8 @@ package com.fresher.tronnv.research;
 import android.app.Application;
 
 import com.fresher.tronnv.research.data.AppExecutors;
-import com.fresher.tronnv.research.data.source.local.RecordChartDatabase;
-import com.fresher.tronnv.research.data.source.remote.RecordChartRepository;
+import com.fresher.tronnv.research.data.source.local.MusicDatabase;
+import com.fresher.tronnv.research.data.source.remote.DataRepository;
 
 public class MusicApp extends Application {
     private AppExecutors appExecutors;
@@ -15,10 +15,16 @@ public class MusicApp extends Application {
         appExecutors = new AppExecutors();
     }
 
-    public RecordChartDatabase getDatabase(){
-        return RecordChartDatabase.getInstance(this,appExecutors);
+    public MusicDatabase getRecordChartDatabase(){
+        return MusicDatabase.getInstance(this,appExecutors);
     }
-    public RecordChartRepository getRepository(){
-        return RecordChartRepository.getsInstance(getDatabase());
+    public DataRepository getRecordChartRepository(){
+        return DataRepository.getsInstance(getRecordChartDatabase());
+    }
+    public MusicDatabase getTrackDatabase(){
+        return MusicDatabase.getInstance(this,appExecutors);
+    }
+    public DataRepository getTrackRepository(){
+        return DataRepository.getsInstance(getTrackDatabase());
     }
 }

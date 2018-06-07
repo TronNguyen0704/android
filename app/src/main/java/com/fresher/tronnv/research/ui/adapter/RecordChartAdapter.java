@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import jp.wasabeef.glide.transformations.BlurTransformation;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.RecyclerViewHolder> {
@@ -75,6 +74,7 @@ public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.
     public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.rank_item, parent, false);
+        Glide.get(view.getContext()).clearMemory();
         return new RecyclerViewHolder(view);
     }
 
@@ -90,6 +90,7 @@ public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.
                 .apply(RequestOptions.bitmapTransform(
                         new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL)))
                 .into(holder.iv_avatar);
+
     }
 
     @Override

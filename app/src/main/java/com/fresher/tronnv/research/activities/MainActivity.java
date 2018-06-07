@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.support.design.widget.BottomNavigationView;
@@ -16,7 +15,7 @@ import android.widget.SearchView;
 
 import com.fresher.tronnv.research.R;
 import com.fresher.tronnv.research.ui.PlayListFragment;
-import com.fresher.tronnv.research.ui.RecordChartFragment;
+import com.fresher.tronnv.research.ui.HomeFragment;
 
 
 public class MainActivity extends AppCompatActivity implements PlayListFragment.OnItemLyricClickListener{
@@ -30,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements PlayListFragment.
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home: {
-                    //RecordChartFragment recordChartFragment = new RecordChartFragment();
+                    //HomeFragment recordChartFragment = new HomeFragment();
                     if(isChange) {
                         searchView.setVisibility(View.VISIBLE);
                         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -64,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements PlayListFragment.
     };
     private ProgressBar progressBar;
     private SearchView searchView;
-    private RecordChartFragment recordChartFragment;
+    private HomeFragment recordChartFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,13 +73,13 @@ public class MainActivity extends AppCompatActivity implements PlayListFragment.
 
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        recordChartFragment = new RecordChartFragment();
+        recordChartFragment = new HomeFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         progressBar = findViewById(R.id.loading_indicator);
         searchView = findViewById(R.id.search_view);
         searchView.setActivated(true);
         searchView.onActionViewExpanded();
-        searchView.setIconified(false);
+        searchView.setIconified(true);
         searchView.setFocusable(false);
         searchView.clearFocus();
         fragmentManager.beginTransaction()

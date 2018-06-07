@@ -4,7 +4,6 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
-import android.support.annotation.NonNull;
 
 import com.fresher.tronnv.research.MusicApp;
 import com.fresher.tronnv.research.data.source.RecordChart;
@@ -24,7 +23,7 @@ public class RecordChartViewModel extends AndroidViewModel {
         observableRecordChart = new MediatorLiveData<>();
 
         observableRecordChart.setValue(null);
-        LiveData<List<RecordChart>> ranks = ((MusicApp) application).getRepository().getAllRank();
+        LiveData<List<RecordChart>> ranks = ((MusicApp) application).getRecordChartRepository().getAllRank();
         observableRecordChart.addSource(ranks,observableRecordChart::setValue);
     }
     public LiveData<List<RecordChart>> getRecordChart(){

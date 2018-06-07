@@ -7,6 +7,7 @@ import com.fresher.tronnv.research.component.DaggerNetComponent;
 import com.fresher.tronnv.research.component.NetComponent;
 import com.fresher.tronnv.research.data.json.JSONManager;
 import com.fresher.tronnv.research.data.source.RecordChart;
+import com.fresher.tronnv.research.data.source.Track;
 import com.fresher.tronnv.research.model.MusicLyric;
 import com.fresher.tronnv.research.mudule.NetModule;
 import com.fresher.tronnv.research.network.RequestLyricInterface;
@@ -162,6 +163,32 @@ public class DataManager {
                         JSONManager.JsonRecordChartWriter(recordCharts);
                     }
                 })) ;
+        requestLyricInterface.track()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe((new Observer<List<Track>>(){
+                    @Override
+                    public void onError(Throwable e) {
+                        //Toast.makeText(getBaseContext(), "Error " + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e("Debug", ": " + e.getLocalizedMessage());
+                    }
+                    @Override
+                    public void onComplete() {
+                        //Toast.makeText(getBaseContext(), "Get data success! ", Toast.LENGTH_SHORT).show();
+                        Log.e("Debug", ": " + "Get data success! ");
+                    }
 
+                    @Override
+                    public void onSubscribe(Disposable d) {
+
+                    }
+
+                    @Override
+                    public void onNext(List<Track> tracks) {
+                        Log.i("Debug", "post submitted to API: " + tracks.get(0).getDescription());
+                        //Save file By FileWriter
+                        JSONManager.JsonTrackWriter(tracks);
+                    }
+                })) ;
     }
 }

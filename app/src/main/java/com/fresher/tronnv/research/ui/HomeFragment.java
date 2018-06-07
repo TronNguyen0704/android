@@ -14,12 +14,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.fresher.tronnv.research.R;
 import com.fresher.tronnv.research.data.source.RecordChart;
+import com.fresher.tronnv.research.data.source.Track;
 import com.fresher.tronnv.research.ui.adapter.HeaderPageAdapter;
 import com.fresher.tronnv.research.ui.adapter.RecordChartAdapter;
 import com.fresher.tronnv.research.viewmodel.RecordChartViewModel;
+import com.fresher.tronnv.research.viewmodel.TrackViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,24 +35,29 @@ import java.util.TimerTask;
 /**
  * A class PlayListFragment
  */
-public class RecordChartFragment extends Fragment {
+public class HomeFragment extends Fragment {
     //Interface to transfer data between two fragment
 
     private int currentPage = 0;
     private ViewPager viewPager;
     private boolean isLoading = true;
+    private boolean isLoadingPagerView = true;
     List<RecordChart> recordChartList ;
     private RecordChartAdapter recordChartAdapter;
-    public RecordChartFragment(){
+    private HeaderPageAdapter headerPageAdapter;
+    public HomeFragment(){
         recordChartList = new ArrayList<>();
     }
-    public boolean isLoading(){return isLoading;}
+    public boolean isLoading(){return isLoading || isLoadingPagerView;}
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         final RecordChartViewModel viewModel =
                 ViewModelProviders.of(this).get(RecordChartViewModel.class);
             subscribeUI(viewModel);
+        final TrackViewModel trackViewModel =
+                ViewModelProviders.of(this).get(TrackViewModel.class);
+        subscribeUI(trackViewModel);
     }
 
     @Override
@@ -72,13 +80,26 @@ public class RecordChartFragment extends Fragment {
             }
         });
     }
-
+    private void subscribeUI(TrackViewModel viewModel){
+        viewModel.getTracks().observe(this, new Observer<List<Track>>() {
+            @Override
+            public void onChanged(@Nullable List<Track> tracks) {
+                if (tracks!= null){
+                    headerPageAdapter.setTrackList(tracks);
+                    headerPageAdapter.notifyDataSetChanged();
+                    isLoadingPagerView = false;
+                }
+                else{
+                    isLoadingPagerView = true;
+                }
+            }
+        });
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
     }
-
     @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -88,9 +109,9 @@ public class RecordChartFragment extends Fragment {
         viewPager = rootView.findViewById(R.id.view_pager);
         viewPager.setClipToPadding(false);
         viewPager.setPadding(0,0,0,0);
-        viewPager.setAdapter(new HeaderPageAdapter(getActivity()));
+        headerPageAdapter = new HeaderPageAdapter(getActivity());
+        viewPager.setAdapter(headerPageAdapter);
         viewPager.setCurrentItem(0, true);
-
         final RecyclerView listView = rootView.findViewById(R.id.recycler_view);
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
@@ -106,7 +127,7 @@ public class RecordChartFragment extends Fragment {
         final Handler handler = new Handler();
         final Runnable Update = new Runnable() {
             public void run() {
-                if (currentPage == recordChartAdapter.getItemCount()) {
+                if (currentPage == headerPageAdapter.getCount()) {
                     currentPage = 0;
                 }
                 viewPager.setCurrentItem(currentPage++, true);
