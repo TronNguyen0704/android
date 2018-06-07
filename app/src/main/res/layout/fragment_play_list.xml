@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -9,6 +9,7 @@
         android:id="@+id/search_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:queryHint="@string/query_hint"
         android:background="@color/color_bar"
         app:layout_scrollFlags="scroll|enterAlways"
@@ -17,9 +18,10 @@
 
     </SearchView>
     <ListView
+        android:layout_below="@+id/search_view"
         android:id="@+id/recycler_view"
         android:layout_marginLeft="@dimen/dimen_temp1"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </ListView>
-</LinearLayout>
+</RelativeLayout>
