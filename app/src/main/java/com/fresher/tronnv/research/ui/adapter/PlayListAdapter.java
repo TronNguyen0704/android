@@ -16,6 +16,9 @@ import com.fresher.tronnv.research.model.MusicLyric;
 import java.util.ArrayList;
 import java.util.List;
 
+import jp.wasabeef.glide.transformations.BlurTransformation;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
+
 /**
  * Created by NGUYEN VAN TRON on 05/16/18.
  */
@@ -89,7 +92,8 @@ public class PlayListAdapter extends BaseAdapter{
             name.setText(names.get(position));
             Glide.with(view.getContext())
                     .load(musicLyricsShow.get(position).getAvatar())
-                    .apply(RequestOptions.circleCropTransform())
+                    .apply(RequestOptions.bitmapTransform(
+                            new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL)))
                     .into(avatar);
             Glide.get(view.getContext()).clearMemory();
         }

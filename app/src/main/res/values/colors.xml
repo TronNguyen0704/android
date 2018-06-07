@@ -9,4 +9,6 @@
     <color name="transparent">#0000</color>
     <color name="gray">#F4F4F4</color>
     <color name="colorDown">#9c4dcc</color>
+    <color name="color_main_bgr">#0F0F17</color>
+    <color name="color_bar">#252634</color>
 </resources>

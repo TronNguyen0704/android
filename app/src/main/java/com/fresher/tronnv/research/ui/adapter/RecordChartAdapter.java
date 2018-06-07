@@ -12,12 +12,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.fresher.tronnv.research.R;
 import com.fresher.tronnv.research.data.source.RecordChart;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import jp.wasabeef.glide.transformations.BlurTransformation;
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.RecyclerViewHolder> {
     private List<RecordChart> recordCharts;
@@ -81,7 +85,11 @@ public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.
         holder.txtRank.setTextColor(cols[(position < 3) ? position : 3]);
         holder.txtSongName.setText(recordCharts.get(position).getName()+"");
         holder.txtAuthor.setText(recordCharts.get(position).getAuthor()+"");
-        Glide.with(context).load(recordCharts.get(position).getAvatar()).into(holder.iv_avatar);
+        Glide.with(context)
+                .load(recordCharts.get(position).getAvatar())
+                .apply(RequestOptions.bitmapTransform(
+                        new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL)))
+                .into(holder.iv_avatar);
     }
 
     @Override

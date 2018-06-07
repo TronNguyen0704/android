@@ -25,6 +25,7 @@ public class HeaderPageAdapter extends PagerAdapter {
         inflater = context.getLayoutInflater();
         titles = new ArrayList<>();
         resources = new ArrayList<>();
+        //Load data dummy : Test UI
         titles.add("Thương em thương lắm");
         titles.add("Vụt sáng thành vì sao");
         titles.add("Như là yêu mới lần đầu");

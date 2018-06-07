@@ -80,39 +80,41 @@ public class Database {
     public List<MusicLyric> getDataFromDatabase(String filter){
         Cursor cursor= getDataTable(MusicReaderContract.MusicEntry.TABLE_NAME);
         List<MusicLyric> itemIds = new ArrayList<>();
-        while(cursor.moveToNext()) {
-            MusicLyric musicLyric = new MusicLyric();
-            if(filter.endsWith("null")){
-                musicLyric.setId(cursor.getInt(cursor.getColumnIndex(BaseColumns._ID)));
-                musicLyric.setLyricId(cursor.getInt(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_LYRICID)));
-                musicLyric.setName(cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_TITLE)));
-                musicLyric.setAuthor(cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_AUTHOR)));
-                musicLyric.setAvatar(cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_AVATAR)));
-                musicLyric.setLyric(cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_LYRIC)));
-                itemIds.add(musicLyric);
-            }
-            else if(cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_TITLE)).toLowerCase().contains(filter.toLowerCase())) {
-                musicLyric.setId(cursor.getInt(cursor.getColumnIndex(BaseColumns._ID)));
-                musicLyric.setLyricId(cursor.getInt(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_LYRICID)));
-                musicLyric.setName(cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_TITLE)));
-                musicLyric.setAuthor(cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_AUTHOR)));
-                musicLyric.setAvatar(cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_AVATAR)));
-                musicLyric.setLyric(cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_LYRIC)));
-                itemIds.add(musicLyric);
-            }
+        try {
+            while (cursor.moveToNext()) {
+                MusicLyric musicLyric = new MusicLyric();
+                if (filter.endsWith("null")) {
+                    musicLyric.setId(cursor.getInt(cursor.getColumnIndex(BaseColumns._ID)));
+                    musicLyric.setLyricId(cursor.getInt(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_LYRICID)));
+                    musicLyric.setName(cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_TITLE)));
+                    musicLyric.setAuthor(cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_AUTHOR)));
+                    musicLyric.setAvatar(cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_AVATAR)));
+                    musicLyric.setLyric(cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_LYRIC)));
+                    itemIds.add(musicLyric);
+                } else if (cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_TITLE)).toLowerCase().contains(filter.toLowerCase())) {
+                    musicLyric.setId(cursor.getInt(cursor.getColumnIndex(BaseColumns._ID)));
+                    musicLyric.setLyricId(cursor.getInt(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_LYRICID)));
+                    musicLyric.setName(cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_TITLE)));
+                    musicLyric.setAuthor(cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_AUTHOR)));
+                    musicLyric.setAvatar(cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_AVATAR)));
+                    musicLyric.setLyric(cursor.getString(cursor.getColumnIndex(MusicReaderContract.MusicEntry.COLUMN_NAME_LYRIC)));
+                    itemIds.add(musicLyric);
+                }
 
+            }
+//        while(cursor.moveToNext()) {
+//            long item = cursor.getLong(
+//                    cursor.getColumnIndexOrThrow(MusicReaderContract.MusicEntry._ID));
+//        }
+            cursor.close();
+            if (itemIds.size() > 0) {
+                musicLyrics = new ArrayList<>();
+                musicLyrics.addAll(itemIds);
+                return itemIds;
+            }
+        }finally {
+            mDbHelper.getReadableDatabase().close();
         }
-        while(cursor.moveToNext()) {
-            long item = cursor.getLong(
-                    cursor.getColumnIndexOrThrow(MusicReaderContract.MusicEntry._ID));
-        }
-        cursor.close();
-        if(itemIds.size() > 0) {
-            musicLyrics = new ArrayList<>();
-            musicLyrics.addAll(itemIds);
-            return itemIds;
-        }
-        mDbHelper.getReadableDatabase().close();
         return null;
     }
     public MusicLyric getSongById(int id){

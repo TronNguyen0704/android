@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/container"
+    android:background="@color/color_main_bgr"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -19,8 +20,10 @@
         android:layout_height="wrap_content"
         android:queryHint="@string/query_hint_main"
         app:layout_scrollFlags="scroll|enterAlways"
+        android:background="@color/color_bar"
         android:focusable="false"
-        android:queryBackground="@color/transparent">
+        android:theme="@style/AppSearchView"
+        android:queryBackground="@color/color_bar">
     </SearchView>
     <ProgressBar
         style="@android:style/Widget.ProgressBar"

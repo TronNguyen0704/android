@@ -25,7 +25,7 @@
         android:orientation="vertical"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/dimen_temp1"
-        android:layout_marginTop="@dimen/dimen_temp1">
+        android:layout_marginTop="@dimen/dimen_temp">
         <TextView
             android:id="@+id/tv_name"
             android:textStyle="bold"
