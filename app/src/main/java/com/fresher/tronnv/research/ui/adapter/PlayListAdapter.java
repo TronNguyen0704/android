@@ -46,8 +46,8 @@ public class PlayListAdapter extends BaseAdapter{
     }
     @Override
     public int getCount() {
-        if(musicLyrics!= null)
-            return musicLyrics.size();
+        if(musicLyricsShow!= null)
+            return musicLyricsShow.size();
         return 0;
     }
 
@@ -88,8 +88,8 @@ public class PlayListAdapter extends BaseAdapter{
         TextView name = view.findViewById(R.id.tv_name);
         ImageView avatar = view.findViewById(R.id.img_avatar);
         if(authors!= null && authors.size() != 0 && authors.size() > position) {
-            author.setText(authors.get(position ));
-            name.setText(names.get(position));
+            author.setText(musicLyricsShow.get(position).getAuthor());
+            name.setText(musicLyricsShow.get(position).getName());
             Glide.with(view.getContext())
                     .load(musicLyricsShow.get(position).getAvatar())
                     .apply(RequestOptions.bitmapTransform(

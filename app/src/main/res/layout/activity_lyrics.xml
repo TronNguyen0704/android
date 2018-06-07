@@ -8,6 +8,7 @@
             android:id="@+id/tool_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/color_bar"
             android:layout_weight="1"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
@@ -33,6 +34,7 @@
         android:id="@+id/layout_media_player_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/color_bar"
         android:layout_alignParentBottom="true">
     </FrameLayout>
 </RelativeLayout>
