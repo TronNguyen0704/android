@@ -64,14 +64,13 @@ public class MediaPlayerFragment extends Fragment {
         builder.setContentTitle(getString(R.string.title))
                 .setContentText(getString(R.string.content))
                 .setContentIntent(contentPendingIntent)
-                .setSmallIcon(R.drawable.icon_lyrics)
+                .setSmallIcon(R.drawable.ic_mp3)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
         mNotificationManager.notify(0, builder.build());
     }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        //showNotification();
         try {
             onSongChange = (OnSongChange) context;
         }
@@ -86,7 +85,6 @@ public class MediaPlayerFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
         if(mediaPlayer != null && !isResume) {
             mediaPlayer.start();
             mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
@@ -96,13 +94,15 @@ public class MediaPlayerFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        mediaPlayer.stop();
+//        if(mediaPlayer != null)
+//            mediaPlayer.stop();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        mediaPlayer.pause();
+        if(mediaPlayer != null)
+            mediaPlayer.pause();
     }
 
     @Override
@@ -176,10 +176,12 @@ public class MediaPlayerFragment extends Fragment {
             public void onClick(View v) {
                 if(mediaPlayer.isPlaying()){
                     mediaPlayer.pause();
+                    onSongChange.onPauseMedia();
                     isResume = true;
                     playBtn.setImageResource(R.drawable.play);
                 }
                 else{
+                    onSongChange.onPlay();
                     mediaPlayer.start();
                     isResume = false;
                     playBtn.setImageResource(R.drawable.pause);
@@ -278,5 +280,7 @@ public class MediaPlayerFragment extends Fragment {
     //Interface to transfer data between two fragment
     public interface OnSongChange {
         void onNextSong(int id);
+        void onPauseMedia();
+        void onPlay();
     }
 }

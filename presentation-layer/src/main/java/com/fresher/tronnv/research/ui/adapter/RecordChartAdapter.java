@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.fresher.tronnv.models.RecordChart;
+import com.fresher.tronnv.android_models.RecordChart;
 import com.fresher.tronnv.research.R;
 
 import java.util.ArrayList;
@@ -28,7 +28,41 @@ public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.
     private Context context;
 
     public void setRecordChartList(List<RecordChart> recordChart) {
-            this.recordCharts = recordChart;
+        if(this.recordCharts == null) {
+            this.recordCharts.addAll(recordChart);
+            notifyItemRangeInserted(0, recordChart.size());
+        }
+        else{
+            DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+                @Override
+                public int getOldListSize() {
+                    return recordCharts.size();
+                }
+
+                @Override
+                public int getNewListSize() {
+                    return recordChart.size();
+                }
+
+                @Override
+                public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+                    return recordCharts.get(oldItemPosition).getId() ==
+                            recordChart.get(newItemPosition).getId();
+                }
+
+                @Override
+                public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+                    RecordChart newRecorChart = recordChart.get(newItemPosition);
+                    RecordChart oldRecordChart = recordCharts.get(oldItemPosition);
+                    return newRecorChart.getId() == oldRecordChart.getId()
+                            && Objects.equals(newRecorChart.getName(), oldRecordChart.getName())
+                            && Objects.equals(newRecorChart.getName(), oldRecordChart.getName())
+                            && newRecorChart.getAuthor() == oldRecordChart.getAuthor();
+                }
+            });
+            recordCharts.addAll(recordChart);
+            result.dispatchUpdatesTo(this);
+        }
     }
 
     public RecordChartAdapter(Context context){

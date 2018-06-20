@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.fresher.tronnv.models.MusicLyric;
+import com.fresher.tronnv.android_models.MusicLyric;
 import com.fresher.tronnv.research.R;
 
 import java.util.ArrayList;
@@ -26,22 +26,16 @@ public class PlayListAdapter extends BaseAdapter{
     private Context context;
     private List<MusicLyric> musicLyrics;
     private List<MusicLyric> musicLyricsShow;
-    private List<String> names;
-    private List<String> authors;
-    public PlayListAdapter(Context context, List<MusicLyric> lyrics){
+
+    public void setMusicLyrics(List<MusicLyric> musicLyrics) {
+        this.musicLyrics.addAll(musicLyrics);
+        this.musicLyricsShow.addAll(musicLyrics);
+    }
+
+    public PlayListAdapter(Context context){
         this.context = context;
-        if(lyrics!= null) {
-            this.musicLyrics = new ArrayList<>();
-            musicLyricsShow = new ArrayList<>();
-            names = new ArrayList<>();
-            authors = new ArrayList<>();
-            for (int i = 0; i < lyrics.size(); i++) {
-                names.add(lyrics.get(i).getName());
-                authors.add(lyrics.get(i).getAuthor());
-                this.musicLyrics.add(lyrics.get(i));
-                musicLyricsShow.add(lyrics.get(i));
-            }
-        }
+        this.musicLyrics = new ArrayList<>();
+        this.musicLyricsShow = new ArrayList<>();
     }
     @Override
     public int getCount() {
@@ -64,14 +58,10 @@ public class PlayListAdapter extends BaseAdapter{
         return 0;
     }
     public List<MusicLyric> getFilter(String filter){
-        names.clear();
-        authors.clear();
         musicLyricsShow.clear();
         for(int i = 0; i < musicLyrics.size(); i++){
             MusicLyric musicLyric = musicLyrics.get(i);
             if(musicLyric.getName().toLowerCase().contains(filter.toLowerCase())){
-                names.add(musicLyric.getName());
-                authors.add(musicLyric.getAuthor());
                 musicLyricsShow.add(musicLyric);
             }
 
@@ -86,7 +76,7 @@ public class PlayListAdapter extends BaseAdapter{
         TextView author = view.findViewById(R.id.tv_author);
         TextView name = view.findViewById(R.id.tv_name);
         ImageView avatar = view.findViewById(R.id.img_avatar);
-        if(authors!= null && authors.size() != 0 && authors.size() > position) {
+        if((musicLyricsShow != null && musicLyricsShow.size() > 0)) {
             author.setText(musicLyricsShow.get(position).getAuthor());
             name.setText(musicLyricsShow.get(position).getName());
             Glide.with(view.getContext())

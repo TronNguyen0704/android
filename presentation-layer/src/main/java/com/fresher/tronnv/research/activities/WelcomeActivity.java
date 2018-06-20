@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.fresher.tronnv.research.R;
-import com.fresher.tronnv.research.network.NetworkChangeReceiver;
+import com.fresher.tronnv.research.service.NetworkChangeReceiver;
 import com.fresher.tronnv.research.presenters.ApplicationPresenter;
 import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
 
@@ -34,8 +34,8 @@ public class WelcomeActivity extends AppCompatActivity{
         final IntentFilter filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
         //Broadcast receiver
         registerReceiver(receiver, filter);
-        applicationPresenter = new ApplicationPresenterImpl();
-        applicationPresenter.requestMusic();
+        applicationPresenter = new ApplicationPresenterImpl(getBaseContext());
+        applicationPresenter.loadMusicData();
         Animation shake = AnimationUtils.loadAnimation(this, R.anim.scale);
         shake.setRepeatCount(ObjectAnimator.INFINITE);
         shake.setRepeatMode(ObjectAnimator.REVERSE);
@@ -53,15 +53,15 @@ public class WelcomeActivity extends AppCompatActivity{
     public void goToMain(View v) {
         //Checking network
         if(receiver.isConnected(getBaseContext())) {
-            if(applicationPresenter.requestMusic() != null) {
+            if(applicationPresenter.isData()) {
                 startActivity(new Intent(this, MainActivity.class));
             }else{
+                applicationPresenter.loadMusicData();
                 Toast.makeText(this,"Data is loading...",Toast.LENGTH_SHORT).show();
             }
         }
         else{
-
-            if(applicationPresenter.requestMusic() == null ||(applicationPresenter.requestMusic().size() ==0) ) {
+            if(!applicationPresenter.isData()) {
                 Toast.makeText(this,"No Internet connection",Toast.LENGTH_SHORT).show();
             }
             else {

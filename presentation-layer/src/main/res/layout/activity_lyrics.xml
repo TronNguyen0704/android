@@ -9,12 +9,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/color_bar"
-            android:layout_weight="1"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         </android.support.v7.widget.Toolbar>
-    //Add fragment
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"

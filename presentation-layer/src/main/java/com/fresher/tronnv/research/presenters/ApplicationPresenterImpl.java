@@ -1,40 +1,48 @@
 package com.fresher.tronnv.research.presenters;
 
-import com.fresher.tronnv.models.MusicLyric;
-import com.fresher.tronnv.models.RecordChart;
-import com.fresher.tronnv.models.Track;
+import android.arch.lifecycle.LiveData;
+import android.content.Context;
+
+import com.fresher.tronnv.android_models.MusicLyric;
+import com.fresher.tronnv.android_models.RecordChart;
+import com.fresher.tronnv.android_models.Track;
 import com.fresher.tronnv.research.MainUseCases;
 
 import java.util.List;
 
 public class ApplicationPresenterImpl implements ApplicationPresenter{
     private MainUseCases mainUseCases;
-    public ApplicationPresenterImpl(){
+    public ApplicationPresenterImpl(Context context){
         if(mainUseCases == null)
-            this.mainUseCases = new MainUseCases();
+            this.mainUseCases = new MainUseCases(context);
     }
-    public List<MusicLyric> requestMusic() {
+    public LiveData<List<MusicLyric>> requestMusic() {
         return  mainUseCases.getAllMusic();
     }
 
     @Override
-    public List<MusicLyric> requestMusic(String filter) {
+    public LiveData<List<MusicLyric>> requestMusic(String filter) {
         return mainUseCases.getMusicByName(filter);
     }
 
     @Override
-    public MusicLyric getSongById(int id) {
+    public LiveData<MusicLyric> getSongById(int id) {
         return mainUseCases.getSongById(id);
     }
 
     @Override
-    public List<Track> getTracks() {
+    public LiveData<List<Track>> getTracks() {
         return mainUseCases.getTracks();
     }
 
     @Override
-    public List<RecordChart> getRecordCharts() {
+    public LiveData<List<RecordChart>> getRecordCharts() {
         return mainUseCases.getRecordChart();
+    }
+
+    @Override
+    public boolean isData() {
+        return mainUseCases.isData();
     }
 
     @Override

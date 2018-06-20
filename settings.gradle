@@ -1,1 +1,1 @@
-include ':presentation-layer', ':models', ':data-layer', ':domain-layer'
+include ':presentation-layer', ':android-data-layer', ':android-models', ':android-domain-layer'

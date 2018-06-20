@@ -2,6 +2,7 @@ package com.fresher.tronnv.research.activities;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -12,38 +13,43 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.RemoteViews;
 
+import com.fresher.tronnv.research.Constants;
 import com.fresher.tronnv.research.R;
 import com.fresher.tronnv.research.presenters.ApplicationPresenter;
 import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
+import com.fresher.tronnv.research.service.NotificationService;
 import com.fresher.tronnv.research.ui.LyricsFragment;
 import com.fresher.tronnv.research.ui.MediaPlayerFragment;
 
 
 
-public class LyricActivity extends AppCompatActivity implements MediaPlayerFragment.OnSongChange{
+public class LyricActivity extends AppCompatActivity implements MediaPlayerFragment.OnSongChange, LyricsFragment.LoadFinish{
     private MediaPlayer mPlayer;
     private Toolbar toolbar;
     private ApplicationPresenter applicationPresenter;
+    private String art;
+    private String track;
+    Intent serviceIntent;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lyrics);
-        applicationPresenter = new ApplicationPresenterImpl();
+        applicationPresenter = new ApplicationPresenterImpl(getBaseContext());
+        applicationPresenter.loadMusicData();
         toolbar = findViewById(R.id.tool_bar);
         //Create LyricsFrament
         LyricsFragment lyricsFragment = new LyricsFragment();
         //Add set data
         String filter = getIntent().getStringExtra("Filter");
-        lyricsFragment.setMusicLyrics(applicationPresenter.requestMusic(filter));
         //Get data from Intent
         int index = getIntent().getIntExtra("Index",0);
         int ID = getIntent().getIntExtra("ID",0);
         mPlayer = MediaPlayer.create(this,getRawIDByName("mp" +String.valueOf(3100 + ID)));
 
         //SetupToolBar
-        toolbar.setSubtitle(applicationPresenter.getSongById(ID).getAuthor());
-        toolbar.setTitle(applicationPresenter.getSongById(ID).getName());
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -51,7 +57,6 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
         lyricsFragment.setmIndex(index);
         // Add the fragment to its container using a FragmentManager and a Transaction
         FragmentManager fragmentManager = getSupportFragmentManager();
-
         fragmentManager.beginTransaction()
                 .add(R.id.layout_lyric_container, lyricsFragment)
                 .commit();
@@ -65,9 +70,6 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
         fragmentManager.beginTransaction()
                 .add(R.id.layout_media_player_container, mediaPlayerFragment)
                 .commit();
-
-
-
     }
 
     @Override
@@ -98,9 +100,6 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
         LyricsFragment lyricsFragment = new LyricsFragment();
 
         //Add set data
-        lyricsFragment.setMusicLyrics(applicationPresenter.requestMusic());
-        toolbar.setSubtitle(applicationPresenter.getSongById(id).getAuthor());
-        toolbar.setTitle(applicationPresenter.getSongById(id).getName());
         //Set Index
         lyricsFragment.setmIndex(id - 1);
         lyricsFragment.setRetainInstance(true);
@@ -108,6 +107,20 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
                 .replace(R.id.layout_lyric_container, lyricsFragment)
                 .commit();
     }
+
+
+
+
+    @Override
+    public void onPauseMedia() {
+        stopService(serviceIntent);
+    }
+
+    @Override
+    public void onPlay() {
+        startService();
+    }
+
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -163,5 +176,30 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
                 return super.onOptionsItemSelected(item);
 
         }
+    }
+    public void startService() {
+        serviceIntent = new Intent(LyricActivity.this, NotificationService.class);
+        serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
+        serviceIntent.putExtra("name",track);
+        serviceIntent.putExtra("author",art);
+        serviceIntent.putExtra("avatar","");
+        startService(serviceIntent);
+    }
+    @Override
+    public void onFinish(String name, String author) {
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        toolbar.setSubtitle(author);
+        toolbar.setTitle(name);
+        track = name;
+        art = author;
+        startService();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
     }
 }

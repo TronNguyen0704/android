@@ -1,4 +1,4 @@
-package com.fresher.tronnv.research.network;
+package com.fresher.tronnv.research.service;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

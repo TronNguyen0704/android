@@ -90,5 +90,6 @@ dependencies {
     testImplementation "android.arch.core:core-testing:$lifecycle_version"
 
     // Modules
-    implementation project(':domain-layer')
+    implementation project(':android-domain-layer')
+    implementation project(':android-models')
 }

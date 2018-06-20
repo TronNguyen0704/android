@@ -1,6 +1,8 @@
 package com.fresher.tronnv.research.ui;
 
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,11 +15,14 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 
-import com.fresher.tronnv.models.MusicLyric;
+import com.fresher.tronnv.android_models.MusicLyric;
 import com.fresher.tronnv.research.R;
 import com.fresher.tronnv.research.presenters.ApplicationPresenter;
 import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
 import com.fresher.tronnv.research.ui.adapter.PlayListAdapter;
+import com.fresher.tronnv.research.viewmodel.MusicViewModel;
+import com.fresher.tronnv.research.viewmodel.RecordChartViewModel;
+import com.fresher.tronnv.research.viewmodel.TrackViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +41,9 @@ public class PlayListFragment extends Fragment {
     OnItemLyricClickListener mCallback;
     List<MusicLyric> lyrics ;
     List<MusicLyric> musicLyricsShow ;
-    private ApplicationPresenter applicationPresenter;
+    private boolean isLoading = true;
     private SearchView searchView;
+    private PlayListAdapter playListAdapter;
     public void setSearchView(SearchView searchView){
         this.searchView = searchView;
     }
@@ -45,18 +51,40 @@ public class PlayListFragment extends Fragment {
         lyrics = new ArrayList<>();
         musicLyricsShow = new ArrayList<>();
     }
-
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        final MusicViewModel viewModel =
+                ViewModelProviders.of(this).get(MusicViewModel.class);
+        subscribeUI(viewModel);
+    }
+    private void subscribeUI(MusicViewModel viewModel){
+        viewModel.getMusics().observe(this, new Observer<List<MusicLyric>>() {
+            @Override
+            public void onChanged(@Nullable List<MusicLyric> musicLyrics) {
+                if (musicLyrics!= null){
+                    playListAdapter.setMusicLyrics(musicLyrics);
+                    lyrics.addAll(musicLyrics);
+                    musicLyricsShow.addAll(musicLyrics);
+                    playListAdapter.notifyDataSetChanged();
+                    isLoading = false;
+                }
+                else{
+                    isLoading = true;
+                }
+            }
+        });
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        applicationPresenter = new ApplicationPresenterImpl();
-        if(musicLyricsShow.size() > 0) {
-            lyrics.addAll(musicLyricsShow);
-        }
-        else {
-            lyrics.addAll(applicationPresenter.requestMusic());
-            musicLyricsShow.addAll(applicationPresenter.requestMusic());
-        }
+//        if(musicLyricsShow.size() > 0) {
+//            lyrics.addAll(musicLyricsShow);
+//        }
+//        else {
+//            lyrics.addAll(applicationPresenter.requestMusic());
+//            musicLyricsShow.addAll(applicationPresenter.requestMusic());
+//        }
     }
 
     @Override
@@ -85,7 +113,7 @@ public class PlayListFragment extends Fragment {
 
         final ListView listView = rootView.findViewById(R.id.recycler_view);
 
-        final PlayListAdapter playListAdapter = new PlayListAdapter(getContext(), lyrics);
+         playListAdapter = new PlayListAdapter(getContext());
         //listView.setDivider(null);
         listView.setAdapter(playListAdapter);
         final String[] filter = {""};

@@ -1,19 +1,22 @@
 package com.fresher.tronnv.research.presenters;
 
-import com.fresher.tronnv.models.MusicLyric;
-import com.fresher.tronnv.models.RecordChart;
-import com.fresher.tronnv.models.Track;
+
+import android.arch.lifecycle.LiveData;
+
+import com.fresher.tronnv.android_models.MusicLyric;
+import com.fresher.tronnv.android_models.RecordChart;
+import com.fresher.tronnv.android_models.Track;
 import com.fresher.tronnv.research.presenters.base.Presenter;
 
 import java.util.List;
 
 public interface ApplicationPresenter extends Presenter{
-    List<MusicLyric> requestMusic();
-    List<MusicLyric> requestMusic(String filter);
-    MusicLyric getSongById(int id);
-    List<Track> getTracks();
-    List<RecordChart> getRecordCharts();
-
+    LiveData<List<MusicLyric>> requestMusic();
+    LiveData<List<MusicLyric>> requestMusic(String filter);
+    LiveData<MusicLyric> getSongById(int id);
+    LiveData<List<Track>> getTracks();
+    LiveData<List<RecordChart>> getRecordCharts();
+    boolean isData();
     void loadTrackData();
     void loadRecordChartData();
     void loadMusicData();

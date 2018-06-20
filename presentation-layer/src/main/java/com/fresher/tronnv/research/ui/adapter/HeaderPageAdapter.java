@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
-import com.fresher.tronnv.models.Track;
+import com.fresher.tronnv.android_models.Track;
 import com.fresher.tronnv.research.R;
 
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class HeaderPageAdapter extends PagerAdapter {
         tracks = new ArrayList<>();
     }
     public void setTrackList(List<Track> trackList) {
-        this.tracks = trackList;
+        this.tracks.addAll(trackList);
     }
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {

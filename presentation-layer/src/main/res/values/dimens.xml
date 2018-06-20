@@ -2,11 +2,18 @@
 <resources>
     <dimen name="activity_vertical_margin">10dp</dimen>
     <dimen name="activity_horizontal_margin">10dp</dimen>
-    <dimen name="text">15dp</dimen>
-    <dimen name="textTitle">12dp</dimen>
+    <dimen name="text">15sp</dimen>
+    <dimen name="text_size_small">12sp</dimen>
     <dimen name="icon">64dp</dimen>
     <dimen name="dimen_temp1">5dp</dimen>
     <dimen name="media_margin">20dp</dimen>
     <dimen name="dimen_temp">10dp</dimen>
     <dimen name="avatar">64dp</dimen>
+    <dimen name="dimen_album_art">64dp</dimen>
+    <dimen name="dimen_button_info">11dp</dimen>
+    <dimen name="text_size_medium">16sp</dimen>
+    <dimen name="text_size_large">18sp</dimen>
+    <dimen name="notification_expanded_height">128dip</dimen>
+    <dimen name="play_controls_notification">48dip</dimen>
+    <dimen name="notification_padding">8dip</dimen>
 </resources>

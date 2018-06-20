@@ -121,8 +121,8 @@ public class DataManager {
                                 .builder()
                                 .netModule(new NetModule(retrofitClient))
                                 .build();
-                        netComponent.getDataManager().restAPIToGetData(retrofitClient);
                     }
+                netComponent.getDataManager().restAPIToGetData(retrofitClient);
                     //restAPIToGetData(retrofitClient);
             }
         }

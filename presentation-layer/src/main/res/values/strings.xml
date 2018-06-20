@@ -21,4 +21,6 @@
     <string name="image3">https://zmp3-photo.zadn.vn/banner/8/1/d/9/81d95747338935636a525de0d17ccd39.jpg</string>
     <string name="image4">https://zmp3-photo.zadn.vn/banner/5/7/4/b/574b36824103a43e51ec7721ad705f9a.jpg</string>
     <string name="image5">https://zmp3-photo.zadn.vn/banner/b/5/3/6/b53667f4f3659a76d7d3d82da6526171.jpg</string>
+    <string name="cd_play">Play and Pause</string>
+    <string name="cd_next">Skip forwards</string>
 </resources>

@@ -3,9 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/android.iml" filepath="$PROJECT_DIR$/android.iml" />
-      <module fileurl="file://$PROJECT_DIR$/data-layer/data-layer.iml" filepath="$PROJECT_DIR$/data-layer/data-layer.iml" />
-      <module fileurl="file://$PROJECT_DIR$/domain-layer/domain-layer.iml" filepath="$PROJECT_DIR$/domain-layer/domain-layer.iml" />
-      <module fileurl="file://$PROJECT_DIR$/models/models.iml" filepath="$PROJECT_DIR$/models/models.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android-data-layer/android-data-layer.iml" filepath="$PROJECT_DIR$/android-data-layer/android-data-layer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android-domain-layer/android-domain-layer.iml" filepath="$PROJECT_DIR$/android-domain-layer/android-domain-layer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android-models/android-models.iml" filepath="$PROJECT_DIR$/android-models/android-models.iml" />
       <module fileurl="file://$PROJECT_DIR$/presentation-layer/presentation-layer.iml" filepath="$PROJECT_DIR$/presentation-layer/presentation-layer.iml" />
     </modules>
   </component>
