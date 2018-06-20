@@ -38,7 +38,6 @@ import java.util.TimerTask;
  * A class PlayListFragment
  */
 public class HomeFragment extends Fragment {
-    //Interface to transfer data between two fragment
 
     public interface Loadfinish{
         void onFinish();

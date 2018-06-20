@@ -66,6 +66,14 @@ public class NotificationService extends Service {
         // showing default album image
         views.setViewVisibility(R.id.img_status_bar_icon, View.VISIBLE);
         views.setViewVisibility(R.id.img_album_art, View.GONE);
+        if(!isPlaying) {
+           views.setViewVisibility(R.id.btn_collapse_bar, View.GONE);
+           expandedViews.setViewVisibility(R.id.btn_collapse, View.GONE);
+        }
+        else {
+           views.setViewVisibility(R.id.btn_collapse_bar, View.VISIBLE);
+           expandedViews.setViewVisibility(R.id.btn_collapse, View.VISIBLE);
+        }
         expandedViews.setImageViewBitmap(R.id.status_bar_album_art,
                 Constants.getDefaultAlbumArt(this));
 
@@ -103,8 +111,8 @@ public class NotificationService extends Service {
         expandedViews.setOnClickPendingIntent(R.id.status_bar_next, pnextIntent);
         expandedViews.setOnClickPendingIntent(R.id.status_bar_prev, ppreviousIntent);
 
-        //views.setOnClickPendingIntent(R.id.btn_collapse, pcloseIntent);
-        //expandedViews.setOnClickPendingIntent(R.id.btn_collapse, pcloseIntent);
+        views.setOnClickPendingIntent(R.id.btn_collapse_bar, pcloseIntent);
+        expandedViews.setOnClickPendingIntent(R.id.btn_collapse, pcloseIntent);
 
         if(isPlaying) {
             views.setImageViewResource(R.id.btn_play,

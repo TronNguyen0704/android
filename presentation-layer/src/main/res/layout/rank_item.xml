@@ -8,10 +8,10 @@
     <TextView
         android:id="@+id/tv_rank"
         android:fontFamily="@font/vagrundschriftbq"
-        android:layout_width="50dp"
-        android:textSize="20sp"
+        android:layout_width="@dimen/dimen_view_witdh"
+        android:textSize="@dimen/text_size_over"
         android:textAlignment="center"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="@dimen/media_margin"
         android:layout_height="wrap_content" />
     <ImageView
         android:id="@+id/img_avatar"
@@ -30,13 +30,13 @@
             android:id="@+id/tv_name"
             android:textStyle="bold"
             android:textColor="@color/White"
-            android:textSize="15sp"
+            android:textSize="@dimen/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:maxLines="1"/>
         <TextView
             android:id="@+id/tv_author"
-            android:textSize="10sp"
+            android:textSize="@dimen/text_size_small"
             android:textColor="@color/White"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
