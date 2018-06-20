@@ -58,3 +58,9 @@ Reference :
   Title: Android Architecture Components samples
   
   Link: https://github.com/googlesamples/android-architecture-components/
+ 
+* Author: Laxman
+         
+  Title: Android custom notification for music player Example
+ 
+  Link: http://www.tutorialsface.com/2015/08/android-custom-notification-tutorial/
