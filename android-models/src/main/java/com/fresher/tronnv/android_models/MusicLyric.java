@@ -17,7 +17,6 @@ import io.reactivex.annotations.Nullable;
  */
 @Entity(tableName = "songs")
 public class MusicLyric {
-
     @PrimaryKey
     @NonNull
     @ColumnInfo(name = "id")

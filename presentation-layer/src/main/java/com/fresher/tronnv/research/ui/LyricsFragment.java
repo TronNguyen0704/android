@@ -46,6 +46,10 @@ public class LyricsFragment extends Fragment{
         musicLyrics = new ArrayList<>();
     }
 
+    public List<MusicLyric> getMusicLyrics() {
+        return musicLyrics;
+    }
+
     public void setMusicLyrics(List<MusicLyric> musicLyrics) {
         this.musicLyrics = musicLyrics;
     }

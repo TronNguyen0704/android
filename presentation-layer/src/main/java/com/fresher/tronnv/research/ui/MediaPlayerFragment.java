@@ -3,8 +3,12 @@ package com.fresher.tronnv.research.ui;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.arch.lifecycle.LiveData;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -13,6 +17,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,19 +25,19 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.fresher.tronnv.research.R;
+import com.fresher.tronnv.research.service.NotificationService;
 
 import java.util.concurrent.TimeUnit;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 /**
  * Created by NGUYEN VAN TRON on 05/18/18.
- */
 /**
  *This fragment to show media player
  */
-public class MediaPlayerFragment extends Fragment {
+public class MediaPlayerFragment extends Fragment{
 
-    private MediaPlayer mediaPlayer;
+    //private MediaPlayer mediaPlayer;
     private Handler mSeekbarUpdateHandler = new Handler();
     private Runnable mUpdateSeekbar;
     private boolean isPause = false;
@@ -40,34 +45,10 @@ public class MediaPlayerFragment extends Fragment {
     private Context context;
     private int ID;
     private OnSongChange onSongChange;
-    private NotificationManager mNotificationManager;
-    private void showNotification() {
-        mNotificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
-        String CHANNEL_ID = "my_channel_01";
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-
-            CharSequence name = "my_channel";
-            String Description = "This is my channel";
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
-            mChannel.setDescription(Description);
-            mChannel.enableLights(true);
-            mChannel.setLightColor(Color.RED);
-            mChannel.enableVibration(true);
-            mChannel.setShowBadge(false);
-            mNotificationManager.createNotificationChannel(mChannel);
-        }
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,CHANNEL_ID);
-        PendingIntent contentPendingIntent = PendingIntent.getActivity
-                (context, (int)System.currentTimeMillis(), new Intent("Kill_app"), PendingIntent.FLAG_UPDATE_CURRENT);
-
-        builder.setContentTitle(getString(R.string.title))
-                .setContentText(getString(R.string.content))
-                .setContentIntent(contentPendingIntent)
-                .setSmallIcon(R.drawable.ic_mp3)
-                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-        mNotificationManager.notify(0, builder.build());
-    }
+    private boolean isPlaying = true;
+    private BroadcastReceiver broadcastReceiver;
+    private int currentDuration = 0;
+    private int duration = 0;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -79,39 +60,44 @@ public class MediaPlayerFragment extends Fragment {
         }
     }
     public MediaPlayerFragment(){
-
+        broadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                currentDuration = intent.getIntExtra(NotificationService.CURRENTPOSITION,0);
+                duration = intent.getIntExtra(NotificationService.DURATION,0);
+                int songID = intent.getIntExtra("id",ID);
+                if(ID != songID )
+                    onSongChange.onNextSong(songID);
+            }
+        };
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(mediaPlayer != null && !isResume) {
-            mediaPlayer.start();
-            mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
-        }
+        mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(context).registerReceiver(broadcastReceiver,new IntentFilter(NotificationService.PROCESSED));
     }
 
     @Override
     public void onStop() {
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(broadcastReceiver);
         super.onStop();
-//        if(mediaPlayer != null)
-//            mediaPlayer.stop();
     }
-
     @Override
     public void onPause() {
         super.onPause();
-        if(mediaPlayer != null)
-            mediaPlayer.pause();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(mediaPlayer!= null)
-            mediaPlayer.reset();
     }
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_mediaplayer,container,false);
@@ -119,10 +105,7 @@ public class MediaPlayerFragment extends Fragment {
         final TextView timeCount = rootView.findViewById(R.id.tv_time_count);
         final TextView totalTime = rootView.findViewById(R.id.tv_total_time);
         int timeReTotal = 0;
-        if(mediaPlayer!= null) {
-            timeReTotal = mediaPlayer.getDuration();
-            seekBar.setMax(timeReTotal);
-        }
+        seekBar.setMax(duration);
         long min = TimeUnit.MILLISECONDS.toMinutes((long) timeReTotal);
         long sec = TimeUnit.MILLISECONDS.toSeconds((long) timeReTotal) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) timeReTotal));
         totalTime.setText((min>=10)? String.valueOf(min) : "0"+ min +":" +( (sec>=10)? String.valueOf(sec) : "0"+ sec));
@@ -130,27 +113,18 @@ public class MediaPlayerFragment extends Fragment {
         mUpdateSeekbar = new Runnable() {
             @Override
             public void run() {
-                if(mediaPlayer!= null && !isPause) {
-                    try {
-                        int timeRemaining = mediaPlayer.getCurrentPosition();
-                        seekBar.setProgress(timeRemaining);
-                        long min = TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining);
-                        long sec = TimeUnit.MILLISECONDS.toSeconds((long) timeRemaining) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining));
-                        timeCount.setText((min>=10)? String.valueOf(min) : "0"+ min +":" +( (sec>=10)? String.valueOf(sec) : "0"+ sec));
-                        mSeekbarUpdateHandler.postDelayed(this, 50);
-                    }
-                    catch (IllegalStateException e){
-                        System.out.print(e.toString());
-                    }
-
+                if(!isPause){
+                    updateSeekBar(seekBar,timeCount,totalTime);
+                    mSeekbarUpdateHandler.postDelayed(this, 50);
                 }
             }
         };
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser)
-                    mediaPlayer.seekTo(progress);
+                if (fromUser) {
+                    //mediaPlayer.seekTo(progress);
+                }
             }
 
             @Override
@@ -174,16 +148,14 @@ public class MediaPlayerFragment extends Fragment {
         playBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mediaPlayer.isPlaying()){
-                    mediaPlayer.pause();
+                if(isPlaying){
                     onSongChange.onPauseMedia();
-                    isResume = true;
+                    isPlaying = false;
                     playBtn.setImageResource(R.drawable.play);
                 }
                 else{
                     onSongChange.onPlay();
-                    mediaPlayer.start();
-                    isResume = false;
+                    isPlaying = true;
                     playBtn.setImageResource(R.drawable.pause);
                 }
             }
@@ -191,10 +163,8 @@ public class MediaPlayerFragment extends Fragment {
         preBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if(!isResume) {
                     playBtn.setImageResource(R.drawable.pause);
-                    mediaPlayer.release();
                 }
                 if(ID == 1){
                     ID = 11;
@@ -202,26 +172,15 @@ public class MediaPlayerFragment extends Fragment {
                 ID--;
                 //sent data to LyricFragment
                 onSongChange.onNextSong(ID);
-                mediaPlayer = MediaPlayer.create(context,getRawIDByName("mp" +String.valueOf(3100 + ID)));
                 mUpdateSeekbar = new Runnable() {
                     @Override
                     public void run() {
-                        if(mediaPlayer!= null && !isPause) {
-                            if(mediaPlayer.isPlaying()) {
-                                int timeRemaining = mediaPlayer.getCurrentPosition();
-                                seekBar.setProgress(timeRemaining);
-                                long min = TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining);
-                                long sec = TimeUnit.MILLISECONDS.toSeconds((long) timeRemaining) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining));
-                                timeCount.setText((min >= 10) ? String.valueOf(min) : "0" + min + ":" + ((sec >= 10) ? String.valueOf(sec) : "0" + sec));
-                                mSeekbarUpdateHandler.postDelayed(this, 50);
-                            }
+                        if(!isPause){
+                            updateSeekBar(seekBar,timeCount,totalTime);
+                            mSeekbarUpdateHandler.postDelayed(this, 50);
                         }
                     }
                 };
-                if(!isResume) {
-                    mediaPlayer.start();
-                    mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
-                }
 
             }
         });
@@ -230,7 +189,6 @@ public class MediaPlayerFragment extends Fragment {
             public void onClick(View v) {
                 if(!isResume) {
                     playBtn.setImageResource(R.drawable.pause);
-                    mediaPlayer.release();
                 }
                 if(ID == 10){
                     ID = 0;
@@ -238,34 +196,33 @@ public class MediaPlayerFragment extends Fragment {
                 ID++;
                 //sent data to LyricFragment
                 onSongChange.onNextSong(ID);
-                mediaPlayer = MediaPlayer.create(context,getRawIDByName("mp" +String.valueOf(3100 + ID)));
                 mUpdateSeekbar = new Runnable() {
                     @Override
                     public void run() {
-                        if(mediaPlayer!= null && !isPause) {
-                            if(mediaPlayer.isPlaying()) {
-                                int timeRemaining = mediaPlayer.getCurrentPosition();
-                                seekBar.setProgress(timeRemaining);
-                                long min = TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining);
-                                long sec = TimeUnit.MILLISECONDS.toSeconds((long) timeRemaining) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining));
-                                timeCount.setText((min >= 10) ? String.valueOf(min) : "0" + min + ":" + ((sec >= 10) ? String.valueOf(sec) : "0" + sec));
-                                mSeekbarUpdateHandler.postDelayed(this, 50);
-                            }
+                        if(!isPause){
+                            updateSeekBar(seekBar,timeCount,totalTime);
+                            mSeekbarUpdateHandler.postDelayed(this, 50);
                         }
                     }
                 };
-                if(!isResume) {
-                    mediaPlayer.start();
-                    mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
-                }
 
             }
         });
         return rootView;
     }
-
+    private void updateSeekBar(SeekBar seekBar, TextView timeCount, TextView totalTime){
+        seekBar.setMax(duration);
+        int timeRemaining = currentDuration;
+        seekBar.setProgress(timeRemaining);
+        long min = TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining);
+        long sec = TimeUnit.MILLISECONDS.toSeconds((long) timeRemaining) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining));
+        timeCount.setText((min>=10)? String.valueOf(min) : "0"+ min +":" +( (sec>=10)? String.valueOf(sec) : "0"+ sec));
+        long min2 = TimeUnit.MILLISECONDS.toMinutes((long) duration);
+        long sec2 = TimeUnit.MILLISECONDS.toSeconds((long) duration) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) duration));
+        totalTime.setText((min>=10)? String.valueOf(min2) : "0"+ min2 +":" +( (sec2>=10)? String.valueOf(sec2) : "0"+ sec2));
+    }
     public void setMediaPlayer(MediaPlayer mediaPlayer) {
-        this.mediaPlayer = mediaPlayer;
+
     }
     public void setContext(Context context){
         this.context = context;

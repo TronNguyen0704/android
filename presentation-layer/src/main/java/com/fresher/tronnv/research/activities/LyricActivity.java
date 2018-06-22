@@ -1,11 +1,16 @@
 package com.fresher.tronnv.research.activities;
 
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
@@ -16,23 +21,27 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RemoteViews;
 
+import com.fresher.tronnv.android_models.MusicLyric;
 import com.fresher.tronnv.research.Constants;
 import com.fresher.tronnv.research.R;
 import com.fresher.tronnv.research.presenters.ApplicationPresenter;
 import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
+import com.fresher.tronnv.research.service.MediaPlayerService;
 import com.fresher.tronnv.research.service.NotificationService;
 import com.fresher.tronnv.research.ui.LyricsFragment;
 import com.fresher.tronnv.research.ui.MediaPlayerFragment;
 
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class LyricActivity extends AppCompatActivity implements MediaPlayerFragment.OnSongChange, LyricsFragment.LoadFinish{
-    private MediaPlayer mPlayer;
     private Toolbar toolbar;
     private ApplicationPresenter applicationPresenter;
-    private String art;
-    private String track;
-    Intent serviceIntent;
+    private int id;
+    private Intent serviceIntent;
+    private LyricsFragment lyricsFragment;
+    List<MusicLyric> musicLyrics ;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,14 +49,15 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
         applicationPresenter = new ApplicationPresenterImpl(getBaseContext());
         applicationPresenter.loadMusicData();
         toolbar = findViewById(R.id.tool_bar);
+        musicLyrics = new ArrayList<>();
         //Create LyricsFrament
-        LyricsFragment lyricsFragment = new LyricsFragment();
+        lyricsFragment = new LyricsFragment();
         //Add set data
         String filter = getIntent().getStringExtra("Filter");
         //Get data from Intent
         int index = getIntent().getIntExtra("Index",0);
         int ID = getIntent().getIntExtra("ID",0);
-        mPlayer = MediaPlayer.create(this,getRawIDByName("mp" +String.valueOf(3100 + ID)));
+        id = ID;
 
         //SetupToolBar
         setSupportActionBar(toolbar);
@@ -62,8 +72,6 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
                 .commit();
         // Create and display the media player
         MediaPlayerFragment mediaPlayerFragment = new MediaPlayerFragment();
-
-        mediaPlayerFragment.setMediaPlayer(mPlayer);
         mediaPlayerFragment.setContext(this);
         mediaPlayerFragment.setID(ID);
 
@@ -71,6 +79,7 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
                 .add(R.id.layout_media_player_container, mediaPlayerFragment)
                 .commit();
     }
+
 
     @Override
     protected void onStop() {
@@ -88,8 +97,6 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
     protected void onDestroy() {
         super.onDestroy();
         //unregisterReceiver(mReceiver);
-        if(mPlayer!= null)
-            mPlayer.release();
     }
     public int getRawIDByName(String name){
         return getResources().getIdentifier(name, "raw", this.getPackageName());
@@ -97,15 +104,17 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
 
     @Override
     public void onNextSong(int id) {
-        LyricsFragment lyricsFragment = new LyricsFragment();
-
+        lyricsFragment = new LyricsFragment();
         //Add set data
         //Set Index
+        this.id = id;
         lyricsFragment.setmIndex(id - 1);
         lyricsFragment.setRetainInstance(true);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.layout_lyric_container, lyricsFragment)
                 .commit();
+        stopService(serviceIntent);
+        startService();
     }
 
 
@@ -180,10 +189,26 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
     public void startService() {
         serviceIntent = new Intent(LyricActivity.this, NotificationService.class);
         serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
-        serviceIntent.putExtra("name",track);
-        serviceIntent.putExtra("author",art);
-        serviceIntent.putExtra("avatar","");
+        serviceIntent.putExtra("id",id);
+        serviceIntent.putStringArrayListExtra("names",getListString(1));
+        serviceIntent.putStringArrayListExtra("authors",getListString(2));
+        serviceIntent.putStringArrayListExtra("avatars",getListString(3));
         startService(serviceIntent);
+    }
+    private ArrayList<String> getListString(int type){
+        int size = lyricsFragment.getMusicLyrics().size();
+        if(size>0 && musicLyrics.size() ==0)
+            musicLyrics.addAll(lyricsFragment.getMusicLyrics());
+        ArrayList<String> temp = new ArrayList<>();
+        for(int i = 0;i< musicLyrics.size();i++){
+            if(type == 1)
+                temp.add(musicLyrics.get(i).getName());
+            else if(type == 2)
+                temp.add(musicLyrics.get(i).getAuthor());
+            else if(type == 3)
+                temp.add(musicLyrics.get(i).getAvatar());
+        }
+        return temp;
     }
     @Override
     public void onFinish(String name, String author) {
@@ -192,8 +217,6 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setSubtitle(author);
         toolbar.setTitle(name);
-        track = name;
-        art = author;
         startService();
     }
 
