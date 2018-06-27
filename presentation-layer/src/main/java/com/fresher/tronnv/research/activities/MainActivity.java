@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements PlayListFragment.
         bundle.putInt("Index", position);
         bundle.putInt("ID", idSong);
         bundle.putString("Filter", filter);
+        bundle.putBoolean("start", true);
         final Intent intent = new Intent(this, LyricActivity.class);
         intent.putExtras(bundle);
         startActivity(intent);

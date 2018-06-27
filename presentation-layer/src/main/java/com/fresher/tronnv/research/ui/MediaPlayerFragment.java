@@ -49,6 +49,7 @@ public class MediaPlayerFragment extends Fragment{
     private BroadcastReceiver broadcastReceiver;
     private int currentDuration = 0;
     private int duration = 0;
+    private ImageButton playBtn;
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -66,8 +67,20 @@ public class MediaPlayerFragment extends Fragment{
                 currentDuration = intent.getIntExtra(NotificationService.CURRENTPOSITION,0);
                 duration = intent.getIntExtra(NotificationService.DURATION,0);
                 int songID = intent.getIntExtra("id",ID);
-                if(ID != songID )
-                    onSongChange.onNextSong(songID);
+                if(intent.getIntExtra("play_pause",-1) != -1){
+                    if(intent.getIntExtra("play_pause",-1)==1) {
+                        playBtn.setImageResource(R.drawable.pause);
+                        isPlaying = true;
+                    }
+                    else{
+                        playBtn.setImageResource(R.drawable.play);
+                        isPlaying = false;
+                    }
+                }
+                if(ID != songID) {
+                    onSongChange.onChangeUI(songID);
+                    ID = songID;
+                }
             }
         };
     }
@@ -96,8 +109,10 @@ public class MediaPlayerFragment extends Fragment{
 
     @Override
     public void onDestroy() {
+
         super.onDestroy();
     }
+    boolean flag = false;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_mediaplayer,container,false);
@@ -123,7 +138,10 @@ public class MediaPlayerFragment extends Fragment{
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                    //mediaPlayer.seekTo(progress);
+//                        Intent intent = new Intent(NotificationService.RESTART);
+//                        intent.putExtra("progress", progress);
+//                        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+//                        localBroadcastManager.sendBroadcast(intent);
                 }
             }
 
@@ -139,7 +157,7 @@ public class MediaPlayerFragment extends Fragment{
         });
 
 
-        final ImageButton playBtn = rootView.findViewById(R.id.btn_play);
+        playBtn = rootView.findViewById(R.id.btn_play);
         playBtn.setImageResource(R.drawable.pause);
         final ImageButton preBtn = rootView.findViewById(R.id.btn_pre);
         preBtn.setImageResource(R.drawable.pre);
@@ -171,7 +189,7 @@ public class MediaPlayerFragment extends Fragment{
                 }
                 ID--;
                 //sent data to LyricFragment
-                onSongChange.onNextSong(ID);
+                onSongChange.onPreviousSong(ID);
                 mUpdateSeekbar = new Runnable() {
                     @Override
                     public void run() {
@@ -239,5 +257,7 @@ public class MediaPlayerFragment extends Fragment{
         void onNextSong(int id);
         void onPauseMedia();
         void onPlay();
+        void onPreviousSong(int id);
+        void onChangeUI(int songID);
     }
 }

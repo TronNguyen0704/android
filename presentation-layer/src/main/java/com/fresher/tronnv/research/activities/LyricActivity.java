@@ -1,32 +1,23 @@
 package com.fresher.tronnv.research.activities;
 
-import android.app.NotificationManager;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.RemoteViews;
 
 import com.fresher.tronnv.android_models.MusicLyric;
 import com.fresher.tronnv.research.Constants;
 import com.fresher.tronnv.research.R;
 import com.fresher.tronnv.research.presenters.ApplicationPresenter;
 import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
-import com.fresher.tronnv.research.service.MediaPlayerService;
 import com.fresher.tronnv.research.service.NotificationService;
 import com.fresher.tronnv.research.ui.LyricsFragment;
 import com.fresher.tronnv.research.ui.MediaPlayerFragment;
@@ -42,10 +33,13 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
     private Intent serviceIntent;
     private LyricsFragment lyricsFragment;
     List<MusicLyric> musicLyrics ;
+    private LocalBroadcastManager broadcastReceiver;
+    private boolean serviceIsStarted = false;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lyrics);
+        broadcastReceiver = LocalBroadcastManager.getInstance(this);
         applicationPresenter = new ApplicationPresenterImpl(getBaseContext());
         applicationPresenter.loadMusicData();
         toolbar = findViewById(R.id.tool_bar);
@@ -55,16 +49,24 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
         //Add set data
         String filter = getIntent().getStringExtra("Filter");
         //Get data from Intent
-        int index = getIntent().getIntExtra("Index",0);
+        int index = getIntent().getIntExtra("Index",-1);
         int ID = getIntent().getIntExtra("ID",0);
         id = ID;
-
+        boolean start = getIntent().getBooleanExtra("start",false);
         //SetupToolBar
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         //Set Index
-        lyricsFragment.setmIndex(index);
+        if(start && (NotificationService.serviceIdSong != -1)){
+            NotificationService.serviceState = false;
+            serviceIntent = new Intent(LyricActivity.this, NotificationService.class);
+            stopService(serviceIntent);
+            lyricsFragment.setmIndex(index);
+        }
+        else{
+            lyricsFragment.setmIndex((NotificationService.serviceIdSong != -1) ? NotificationService.serviceIdSong -1 : index);
+        }
         // Add the fragment to its container using a FragmentManager and a Transaction
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -84,37 +86,72 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
     @Override
     protected void onStop() {
         super.onStop();
-        //mPlayer.stop();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //mPlayer.start();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //unregisterReceiver(mReceiver);
+        stopService(serviceIntent);
     }
     public int getRawIDByName(String name){
         return getResources().getIdentifier(name, "raw", this.getPackageName());
     }
 
     @Override
-    public void onNextSong(int id) {
+    public void onChangeUI(int songID) {
         lyricsFragment = new LyricsFragment();
         //Add set data
         //Set Index
-        this.id = id;
-        lyricsFragment.setmIndex(id - 1);
+        this.id = songID;
+        lyricsFragment.setmIndex(songID-1);
         lyricsFragment.setRetainInstance(true);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.layout_lyric_container, lyricsFragment)
                 .commit();
-        stopService(serviceIntent);
-        startService();
+    }
+
+    @Override
+    public void onNextSong(int id) {
+        if( !NotificationService.serviceState) {
+            startService();
+        }
+        lyricsFragment = new LyricsFragment();
+        //Add set data
+        //Set Index
+        this.id = id;
+        lyricsFragment.setmIndex(NotificationService.serviceIdSong);
+        lyricsFragment.setRetainInstance(true);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.layout_lyric_container, lyricsFragment)
+                .commit();
+        Intent intent = new Intent(NotificationService.RESTART);
+        intent.putExtra("restart","next");
+        broadcastReceiver.sendBroadcast(intent);
+    }
+    @Override
+    public void onPreviousSong(int id) {
+
+        lyricsFragment = new LyricsFragment();
+        //Add set data
+        //Set Index
+        this.id = id;
+        lyricsFragment.setmIndex(NotificationService.serviceIdSong);
+        if(!NotificationService.serviceState) {
+            startService();
+            lyricsFragment.setmIndex(id - 1);
+        }
+        lyricsFragment.setRetainInstance(true);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.layout_lyric_container, lyricsFragment)
+                .commit();
+        Intent intent = new Intent(NotificationService.RESTART);
+        intent.putExtra("restart","previous");
+        broadcastReceiver.sendBroadcast(intent);
     }
 
 
@@ -122,12 +159,19 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
 
     @Override
     public void onPauseMedia() {
-        stopService(serviceIntent);
+        Intent intent = new Intent(NotificationService.RESTART);
+        intent.putExtra("restart","pause");
+        broadcastReceiver.sendBroadcast(intent);
     }
 
     @Override
     public void onPlay() {
-        startService();
+        if(!NotificationService.serviceState) {
+            startService();
+        }
+        Intent intent = new Intent(NotificationService.RESTART);
+        intent.putExtra("restart","play");
+        broadcastReceiver.sendBroadcast(intent);
     }
 
 
@@ -187,6 +231,7 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
         }
     }
     public void startService() {
+        serviceIsStarted = true;
         serviceIntent = new Intent(LyricActivity.this, NotificationService.class);
         serviceIntent.setAction(Constants.ACTION.STARTFOREGROUND_ACTION);
         serviceIntent.putExtra("id",id);
@@ -210,6 +255,7 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
         }
         return temp;
     }
+
     @Override
     public void onFinish(String name, String author) {
         setSupportActionBar(toolbar);
@@ -217,7 +263,9 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setSubtitle(author);
         toolbar.setTitle(name);
-        startService();
+        if(!serviceIsStarted && !NotificationService.serviceState) {
+            startService();
+        }
     }
 
     @Override
