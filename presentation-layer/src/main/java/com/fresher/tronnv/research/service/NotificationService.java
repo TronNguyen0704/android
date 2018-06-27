@@ -159,6 +159,7 @@ public class NotificationService extends Service{
                         mediaPlayer.pause();
                         isPlaying = false;
                     }
+                    serviceState = false;
                     stopForeground(true);
                 }
             }

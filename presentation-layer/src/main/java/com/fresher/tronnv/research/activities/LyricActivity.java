@@ -96,7 +96,8 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopService(serviceIntent);
+        if(!NotificationService.serviceState)
+            stopService(serviceIntent);
     }
     public int getRawIDByName(String name){
         return getResources().getIdentifier(name, "raw", this.getPackageName());
