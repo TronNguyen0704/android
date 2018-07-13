@@ -9,7 +9,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.IBinder;
@@ -19,6 +21,11 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.BaseTarget;
+import com.bumptech.glide.request.target.SizeReadyCallback;
+import com.bumptech.glide.request.transition.Transition;
 import com.fresher.tronnv.research.Constants;
 import com.fresher.tronnv.research.R;
 import com.fresher.tronnv.research.activities.LyricActivity;
@@ -44,33 +51,35 @@ public class NotificationService extends Service{
     private LocalBroadcastManager broadcastReceiver;
     private BroadcastReceiver bReceiver;
     private int id;
-    private int duration;
-    private int curr;
+    private int duration = 0;
+    private int curr = 0;
     public static boolean serviceState = false;
     public static int serviceIdSong= -1;
     private TimerTask updateTask = new TimerTask() {
         @Override
         public void run() {
-            if(mediaPlayer!= null) {
+            if(mediaPlayer != null) {
                 try {
-                    curr = mediaPlayer.getCurrentPosition();
-                    duration = mediaPlayer.getDuration();
-                    if(mediaPlayer.isPlaying() && isPlaying){
+                    curr = (mediaPlayer!= null) ? mediaPlayer.getCurrentPosition() : curr;
+                    duration = (mediaPlayer!= null) ? mediaPlayer.getDuration() : curr;
+                    if((mediaPlayer!= null) && mediaPlayer.isPlaying() && isPlaying){
                         sentUpdateToUI(curr,duration);
+                    }
+                    if(duration - curr <= 150){//trick completion of media player
+                        theNextSong();
                     }
                 }
                 catch (IllegalStateException e){
                         System.out.print(e.toString());
                 }
             }
-            //Do some work here
         }
     };
     @Override
     public void onCreate() {
         serviceState  = true;
         broadcastReceiver = LocalBroadcastManager.getInstance(this);
-        mediaPlayer = new MediaPlayer();
+//        mediaPlayer = new MediaPlayer();
         names = new ArrayList<>();
         authors = new ArrayList<>();
         avatars = new ArrayList<>();
@@ -80,32 +89,21 @@ public class NotificationService extends Service{
         bReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-//                int progress = intent.getIntExtra("progress",curr);
-//                if(progress != curr){
-//                    progressMediaPlayer = progress;
-//                }
-                if(intent.getStringExtra("restart").endsWith("next")){
-
+                int progress = intent.getIntExtra("progress",curr);
+                if(progress != curr){
+                    progressMediaPlayer = progress;
+                    mediaPlayer.seekTo(progressMediaPlayer);
+                }
+                if(intent.getStringExtra("restart") != null && intent.getStringExtra("restart").endsWith("next")){
                     views.setImageViewResource(R.id.btn_play,
                             android.R.drawable.ic_media_pause);
                     expandedViews.setImageViewResource(R.id.status_bar_play,
                             android.R.drawable.ic_media_pause);
                     views.setViewVisibility(R.id.btn_collapse_bar, View.GONE);
                     expandedViews.setViewVisibility(R.id.btn_collapse, View.GONE);
-                    if(id == 10){
-                        id = 0;
-                    }
-                    id++;
-                    serviceIdSong = id;
-                    mediaPlayer.stop();
-                    mediaPlayer.release();
-                    mediaPlayer = null;
-                    mediaPlayer = MediaPlayer.create(getBaseContext(),getRawIDByName("mp" +String.valueOf(3100 + id)));
-                    mediaPlayer.start();
-                    duration = mediaPlayer.getDuration();
-                    shorNotifi();
+                    theNextSong();
                 }
-                else if(intent.getStringExtra("restart").endsWith("previous")){
+                else if(intent.getStringExtra("restart") != null && intent.getStringExtra("restart").endsWith("previous")){
                     views.setImageViewResource(R.id.btn_play,
                             android.R.drawable.ic_media_pause);
                     expandedViews.setImageViewResource(R.id.status_bar_play,
@@ -122,21 +120,12 @@ public class NotificationService extends Service{
                     mediaPlayer = null;
                     mediaPlayer = MediaPlayer.create(getBaseContext(),getRawIDByName("mp" +String.valueOf(3100 + id)));
                     mediaPlayer.start();
+                    serviceState = true;
+                    isPlaying = true;
                     duration = mediaPlayer.getDuration();
                     shorNotifi();
                 }
-                else if(intent.getStringExtra("restart").endsWith("play")){
-                    if(mediaPlayer.isPlaying()) {
-                        views.setImageViewResource(R.id.btn_play,
-                                android.R.drawable.ic_media_play);
-                        expandedViews.setImageViewResource(R.id.status_bar_play,
-                                android.R.drawable.ic_media_play);
-                        views.setViewVisibility(R.id.btn_collapse_bar, View.VISIBLE);
-                        expandedViews.setViewVisibility(R.id.btn_collapse, View.VISIBLE);
-                        mediaPlayer.pause();
-                        isPlaying = false;
-                    }
-                    else{
+                else if(intent.getStringExtra("restart") != null && intent.getStringExtra("restart").endsWith("play")){
                         views.setImageViewResource(R.id.btn_play,
                                 android.R.drawable.ic_media_pause);
                         expandedViews.setImageViewResource(R.id.status_bar_play,
@@ -144,12 +133,15 @@ public class NotificationService extends Service{
                         views.setViewVisibility(R.id.btn_collapse_bar, View.GONE);
                         expandedViews.setViewVisibility(R.id.btn_collapse, View.GONE);
                         isPlaying = true;
+                        serviceState = true;
                         mediaPlayer.start();
-                    }
+                        if(intent.getIntExtra("currSaved",-1) != -1) {
+                            mediaPlayer.seekTo(intent.getIntExtra("currSaved",0));
+                        }
                     shorNotifi();
                 }
-                else if(intent.getStringExtra("restart").endsWith("pause")){
-                    if(mediaPlayer.isPlaying()) {
+                else if( intent.getStringExtra("restart") != null && intent.getStringExtra("restart").endsWith("pause")){
+
                         views.setImageViewResource(R.id.btn_play,
                                 android.R.drawable.ic_media_play);
                         expandedViews.setImageViewResource(R.id.status_bar_play,
@@ -158,13 +150,34 @@ public class NotificationService extends Service{
                         expandedViews.setViewVisibility(R.id.btn_collapse, View.VISIBLE);
                         mediaPlayer.pause();
                         isPlaying = false;
-                    }
                     serviceState = false;
                     stopForeground(true);
                 }
             }
         };
         LocalBroadcastManager.getInstance(this).registerReceiver(bReceiver,new IntentFilter(NotificationService.RESTART));
+    }
+    private void theNextSong(){
+        if(id == 10){
+            id = 0;
+        }
+        id++;
+        serviceIdSong = id;
+        mediaPlayer.stop();
+        mediaPlayer.release();
+        mediaPlayer = null;
+        mediaPlayer = MediaPlayer.create(getApplication(),getRawIDByName("mp" +String.valueOf(3100 + id)));
+        mediaPlayer.start();
+        isPlaying = true;
+        serviceState = true;
+        duration = mediaPlayer.getDuration();
+        views.setImageViewResource(R.id.btn_play,
+                android.R.drawable.ic_media_pause);
+        expandedViews.setImageViewResource(R.id.status_bar_play,
+                android.R.drawable.ic_media_pause);
+        views.setViewVisibility(R.id.btn_collapse_bar, View.GONE);
+        expandedViews.setViewVisibility(R.id.btn_collapse, View.GONE);
+        shorNotifi();
     }
     private void sentUpdateToUI(int curr, int duration){
         serviceIdSong = id;
@@ -211,6 +224,8 @@ public class NotificationService extends Service{
             mediaPlayer = MediaPlayer.create(this,getRawIDByName("mp" +String.valueOf(3100 + id)));
             mediaPlayer.start();
             duration = mediaPlayer.getDuration();
+            serviceState = true;
+            isPlaying = true;
             //Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
         } else if (intent.getAction().equals(Constants.ACTION.PREV_ACTION)) {
             //Toast.makeText(this, "Clicked Previous", Toast.LENGTH_SHORT).show();
@@ -226,6 +241,14 @@ public class NotificationService extends Service{
             mediaPlayer = MediaPlayer.create(this,getRawIDByName("mp" +String.valueOf(3100 + id)));
             mediaPlayer.start();
             duration = mediaPlayer.getDuration();
+            views.setImageViewResource(R.id.btn_play,
+                    android.R.drawable.ic_media_pause);
+            expandedViews.setImageViewResource(R.id.status_bar_play,
+                    android.R.drawable.ic_media_pause);
+            views.setViewVisibility(R.id.btn_collapse_bar, View.GONE);
+            expandedViews.setViewVisibility(R.id.btn_collapse, View.GONE);
+            isPlaying = true;
+            serviceState = true;
             shorNotifi();
             //Sent request to UI
             Intent intentPre = new Intent(PROCESSED);
@@ -261,19 +284,7 @@ public class NotificationService extends Service{
         } else if (intent.getAction().equals(Constants.ACTION.NEXT_ACTION)) {
             //Toast.makeText(this, "Clicked Next", Toast.LENGTH_SHORT).show();
             Log.i(LOG_TAG, "Clicked Next");
-            if(id == 10){
-                id = 0;
-            }
-            id++;
-            serviceIdSong = id;
-            mediaPlayer.stop();
-            mediaPlayer.release();
-            mediaPlayer = null;
-            mediaPlayer = MediaPlayer.create(this,getRawIDByName("mp" +String.valueOf(3100 + id)));
-            mediaPlayer.start();
-            duration = mediaPlayer.getDuration();
-
-            shorNotifi();
+            theNextSong();
             //Sent request to UI
             Intent intentNext = new Intent(PROCESSED);
             intentNext.putExtra("id",id);
@@ -295,13 +306,39 @@ public class NotificationService extends Service{
     private int getRawIDByName(String name){
         return getResources().getIdentifier(name, "raw", this.getPackageName());
     }
+    private BaseTarget target2 = new BaseTarget<Bitmap>() {
+        @Override
+        public void onResourceReady(Bitmap bitmap, Transition<? super Bitmap> transition) {
+            // do something with the bitmap
+            // for demonstration purposes, let's set it to an imageview
+            expandedViews.setImageViewBitmap(R.id.status_bar_album_art,bitmap);
+        }
+
+        @Override
+        public void getSize(SizeReadyCallback cb) {
+            cb.onSizeReady(250, 250);
+        }
+
+        @Override
+        public void removeCallback(SizeReadyCallback cb) {}
+    };
+    private void loadImageSimpleTargetApplicationContext() {
+        Glide
+                .with(getApplicationContext())
+                .load(avatars.get(id - 1))
+                .into(target2);
+    }
     public void initNotification() {
 
         // showing default album image
         views.setViewVisibility(R.id.img_status_bar_icon, View.VISIBLE);
         views.setViewVisibility(R.id.img_album_art, View.GONE);
-        expandedViews.setImageViewBitmap(R.id.status_bar_album_art,Constants.getDefaultAlbumArt(this)
-                );
+        expandedViews.setImageViewBitmap(R.id.status_bar_album_art, Constants.getDefaultAlbumArt(getBaseContext()));
+//        if((names != null && names.size()>0)) {
+//            //expandedViews.setImageViewBitmap(R.id.status_bar_album_art, Constants.getBitmap(avatars.get(id - 1),getBaseContext())
+//            //);
+//            loadImageSimpleTargetApplicationContext();
+//        }
         views.setImageViewResource(R.id.btn_play,
                 android.R.drawable.ic_media_pause);
         expandedViews.setImageViewResource(R.id.status_bar_play,
@@ -358,7 +395,6 @@ public class NotificationService extends Service{
             views.setTextViewText(R.id.tv_art_name, authors.get(id - 1));
             expandedViews.setTextViewText(R.id.status_bar_artist_name, authors.get(id - 1));
         }
-        //expandedViews.setTextViewText(R.id.status_bar_album_name, "Album Name");
         String CHANNEL_ID = "my_channel_01";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 

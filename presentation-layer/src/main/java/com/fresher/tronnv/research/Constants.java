@@ -3,12 +3,21 @@ package com.fresher.tronnv.research;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.FutureTarget;
+import com.bumptech.glide.request.target.BaseTarget;
+import com.bumptech.glide.request.target.SizeReadyCallback;
+import com.bumptech.glide.request.target.Target;
+import com.bumptech.glide.request.transition.Transition;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
 public class Constants {
     public interface ACTION {
@@ -37,6 +46,17 @@ public class Constants {
         } catch (Exception e) {
         }
         return bm;
+    }
+    public static Bitmap getBitmap(String src, Context mContext) {
+        FutureTarget<Bitmap> futureTarget = Glide.with(mContext).asBitmap()
+                .load(src)
+                .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+        try {
+            return futureTarget.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     public static Bitmap getBitmapFromURL(String src) {
         try {

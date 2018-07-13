@@ -1,22 +1,15 @@
 package com.fresher.tronnv.research.ui;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.arch.lifecycle.LiveData;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,10 +22,10 @@ import com.fresher.tronnv.research.service.NotificationService;
 
 import java.util.concurrent.TimeUnit;
 
-import static android.content.Context.NOTIFICATION_SERVICE;
 /**
  * Created by NGUYEN VAN TRON on 05/18/18.
-/**
+/**Cho T hỏi cái này ngoài lề xíu nha
+ Bạn nữ mới vào commer
  *This fragment to show media player
  */
 public class MediaPlayerFragment extends Fragment{
@@ -43,7 +36,7 @@ public class MediaPlayerFragment extends Fragment{
     private boolean isPause = false;
     private boolean isResume = false;
     private Context context;
-    private int ID;
+    private int id;
     private OnSongChange onSongChange;
     private boolean isPlaying = true;
     private BroadcastReceiver broadcastReceiver;
@@ -64,9 +57,9 @@ public class MediaPlayerFragment extends Fragment{
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                currentDuration = intent.getIntExtra(NotificationService.CURRENTPOSITION,0);
-                duration = intent.getIntExtra(NotificationService.DURATION,0);
-                int songID = intent.getIntExtra("id",ID);
+                currentDuration = intent.getIntExtra(NotificationService.CURRENTPOSITION,currentDuration);
+                duration = intent.getIntExtra(NotificationService.DURATION,duration);
+                int songID = intent.getIntExtra("id", id);
                 if(intent.getIntExtra("play_pause",-1) != -1){
                     if(intent.getIntExtra("play_pause",-1)==1) {
                         playBtn.setImageResource(R.drawable.pause);
@@ -77,9 +70,10 @@ public class MediaPlayerFragment extends Fragment{
                         isPlaying = false;
                     }
                 }
-                if(ID != songID) {
+                if(id != songID) {
+                    playBtn.setImageResource(R.drawable.pause);
                     onSongChange.onChangeUI(songID);
-                    ID = songID;
+                    id = songID;
                 }
             }
         };
@@ -102,17 +96,6 @@ public class MediaPlayerFragment extends Fragment{
         LocalBroadcastManager.getInstance(context).unregisterReceiver(broadcastReceiver);
         super.onStop();
     }
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onDestroy() {
-
-        super.onDestroy();
-    }
-    boolean flag = false;
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_mediaplayer,container,false);
@@ -138,10 +121,10 @@ public class MediaPlayerFragment extends Fragment{
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-//                        Intent intent = new Intent(NotificationService.RESTART);
-//                        intent.putExtra("progress", progress);
-//                        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
-//                        localBroadcastManager.sendBroadcast(intent);
+                        Intent intent = new Intent(NotificationService.RESTART);
+                        intent.putExtra("progress", progress);
+                        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+                        localBroadcastManager.sendBroadcast(intent);
                 }
             }
 
@@ -155,27 +138,22 @@ public class MediaPlayerFragment extends Fragment{
 
             }
         });
-
-
         playBtn = rootView.findViewById(R.id.btn_play);
         playBtn.setImageResource(R.drawable.pause);
         final ImageButton preBtn = rootView.findViewById(R.id.btn_pre);
         preBtn.setImageResource(R.drawable.pre);
         ImageButton nextBtn = rootView.findViewById(R.id.btn_next);
         nextBtn.setImageResource(R.drawable.next);
-        playBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isPlaying){
-                    onSongChange.onPauseMedia();
-                    isPlaying = false;
-                    playBtn.setImageResource(R.drawable.play);
-                }
-                else{
-                    onSongChange.onPlay();
-                    isPlaying = true;
-                    playBtn.setImageResource(R.drawable.pause);
-                }
+        playBtn.setOnClickListener(v -> {
+            if(isPlaying){
+                onSongChange.onPauseMedia();
+                isPlaying = false;
+                playBtn.setImageResource(R.drawable.play);
+            }
+            else{
+                onSongChange.onPlay(seekBar.getProgress());
+                isPlaying = true;
+                playBtn.setImageResource(R.drawable.pause);
             }
         });
         preBtn.setOnClickListener(new View.OnClickListener() {
@@ -184,12 +162,12 @@ public class MediaPlayerFragment extends Fragment{
                 if(!isResume) {
                     playBtn.setImageResource(R.drawable.pause);
                 }
-                if(ID == 1){
-                    ID = 11;
+                if(id == 1){
+                    id = 11;
                 }
-                ID--;
+                id--;
                 //sent data to LyricFragment
-                onSongChange.onPreviousSong(ID);
+                onSongChange.onPreviousSong(id);
                 mUpdateSeekbar = new Runnable() {
                     @Override
                     public void run() {
@@ -208,12 +186,12 @@ public class MediaPlayerFragment extends Fragment{
                 if(!isResume) {
                     playBtn.setImageResource(R.drawable.pause);
                 }
-                if(ID == 10){
-                    ID = 0;
+                if(id == 10){
+                    id = 0;
                 }
-                ID++;
+                id++;
                 //sent data to LyricFragment
-                onSongChange.onNextSong(ID);
+                onSongChange.onNextSong(id);
                 mUpdateSeekbar = new Runnable() {
                     @Override
                     public void run() {
@@ -245,8 +223,8 @@ public class MediaPlayerFragment extends Fragment{
     public void setContext(Context context){
         this.context = context;
     }
-    public void setID(int id) {
-        this.ID = id;
+    public void setId(int id) {
+        this.id = id;
     }
     private int getRawIDByName(String name){
         return getResources().getIdentifier(name, "raw", context.getPackageName());
@@ -256,7 +234,7 @@ public class MediaPlayerFragment extends Fragment{
     public interface OnSongChange {
         void onNextSong(int id);
         void onPauseMedia();
-        void onPlay();
+        void onPlay(int curr);
         void onPreviousSong(int id);
         void onChangeUI(int songID);
     }

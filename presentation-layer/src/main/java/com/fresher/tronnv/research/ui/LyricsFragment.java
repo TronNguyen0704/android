@@ -43,6 +43,7 @@ public class LyricsFragment extends Fragment{
     }
 
     public LyricsFragment(){
+
         musicLyrics = new ArrayList<>();
     }
 
@@ -60,23 +61,20 @@ public class LyricsFragment extends Fragment{
         subscribeUI(viewModel);
     }
     private void subscribeUI(MusicViewModel viewModel){
-        viewModel.getMusics().observe(this, new Observer<List<MusicLyric>>() {
-            @Override
-            public void onChanged(@Nullable List<MusicLyric> musicLyrics) {
-                if (musicLyrics!= null){
-                    setMusicLyrics(musicLyrics);
-                    ((LoadFinish)context).onFinish( musicLyrics.get(mIndex).getName(), musicLyrics.get(mIndex).getAuthor());
-                    textViewName.setText("Bài hát: "+ musicLyrics.get(mIndex).getName());
-                    textViewAuthor.setText("Nhạc sĩ: " +musicLyrics.get(mIndex).getAuthor());
-                    textViewLyric.setText(musicLyrics.get(mIndex).getLyric());
-                }
-                else{
-                }
+        viewModel.getMusics().observe(this, musicLyrics -> {
+            if (musicLyrics!= null){
+                setMusicLyrics(musicLyrics);
+                ((LoadFinish)context).onFinish( musicLyrics.get(mIndex).getName(), musicLyrics.get(mIndex).getAuthor());
+                textViewName.setText("Bài hát: "+ musicLyrics.get(mIndex).getName());
+                textViewAuthor.setText("Nhạc sĩ: " +musicLyrics.get(mIndex).getAuthor());
+                textViewLyric.setText(musicLyrics.get(mIndex).getLyric());
+            }
+            else{
             }
         });
     }
     public void setmIndex(int index){
-        this.mIndex = index;
+        this.mIndex =index;
     }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
