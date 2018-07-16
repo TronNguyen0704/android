@@ -9,9 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.IBinder;
@@ -22,10 +20,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.BaseTarget;
-import com.bumptech.glide.request.target.SizeReadyCallback;
-import com.bumptech.glide.request.transition.Transition;
 import com.fresher.tronnv.research.Constants;
 import com.fresher.tronnv.research.R;
 import com.fresher.tronnv.research.activities.LyricActivity;
@@ -123,7 +117,7 @@ public class NotificationService extends Service{
                     serviceState = true;
                     isPlaying = true;
                     duration = mediaPlayer.getDuration();
-                    shorNotifi();
+                    notificationChange();
                 }
                 else if(intent.getStringExtra("restart") != null && intent.getStringExtra("restart").endsWith("play")){
                         views.setImageViewResource(R.id.btn_play,
@@ -138,7 +132,7 @@ public class NotificationService extends Service{
                         if(intent.getIntExtra("currSaved",-1) != -1) {
                             mediaPlayer.seekTo(intent.getIntExtra("currSaved",0));
                         }
-                    shorNotifi();
+                    notificationChange();
                 }
                 else if( intent.getStringExtra("restart") != null && intent.getStringExtra("restart").endsWith("pause")){
 
@@ -163,8 +157,10 @@ public class NotificationService extends Service{
         }
         id++;
         serviceIdSong = id;
-        mediaPlayer.stop();
-        mediaPlayer.release();
+        if(mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+        }
         mediaPlayer = null;
         mediaPlayer = MediaPlayer.create(getApplication(),getRawIDByName("mp" +String.valueOf(3100 + id)));
         mediaPlayer.start();
@@ -177,7 +173,7 @@ public class NotificationService extends Service{
                 android.R.drawable.ic_media_pause);
         views.setViewVisibility(R.id.btn_collapse_bar, View.GONE);
         expandedViews.setViewVisibility(R.id.btn_collapse, View.GONE);
-        shorNotifi();
+        notificationChange();
     }
     private void sentUpdateToUI(int curr, int duration){
         serviceIdSong = id;
@@ -220,7 +216,7 @@ public class NotificationService extends Service{
             serviceIdSong = id;
         }
         if (intent.getAction().equals(Constants.ACTION.STARTFOREGROUND_ACTION)) {
-            shorNotifi();
+            notificationChange();
             mediaPlayer = MediaPlayer.create(this,getRawIDByName("mp" +String.valueOf(3100 + id)));
             mediaPlayer.start();
             duration = mediaPlayer.getDuration();
@@ -249,7 +245,7 @@ public class NotificationService extends Service{
             expandedViews.setViewVisibility(R.id.btn_collapse, View.GONE);
             isPlaying = true;
             serviceState = true;
-            shorNotifi();
+            notificationChange();
             //Sent request to UI
             Intent intentPre = new Intent(PROCESSED);
             intentPre.putExtra("id",id);
@@ -277,7 +273,7 @@ public class NotificationService extends Service{
                 isPlaying = true;
                 mediaPlayer.start();
             }
-            shorNotifi();
+            notificationChange();
             Intent intentPre = new Intent(PROCESSED);
             intentPre.putExtra("play_pause",isPlaying ? 1 : 2);
             broadcastReceiver.sendBroadcast(intentPre);
@@ -306,39 +302,17 @@ public class NotificationService extends Service{
     private int getRawIDByName(String name){
         return getResources().getIdentifier(name, "raw", this.getPackageName());
     }
-    private BaseTarget target2 = new BaseTarget<Bitmap>() {
-        @Override
-        public void onResourceReady(Bitmap bitmap, Transition<? super Bitmap> transition) {
-            // do something with the bitmap
-            // for demonstration purposes, let's set it to an imageview
-            expandedViews.setImageViewBitmap(R.id.status_bar_album_art,bitmap);
-        }
-
-        @Override
-        public void getSize(SizeReadyCallback cb) {
-            cb.onSizeReady(250, 250);
-        }
-
-        @Override
-        public void removeCallback(SizeReadyCallback cb) {}
-    };
-    private void loadImageSimpleTargetApplicationContext() {
-        Glide
-                .with(getApplicationContext())
-                .load(avatars.get(id - 1))
-                .into(target2);
-    }
     public void initNotification() {
 
         // showing default album image
         views.setViewVisibility(R.id.img_status_bar_icon, View.VISIBLE);
         views.setViewVisibility(R.id.img_album_art, View.GONE);
-        expandedViews.setImageViewBitmap(R.id.status_bar_album_art, Constants.getDefaultAlbumArt(getBaseContext()));
-//        if((names != null && names.size()>0)) {
-//            //expandedViews.setImageViewBitmap(R.id.status_bar_album_art, Constants.getBitmap(avatars.get(id - 1),getBaseContext())
-//            //);
-//            loadImageSimpleTargetApplicationContext();
-//        }
+        if(avatars != null && avatars.size() > 0) {
+            expandedViews.setImageViewBitmap(R.id.status_bar_album_art, Constants.getBitmapFromURL(avatars.get(id),getBaseContext()));
+        }
+        else{
+            expandedViews.setImageViewBitmap(R.id.status_bar_album_art, Constants.getDefaultAlbumArt(getBaseContext()));
+        }
         views.setImageViewResource(R.id.btn_play,
                 android.R.drawable.ic_media_pause);
         expandedViews.setImageViewResource(R.id.status_bar_play,
@@ -417,12 +391,18 @@ public class NotificationService extends Service{
         status.contentIntent = pendingIntent;
 
     }
-    private void shorNotifi(){
+    private void notificationChange(){
         serviceIdSong = id;
         views.setTextViewText(R.id.tv_track_name, names.get(id - 1 ));
         expandedViews.setTextViewText(R.id.status_bar_track_name, names.get(id - 1));
         views.setTextViewText(R.id.tv_art_name, authors.get(id-1));
         expandedViews.setTextViewText(R.id.status_bar_artist_name, authors.get(id - 1));
+        if(avatars != null && avatars.size() > 0) {
+            expandedViews.setImageViewBitmap(R.id.status_bar_album_art, Constants.getBitmapFromURL(avatars.get(id),getBaseContext()));
+        }
+        else{
+            expandedViews.setImageViewBitmap(R.id.status_bar_album_art, Constants.getDefaultAlbumArt(getBaseContext()));
+        }
         status.contentView = views;
         status.bigContentView = expandedViews;
         startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);

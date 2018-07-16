@@ -47,30 +47,18 @@ public class Constants {
         }
         return bm;
     }
-    public static Bitmap getBitmap(String src, Context mContext) {
-        FutureTarget<Bitmap> futureTarget = Glide.with(mContext).asBitmap()
-                .load(src)
-                .into(Target.SIZE_ORIGINAL, Target.SIZE_ORIGINAL);
+    public static Bitmap getBitmapFromURL(String src, Context context) {
         try {
-            return futureTarget.get();
-        } catch (InterruptedException | ExecutionException e) {
+            Bitmap bitmap = Glide.with(context)
+                    .asBitmap()
+                    .load(src)
+                    .submit(512, 512)
+                    .get();
+            return bitmap;
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        return null;
-    }
-    public static Bitmap getBitmapFromURL(String src) {
-        try {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
-        } catch (IOException e) {
-            // Log exception
-            Log.e("Connection",e.toString());
             return null;
         }
+
     }
 }

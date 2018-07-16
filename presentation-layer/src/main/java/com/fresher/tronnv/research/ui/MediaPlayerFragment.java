@@ -24,8 +24,6 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Created by NGUYEN VAN TRON on 05/18/18.
-/**Cho T hỏi cái này ngoài lề xíu nha
- Bạn nữ mới vào commer
  *This fragment to show media player
  */
 public class MediaPlayerFragment extends Fragment{
@@ -36,7 +34,7 @@ public class MediaPlayerFragment extends Fragment{
     private boolean isPause = false;
     private boolean isResume = false;
     private Context context;
-    private int id;
+    private int id = -1;
     private OnSongChange onSongChange;
     private boolean isPlaying = true;
     private BroadcastReceiver broadcastReceiver;
@@ -166,6 +164,13 @@ public class MediaPlayerFragment extends Fragment{
                     id = 11;
                 }
                 id--;
+                if(id < 0){
+                    id = NotificationService.serviceIdSong;
+                    if(id == 1){
+                        id = 11;
+                    }
+                    id--;
+                }
                 //sent data to LyricFragment
                 onSongChange.onPreviousSong(id);
                 mUpdateSeekbar = new Runnable() {
@@ -185,6 +190,9 @@ public class MediaPlayerFragment extends Fragment{
             public void onClick(View v) {
                 if(!isResume) {
                     playBtn.setImageResource(R.drawable.pause);
+                }
+                if(id == 0){
+                    id = NotificationService.serviceIdSong;
                 }
                 if(id == 10){
                     id = 0;

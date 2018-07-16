@@ -1,5 +1,6 @@
 package com.fresher.tronnv.research.activities;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
@@ -10,6 +11,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -132,14 +134,17 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
 
     @Override
     public void onNextSong(int id) {
-        if( !NotificationService.serviceState) {
+//        if( !NotificationService.serviceState) {
+//            startService();
+//        }
+        if(!isMyServiceRunning(NotificationService.class)) {
             startService();
         }
         lyricsFragment = new LyricsFragment();
         //Add set data
         //Set Index
         this.id = id;
-        lyricsFragment.setmIndex((NotificationService.serviceIdSong != -1) ? NotificationService.serviceIdSong : id - 1);
+        lyricsFragment.setmIndex(id - 1);
 
         lyricsFragment.setRetainInstance(true);
         getSupportFragmentManager().beginTransaction()
@@ -151,44 +156,46 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
     }
     @Override
     public void onPreviousSong(int id) {
-        if (!NotificationService.serviceState) {
+//        if (!NotificationService.serviceState) {
+//            startService();
+//        }
+        if(!isMyServiceRunning(NotificationService.class)) {
             startService();
         }
-
-        //Add set data
-        //Set Index
         this.id = id;
+        //send broadcast to restart service
         Intent intent = new Intent(NotificationService.RESTART);
         intent.putExtra("restart", "previous");
         broadcastReceiver.sendBroadcast(intent);
+
         lyricsFragment = new LyricsFragment();
-        if (start && id >=0){
-            lyricsFragment.setmIndex(id - 1);
-            start = true;
-        }
-        else {
-            lyricsFragment.setmIndex((NotificationService.serviceIdSong >= 1) ? NotificationService.serviceIdSong - 1 : 9);
-            start = true;
-        }
+        lyricsFragment.setmIndex(id - 1);
         lyricsFragment.setRetainInstance(true);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.layout_lyric_container, lyricsFragment)
                 .commit();
     }
-
-
-
-
     @Override
     public void onPauseMedia() {
         Intent intent = new Intent(NotificationService.RESTART);
         intent.putExtra("restart","pause");
         broadcastReceiver.sendBroadcast(intent);
     }
-
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
     @Override
     public void onPlay(int curr) {
-        if(!NotificationService.serviceState) {
+//        if(!NotificationService.serviceState) {
+//            startService();
+//        }
+        if(!isMyServiceRunning(NotificationService.class)) {
             startService();
         }
         Intent intent = new Intent(NotificationService.RESTART);
@@ -198,8 +205,6 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
         }
         broadcastReceiver.sendBroadcast(intent);
     }
-
-
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
@@ -296,7 +301,16 @@ public class LyricActivity extends AppCompatActivity implements MediaPlayerFragm
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        startActivity(new Intent(this, MainActivity.class));
+        //check if an activity is the last one in the activity stack
+        ActivityManager mngr = (ActivityManager) getSystemService( ACTIVITY_SERVICE );
+        List<ActivityManager.RunningTaskInfo> taskList = mngr.getRunningTasks(10);
+        if(taskList.get(0).numActivities == 1 &&
+                taskList.get(0).topActivity.getClassName().equals(this.getClass().getName())) {
+            startActivity(new Intent(this, MainActivity.class));
+        }
+        else{
+            super.onBackPressed();
+        }
+
     }
 }
