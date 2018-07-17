@@ -33,33 +33,39 @@ import java.util.TimerTask;
 /**
  * Created by NGUYEN VAN TRON on 05/16/18.
  */
-
-/**
+/**dùng service để chạy MediaPlayer và dùng BroadcastReceiver để cập nhật giao diện của notification cũng như là UI nên tốc độ còn hơi chậm
  * A class PlayListFragment
  */
 public class HomeFragment extends Fragment {
 
-    public interface Loadfinish{
+    public interface Loadfinish {
         void onFinish();
     }
-    private int currentPage = 0;
-    private ViewPager viewPager;
-    private boolean isLoading = true;
-    private boolean isLoadingPagerView = true;
-    List<RecordChart> recordChartList ;
-    List<Track> tracks ;
-    private RecordChartAdapter recordChartAdapter;
-    private HeaderPageAdapter headerPageAdapter;
-    private Context context;
-    private ApplicationPresenter applicationPresenter;
-    public HomeFragment(){
-        recordChartList = new ArrayList<>();
-        tracks = new ArrayList<>();
-        applicationPresenter = new ApplicationPresenterImpl(getContext());
-        applicationPresenter.loadTrackData();
-        applicationPresenter.loadRecordChartData();
+
+    private int mCurrentPage = 0;
+    private ViewPager mViewPager;
+    private boolean mIsLoading = true;
+    private boolean mIsLoadingPagerView = true;
+    List<RecordChart> mRecordChartList;
+    List<Track> mTracks;
+    private RecordChartAdapter mRecordChartAdapter;
+    private HeaderPageAdapter mHeaderPageAdapter;
+    private Loadfinish mContext;
+    private ApplicationPresenter mApplicationPresenter;
+    private Handler mHandler;
+    private Runnable mUpdate;
+    public HomeFragment() {
+        mRecordChartList = new ArrayList<>();
+        mTracks = new ArrayList<>();
+        mApplicationPresenter = new ApplicationPresenterImpl(getContext());
+        mApplicationPresenter.loadTrackData();
+        mApplicationPresenter.loadRecordChartData();
     }
-    public boolean isLoading(){return !(isLoading || isLoadingPagerView);}
+
+    public boolean isLoading() {
+        return !(mIsLoading || mIsLoadingPagerView);
+    }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -70,90 +76,98 @@ public class HomeFragment extends Fragment {
                 ViewModelProviders.of(this).get(TrackViewModel.class);
         subscribeUI(trackViewModel);
     }
-    private void subscribeUI(RecordChartViewModel viewModel){
+
+    private void subscribeUI(RecordChartViewModel viewModel) {
         viewModel.getRecordChart().observe(this, new Observer<List<RecordChart>>() {
             @Override
             public void onChanged(@Nullable List<RecordChart> recordCharts) {
-                if (recordCharts!= null){
-                    recordChartAdapter.setRecordChartList(recordCharts);
-                    recordChartAdapter.notifyDataSetChanged();
-                    isLoading = false;
-                    if(isLoading()){
-                        ((Loadfinish)context).onFinish();
+                if (recordCharts != null) {
+                    mRecordChartAdapter.setRecordChartList(recordCharts);
+                    mRecordChartAdapter.notifyDataSetChanged();
+                    mIsLoading = false;
+                    if (isLoading()) {
+                        ((Loadfinish) mContext).onFinish();
                     }
-                }
-                else{
-                    isLoading = true;
+                } else {
+                    mIsLoading = true;
                 }
             }
         });
     }
-    private void subscribeUI(TrackViewModel viewModel){
+
+    private void subscribeUI(TrackViewModel viewModel) {
         viewModel.getTracks().observe(this, new Observer<List<Track>>() {
             @Override
             public void onChanged(@Nullable List<Track> tracks) {
-                if (tracks!= null){
-                    headerPageAdapter.setTrackList(tracks);
-                    headerPageAdapter.notifyDataSetChanged();
-                    isLoadingPagerView = false;
-                    if(isLoading()){
-                        ((Loadfinish)context).onFinish();
+                if (tracks != null) {
+                    mHeaderPageAdapter.setTrackList(tracks);
+                    mHeaderPageAdapter.notifyDataSetChanged();
+                    mIsLoadingPagerView = false;
+                    if (isLoading()) {
+                        ((Loadfinish) mContext).onFinish();
                     }
-                }
-                else{
-                    isLoadingPagerView = true;
+                } else {
+                    mIsLoadingPagerView = true;
                 }
             }
         });
     }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof Loadfinish){
-            this.context = context;
+        if (context instanceof Loadfinish) {
+            this.mContext = (Loadfinish)context;
         }
     }
+
     @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        final View rootView = inflater.inflate(R.layout.fragment_record_chart,container,false);
+        final View rootView = inflater.inflate(R.layout.fragment_record_chart, container, false);
 
-        viewPager = rootView.findViewById(R.id.view_pager);
-        viewPager.setClipToPadding(false);
-        viewPager.setPadding(0,0,0,0);
-        headerPageAdapter = new HeaderPageAdapter(getActivity());
-        //headerPageAdapter.setTrackList(applicationPresenter.getTracks());
-        viewPager.setAdapter(headerPageAdapter);
-        viewPager.setCurrentItem(0, true);
+        mViewPager = rootView.findViewById(R.id.view_pager);
+        mViewPager.setClipToPadding(false);
+        mViewPager.setPadding(0, 0, 0, 0);
+        mHeaderPageAdapter = new HeaderPageAdapter(getActivity());
+        //mHeaderPageAdapter.setTrackList(mApplicationPresenter.getTracks());
+        mViewPager.setAdapter(mHeaderPageAdapter);
+        mViewPager.setCurrentItem(0, true);
         final RecyclerView listView = rootView.findViewById(R.id.recycler_view);
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         listView.setLayoutManager(llm);
-        recordChartAdapter = new RecordChartAdapter(getContext());
-        //recordChartAdapter.setRecordChartList(applicationPresenter.getRecordCharts());
+        mRecordChartAdapter = new RecordChartAdapter(getContext());
+        //mRecordChartAdapter.setRecordChartList(mApplicationPresenter.getRecordCharts());
         //listView.setDivider(null);
-        listView.setAdapter(recordChartAdapter);
-        //recordChartAdapter.notifyDataSetChanged();
+        listView.setAdapter(mRecordChartAdapter);
+        //mRecordChartAdapter.notifyDataSetChanged();
 
         // Auto start of viewpager
-        final Handler handler = new Handler();
-        final Runnable Update = new Runnable() {
+        mHandler = new Handler();
+        mUpdate = new Runnable() {
             public void run() {
-                if (currentPage == headerPageAdapter.getCount()) {
-                    currentPage = 0;
+                if (mCurrentPage == mHeaderPageAdapter.getCount()) {
+                    mCurrentPage = 0;
                 }
-                viewPager.setCurrentItem(currentPage++, true);
+                mViewPager.setCurrentItem(mCurrentPage++, true);
             }
         };
         Timer swipeTimer = new Timer();
         swipeTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                handler.post(Update);
+                mHandler.post(mUpdate);
             }
         }, 5000, 5000);
         return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mHandler.removeCallbacks(mUpdate);
     }
 }

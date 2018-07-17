@@ -17,13 +17,13 @@ import com.fresher.tronnv.research.ui.PlayListFragment;
 import com.fresher.tronnv.research.ui.HomeFragment;
 
 
-public class MainActivity extends AppCompatActivity implements PlayListFragment.OnItemLyricClickListener, HomeFragment.Loadfinish{
+public class MainActivity extends AppCompatActivity implements PlayListFragment.OnItemLyricClickListener, HomeFragment.Loadfinish {
 
 
-    private boolean isChange = false;
-    private ProgressBar progressBar;
-    private SearchView searchView;
-    private HomeFragment homeFragment;
+    private boolean mIsChange = false;
+    private ProgressBar mProgressBar;
+    private SearchView mSearchView;
+    private HomeFragment mHomeFragment;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -31,29 +31,29 @@ public class MainActivity extends AppCompatActivity implements PlayListFragment.
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home: {
-                    //HomeFragment homeFragment = new HomeFragment();
-                    if(isChange) {
-                        searchView.setVisibility(View.VISIBLE);
+                    //HomeFragment mHomeFragment = new HomeFragment();
+                    if (mIsChange) {
+                        mSearchView.setVisibility(View.VISIBLE);
                         FragmentManager fragmentManager = getSupportFragmentManager();
 
                         fragmentManager.beginTransaction()
-                                .replace(R.id.frame, homeFragment)
+                                .replace(R.id.frame, mHomeFragment)
                                 .commit();
-                        isChange = false;
-                   }
+                        mIsChange = false;
+                    }
                     return true;
                 }
                 case R.id.navigation_my_music: {
-                    if(!isChange) {
+                    if (!mIsChange) {
                         PlayListFragment playListFragment = new PlayListFragment();
-                        playListFragment.setSearchView(searchView);
+                        playListFragment.setmSearchView(mSearchView);
                         FragmentManager fragmentManager = getSupportFragmentManager();
 
                         fragmentManager.beginTransaction()
                                 .replace(R.id.frame, playListFragment)
                                 .commit();
-                        //searchView.setVisibility(View.GONE);
-                        isChange = true;
+                        //mSearchView.setVisibility(View.GONE);
+                        mIsChange = true;
                     }
                     return true;
                 }
@@ -72,24 +72,24 @@ public class MainActivity extends AppCompatActivity implements PlayListFragment.
         //config UI
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        progressBar = findViewById(R.id.loading_indicator);
-        searchView = findViewById(R.id.search_view);
-        searchView.setActivated(true);
-        searchView.onActionViewExpanded();
-        searchView.setIconified(false);
-        searchView.setFocusable(false);
-        searchView.clearFocus();
-        homeFragment = new HomeFragment();
+        mProgressBar = findViewById(R.id.loading_indicator);
+        mSearchView = findViewById(R.id.search_view);
+        mSearchView.setActivated(true);
+        mSearchView.onActionViewExpanded();
+        mSearchView.setIconified(false);
+        mSearchView.setFocusable(false);
+        mSearchView.clearFocus();
+        mHomeFragment = new HomeFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .add(R.id.frame, homeFragment)
+                .add(R.id.frame, mHomeFragment)
                 .commit();
     }
 
     //Event when click on a item in playlist
     @Override
     public void onItemSelected(int position, int idSong, String filter) {
-        Log.i("Position clicked = " , "" +position);
+        Log.i("Position clicked = ", "" + position);
         Bundle bundle = new Bundle();
         bundle.putInt("Index", position);
         bundle.putInt("ID", idSong);
@@ -102,6 +102,6 @@ public class MainActivity extends AppCompatActivity implements PlayListFragment.
 
     @Override
     public void onFinish() {
-        progressBar.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.GONE);
     }
 }

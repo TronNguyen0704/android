@@ -33,7 +33,7 @@
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-        <service android:name=".service.NotificationService"/>
+        <service android:name=".service.MediaPlayerService"/>
     </application>
 
 </manifest>

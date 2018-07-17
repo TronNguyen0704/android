@@ -6,7 +6,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 
 import com.fresher.tronnv.android_models.MusicLyric;
-import com.fresher.tronnv.android_models.Track;
 import com.fresher.tronnv.research.presenters.ApplicationPresenter;
 import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
 
@@ -18,18 +17,18 @@ import java.util.List;
  */
 public class MusicViewModel extends AndroidViewModel {
 
-    private final MediatorLiveData<List<MusicLyric>> observableMusic;
+    private final MediatorLiveData<List<MusicLyric>> mObservableMusic;
 
     public MusicViewModel(Application application) {
         super(application);
-        observableMusic = new MediatorLiveData<>();
+        mObservableMusic = new MediatorLiveData<>();
 
-        observableMusic.setValue(null);
+        mObservableMusic.setValue(null);
         ApplicationPresenter applicationPresenter = new ApplicationPresenterImpl(application.getBaseContext());
         LiveData<List<MusicLyric>> musics = applicationPresenter.requestMusic();
-        observableMusic.addSource(musics,observableMusic::setValue);
+        mObservableMusic.addSource(musics, mObservableMusic::setValue);
     }
     public LiveData<List<MusicLyric>> getMusics(){
-        return  observableMusic;
+        return mObservableMusic;
     }
 }

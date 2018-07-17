@@ -18,7 +18,7 @@
     <dimen name="notification_expanded_height">128dip</dimen>
     <dimen name="play_controls_notification">48dip</dimen>
     <dimen name="notification_padding">8dip</dimen>
-    <dimen name="dimen_icon_button">24dp</dimen>
+    <dimen name="dimen_icon_button">15dp</dimen>
     <dimen name="dimen_icon_medium">32dp</dimen>
     <dimen name="status_bar_height">120dp</dimen>
     <dimen name="pageviewer_height">200dp</dimen>

@@ -17,12 +17,8 @@ import android.widget.SearchView;
 
 import com.fresher.tronnv.android_models.MusicLyric;
 import com.fresher.tronnv.research.R;
-import com.fresher.tronnv.research.presenters.ApplicationPresenter;
-import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
 import com.fresher.tronnv.research.ui.adapter.PlayListAdapter;
 import com.fresher.tronnv.research.viewmodel.MusicViewModel;
-import com.fresher.tronnv.research.viewmodel.RecordChartViewModel;
-import com.fresher.tronnv.research.viewmodel.TrackViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,17 +35,16 @@ public class PlayListFragment extends Fragment {
         void onItemSelected(int position, int idSong, String filter);
     }
     OnItemLyricClickListener mCallback;
-    List<MusicLyric> lyrics ;
-    List<MusicLyric> musicLyricsShow ;
-    private boolean isLoading = true;
-    private SearchView searchView;
-    private PlayListAdapter playListAdapter;
-    public void setSearchView(SearchView searchView){
-        this.searchView = searchView;
+    List<MusicLyric> mLyrics;
+    List<MusicLyric> mMusicLyricsShow;
+    private SearchView mSearchView;
+    private PlayListAdapter mPlayListAdapter;
+    public void setmSearchView(SearchView mSearchView){
+        this.mSearchView = mSearchView;
     }
     public PlayListFragment(){
-        lyrics = new ArrayList<>();
-        musicLyricsShow = new ArrayList<>();
+        mLyrics = new ArrayList<>();
+        mMusicLyricsShow = new ArrayList<>();
     }
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -63,14 +58,12 @@ public class PlayListFragment extends Fragment {
             @Override
             public void onChanged(@Nullable List<MusicLyric> musicLyrics) {
                 if (musicLyrics!= null){
-                    playListAdapter.setMusicLyrics(musicLyrics);
-                    lyrics.addAll(musicLyrics);
-                    musicLyricsShow.addAll(musicLyrics);
-                    playListAdapter.notifyDataSetChanged();
-                    isLoading = false;
+                    mPlayListAdapter.setMusicLyrics(musicLyrics);
+                    mLyrics.addAll(musicLyrics);
+                    mMusicLyricsShow.addAll(musicLyrics);
+                    mPlayListAdapter.notifyDataSetChanged();
                 }
                 else{
-                    isLoading = true;
                 }
             }
         });
@@ -78,12 +71,12 @@ public class PlayListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if(musicLyricsShow.size() > 0) {
-//            lyrics.addAll(musicLyricsShow);
+//        if(mMusicLyricsShow.size() > 0) {
+//            mLyrics.addAll(mMusicLyricsShow);
 //        }
 //        else {
-//            lyrics.addAll(applicationPresenter.requestMusic());
-//            musicLyricsShow.addAll(applicationPresenter.requestMusic());
+//            mLyrics.addAll(applicationPresenter.requestMusic());
+//            mMusicLyricsShow.addAll(applicationPresenter.requestMusic());
 //        }
     }
 
@@ -104,20 +97,20 @@ public class PlayListFragment extends Fragment {
 
         final View rootView = inflater.inflate(R.layout.fragment_play_list,container,false);
 
-        //final SearchView searchView = rootView.findViewById(R.id.search_view);
-        searchView.setActivated(true);
-        searchView.onActionViewExpanded();
-        searchView.setIconified(false);
-        searchView.setFocusable(false);
-        searchView.clearFocus();
+        //final SearchView mSearchView = rootView.findViewById(R.id.search_view);
+        mSearchView.setActivated(true);
+        mSearchView.onActionViewExpanded();
+        mSearchView.setIconified(false);
+        mSearchView.setFocusable(false);
+        mSearchView.clearFocus();
 
         final ListView listView = rootView.findViewById(R.id.recycler_view);
 
-         playListAdapter = new PlayListAdapter(getContext());
+         mPlayListAdapter = new PlayListAdapter(getContext());
         //listView.setDivider(null);
-        listView.setAdapter(playListAdapter);
+        listView.setAdapter(mPlayListAdapter);
         final String[] filter = {""};
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
 
@@ -127,16 +120,16 @@ public class PlayListFragment extends Fragment {
             @Override
             public boolean onQueryTextChange(String newText) {
                 filter[0] = newText;
-                musicLyricsShow.clear();
-                musicLyricsShow.addAll(playListAdapter.getFilter(newText));
-                playListAdapter.notifyDataSetChanged();
+                mMusicLyricsShow.clear();
+                mMusicLyricsShow.addAll(mPlayListAdapter.getFilter(newText));
+                mPlayListAdapter.notifyDataSetChanged();
                 return true;
             }
         });
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mCallback.onItemSelected(position,musicLyricsShow.get(position).getId(),filter[0]);
+                mCallback.onItemSelected(position, mMusicLyricsShow.get(position).getId(),filter[0]);
 
             }
         });

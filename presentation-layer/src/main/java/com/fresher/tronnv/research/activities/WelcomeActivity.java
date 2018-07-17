@@ -23,19 +23,19 @@ import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
  */
 public class WelcomeActivity extends AppCompatActivity{
 
-    private NetworkChangeReceiver receiver;
-    private ApplicationPresenter applicationPresenter;
+    private NetworkChangeReceiver mReceiver;
+    private ApplicationPresenter mApplicationPresenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome);
-        receiver = new NetworkChangeReceiver();
-        receiver.setContext(this);
+        mReceiver = new NetworkChangeReceiver();
+        mReceiver.setContext(this);
         final IntentFilter filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
-        //Broadcast receiver
-        registerReceiver(receiver, filter);
-        applicationPresenter = new ApplicationPresenterImpl(getBaseContext());
-        applicationPresenter.loadMusicData();
+        //Broadcast mReceiver
+        registerReceiver(mReceiver, filter);
+        mApplicationPresenter = new ApplicationPresenterImpl(getBaseContext());
+        mApplicationPresenter.loadMusicData();
         Animation shake = AnimationUtils.loadAnimation(this, R.anim.scale);
         shake.setRepeatCount(ObjectAnimator.INFINITE);
         shake.setRepeatMode(ObjectAnimator.REVERSE);
@@ -47,21 +47,21 @@ public class WelcomeActivity extends AppCompatActivity{
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(receiver);
+        unregisterReceiver(mReceiver);
     }
 
     public void goToMain(View v) {
         //Checking network
-        if(receiver.isConnected(getBaseContext())) {
-            if(applicationPresenter.isData()) {
+        if(mReceiver.isConnected(getBaseContext())) {
+            if(mApplicationPresenter.isData()) {
                 startActivity(new Intent(this, MainActivity.class));
             }else{
-                applicationPresenter.loadMusicData();
+                mApplicationPresenter.loadMusicData();
                 Toast.makeText(this,"Data is loading...",Toast.LENGTH_SHORT).show();
             }
         }
         else{
-            if(!applicationPresenter.isData()) {
+            if(!mApplicationPresenter.isData()) {
                 Toast.makeText(this,"No Internet connection",Toast.LENGTH_SHORT).show();
             }
             else {

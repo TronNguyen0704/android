@@ -11,52 +11,52 @@ import com.fresher.tronnv.research.MainUseCases;
 import java.util.List;
 
 public class ApplicationPresenterImpl implements ApplicationPresenter{
-    private MainUseCases mainUseCases;
+    private MainUseCases mMainUseCases;
     public ApplicationPresenterImpl(Context context){
-        if(mainUseCases == null)
-            this.mainUseCases = new MainUseCases(context);
+        if(mMainUseCases == null)
+            this.mMainUseCases = new MainUseCases(context);
     }
     public LiveData<List<MusicLyric>> requestMusic() {
-        return  mainUseCases.getAllMusic();
+        return  mMainUseCases.getAllMusic();
     }
 
     @Override
     public LiveData<List<MusicLyric>> requestMusic(String filter) {
-        return mainUseCases.getMusicByName(filter);
+        return mMainUseCases.getMusicByName(filter);
     }
 
     @Override
     public LiveData<MusicLyric> getSongById(int id) {
-        return mainUseCases.getSongById(id);
+        return mMainUseCases.getSongById(id);
     }
 
     @Override
     public LiveData<List<Track>> getTracks() {
-        return mainUseCases.getTracks();
+        return mMainUseCases.getTracks();
     }
 
     @Override
     public LiveData<List<RecordChart>> getRecordCharts() {
-        return mainUseCases.getRecordChart();
+        return mMainUseCases.getRecordChart();
     }
 
     @Override
     public boolean isData() {
-        return mainUseCases.isData();
+        return mMainUseCases.isData();
     }
 
     @Override
     public void loadTrackData() {
-        mainUseCases.loadTrackData();
+        mMainUseCases.loadTrackData();
     }
 
     @Override
     public void loadRecordChartData() {
-        mainUseCases.loadRecortChartData();
+        mMainUseCases.loadRecortChartData();
     }
 
     @Override
     public void loadMusicData() {
-        mainUseCases.loadMusicData();
+        mMainUseCases.loadMusicData();
     }
 }

@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.FutureTarget;
+import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BaseTarget;
 import com.bumptech.glide.request.target.SizeReadyCallback;
 import com.bumptech.glide.request.target.Target;
@@ -18,6 +19,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.ExecutionException;
+
+import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class Constants {
     public interface ACTION {
@@ -47,6 +50,7 @@ public class Constants {
         }
         return bm;
     }
+
     public static Bitmap getBitmapFromURL(String src, Context context) {
         try {
             Bitmap bitmap = Glide.with(context)

@@ -14,10 +14,10 @@ import android.widget.Toast;
  * register event when network changed
  */
 public class NetworkChangeReceiver extends BroadcastReceiver {
-    private Context context;
+    private Context mContext;
 
     public void setContext(Context context) {
-        this.context = context;
+        this.mContext = context;
     }
     @Override
     public void onReceive(Context context, Intent intent) {

@@ -21,72 +21,74 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 /**
  * Created by NGUYEN VAN TRON on 05/16/18.
  */
-public class PlayListAdapter extends BaseAdapter{
+public class PlayListAdapter extends BaseAdapter {
 
-    private Context context;
-    private List<MusicLyric> musicLyrics;
-    private List<MusicLyric> musicLyricsShow;
+    private Context mContext;
+    private List<MusicLyric> mMusicLyrics;
+    private List<MusicLyric> mMusicLyricsShow;
 
     public void setMusicLyrics(List<MusicLyric> musicLyrics) {
-        this.musicLyrics.addAll(musicLyrics);
-        this.musicLyricsShow.addAll(musicLyrics);
+        this.mMusicLyrics.addAll(musicLyrics);
+        this.mMusicLyricsShow.addAll(musicLyrics);
     }
 
-    public PlayListAdapter(Context context){
-        this.context = context;
-        this.musicLyrics = new ArrayList<>();
-        this.musicLyricsShow = new ArrayList<>();
+    public PlayListAdapter(Context context) {
+        this.mContext = context;
+        this.mMusicLyrics = new ArrayList<>();
+        this.mMusicLyricsShow = new ArrayList<>();
     }
+
     @Override
     public int getCount() {
-        if(musicLyricsShow!= null)
-            return musicLyricsShow.size();
+        if (mMusicLyricsShow != null)
+            return mMusicLyricsShow.size();
         return 0;
     }
 
     @Override
     public Object getItem(int position) {
-        if(musicLyrics!= null)
-            return musicLyrics.get(position);
+        if (mMusicLyrics != null)
+            return mMusicLyrics.get(position);
         return null;
     }
 
     @Override
     public long getItemId(int position) {
-        if(musicLyrics!= null)
-            return musicLyrics.get(position).getId();
+        if (mMusicLyrics != null)
+            return mMusicLyrics.get(position).getId();
         return 0;
     }
-    public List<MusicLyric> getFilter(String filter){
-        musicLyricsShow.clear();
-        for(int i = 0; i < musicLyrics.size(); i++){
-            MusicLyric musicLyric = musicLyrics.get(i);
-            if(musicLyric.getName().toLowerCase().contains(filter.toLowerCase())){
-                musicLyricsShow.add(musicLyric);
+
+    public List<MusicLyric> getFilter(String filter) {
+        mMusicLyricsShow.clear();
+        for (int i = 0; i < mMusicLyrics.size(); i++) {
+            MusicLyric musicLyric = mMusicLyrics.get(i);
+            if (musicLyric.getName().toLowerCase().contains(filter.toLowerCase())) {
+                mMusicLyricsShow.add(musicLyric);
             }
 
         }
-        return musicLyricsShow;
+        return mMusicLyricsShow;
     }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        View view = LayoutInflater.from(context).inflate(R.layout.row_item, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.row_item, parent, false);
 
         TextView author = view.findViewById(R.id.tv_author);
         TextView name = view.findViewById(R.id.tv_name);
         ImageView avatar = view.findViewById(R.id.img_avatar);
-        if((musicLyricsShow != null && musicLyricsShow.size() > 0)) {
-            author.setText(musicLyricsShow.get(position).getAuthor());
-            name.setText(musicLyricsShow.get(position).getName());
+        if ((mMusicLyricsShow != null && mMusicLyricsShow.size() > 0)) {
+            author.setText(mMusicLyricsShow.get(position).getAuthor());
+            name.setText(mMusicLyricsShow.get(position).getName());
             Glide.with(view.getContext())
-                    .load(musicLyricsShow.get(position).getAvatar())
+                    .load(mMusicLyricsShow.get(position).getAvatar())
                     .apply(RequestOptions.bitmapTransform(
                             new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL)))
                     .into(avatar);
             Glide.get(view.getContext()).clearMemory();
-        }
-        else{
+        } else {
             view.setVisibility(View.GONE);
         }
         return view;

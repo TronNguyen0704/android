@@ -23,20 +23,19 @@ import java.util.Objects;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.RecyclerViewHolder> {
-    private List<RecordChart> recordCharts;
+    private List<RecordChart> mRecordCharts;
 
-    private Context context;
+    private Context mContext;
 
     public void setRecordChartList(List<RecordChart> recordChart) {
-        if(this.recordCharts == null) {
-            this.recordCharts.addAll(recordChart);
+        if (this.mRecordCharts == null) {
+            this.mRecordCharts.addAll(recordChart);
             notifyItemRangeInserted(0, recordChart.size());
-        }
-        else{
+        } else {
             DiffUtil.DiffResult result = DiffUtil.calculateDiff(new DiffUtil.Callback() {
                 @Override
                 public int getOldListSize() {
-                    return recordCharts.size();
+                    return mRecordCharts.size();
                 }
 
                 @Override
@@ -46,47 +45,47 @@ public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.
 
                 @Override
                 public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-                    return recordCharts.get(oldItemPosition).getId() ==
+                    return mRecordCharts.get(oldItemPosition).getId() ==
                             recordChart.get(newItemPosition).getId();
                 }
 
                 @Override
                 public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
                     RecordChart newRecorChart = recordChart.get(newItemPosition);
-                    RecordChart oldRecordChart = recordCharts.get(oldItemPosition);
+                    RecordChart oldRecordChart = mRecordCharts.get(oldItemPosition);
                     return newRecorChart.getId() == oldRecordChart.getId()
                             && Objects.equals(newRecorChart.getName(), oldRecordChart.getName())
                             && Objects.equals(newRecorChart.getName(), oldRecordChart.getName())
                             && newRecorChart.getAuthor() == oldRecordChart.getAuthor();
                 }
             });
-            recordCharts.addAll(recordChart);
+            mRecordCharts.addAll(recordChart);
             result.dispatchUpdatesTo(this);
         }
     }
 
-    public RecordChartAdapter(Context context){
-        this.context = context;
-        recordCharts = new ArrayList<>();
+    public RecordChartAdapter(Context context) {
+        this.mContext = context;
+        mRecordCharts = new ArrayList<>();
     }
+
     @NonNull
     @Override
     public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.rank_item, parent, false);
-        Glide.get(view.getContext()).clearMemory();
         return new RecyclerViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
-        int [] cols = new int[]{Color.BLUE,Color.GREEN,Color.RED, Color.WHITE};
-        holder.txtRank.setText(recordCharts.get(position).getRank() +"");
+        int[] cols = new int[]{Color.BLUE, Color.GREEN, Color.RED, Color.WHITE};
+        holder.txtRank.setText(mRecordCharts.get(position).getRank() + "");
         holder.txtRank.setTextColor(cols[(position < 3) ? position : 3]);
-        holder.txtSongName.setText(recordCharts.get(position).getName()+"");
-        holder.txtAuthor.setText(recordCharts.get(position).getAuthor()+"");
-        Glide.with(context)
-                .load(recordCharts.get(position).getAvatar())
+        holder.txtSongName.setText(mRecordCharts.get(position).getName() + "");
+        holder.txtAuthor.setText(mRecordCharts.get(position).getAuthor() + "");
+        Glide.with(mContext)
+                .load(mRecordCharts.get(position).getAvatar())
                 .apply(RequestOptions.bitmapTransform(
                         new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL)))
                 .into(holder.iv_avatar);
@@ -95,20 +94,21 @@ public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.
 
     @Override
     public int getItemCount() {
-        if(recordCharts !=null)
-            return recordCharts.size();
+        if (mRecordCharts != null)
+            return mRecordCharts.size();
         return 0;
     }
 
-    public class RecyclerViewHolder extends RecyclerView.ViewHolder {
+     static class  RecyclerViewHolder extends RecyclerView.ViewHolder {
         TextView txtRank;
         ImageView iv_avatar;
         TextView txtSongName;
         TextView txtAuthor;
+
         public RecyclerViewHolder(View itemView) {
             super(itemView);
-            txtRank  = itemView.findViewById(R.id.tv_rank);
-            iv_avatar  = itemView.findViewById(R.id.img_avatar);
+            txtRank = itemView.findViewById(R.id.tv_rank);
+            iv_avatar = itemView.findViewById(R.id.img_avatar);
             txtSongName = itemView.findViewById(R.id.tv_name);
             txtAuthor = itemView.findViewById(R.id.tv_author);
 

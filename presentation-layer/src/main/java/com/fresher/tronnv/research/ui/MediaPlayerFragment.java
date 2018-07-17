@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -17,61 +16,71 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import com.fresher.tronnv.research.R;
-import com.fresher.tronnv.research.service.NotificationService;
 
+import com.fresher.tronnv.research.R;
+import com.fresher.tronnv.research.service.MediaPlayerService;
+
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by NGUYEN VAN TRON on 05/18/18.
- *This fragment to show media player
+ * This fragment to show media player
  */
-public class MediaPlayerFragment extends Fragment{
+public class MediaPlayerFragment extends Fragment {
 
     //private MediaPlayer mediaPlayer;
     private Handler mSeekbarUpdateHandler = new Handler();
     private Runnable mUpdateSeekbar;
-    private boolean isPause = false;
+    private boolean mIsPause = false;
     private boolean isResume = false;
-    private Context context;
-    private int id = -1;
-    private OnSongChange onSongChange;
-    private boolean isPlaying = true;
-    private BroadcastReceiver broadcastReceiver;
-    private int currentDuration = 0;
-    private int duration = 0;
-    private ImageButton playBtn;
+    private Context mContext;
+    private int mId = -1;
+    private OnSongChange mOnSongChange;
+    private boolean mIsPlaying = true;
+    private BroadcastReceiver mBroadcastReceiver;
+    private int mCurrentDuration = 0;
+    private int mDuration = 0;
+    private ImageButton mPlayBtn;
+    private TimerTask mUpdateTask = new TimerTask() {
+        @Override
+        public void run() {
+           sentToUpdateUI();
+        }
+    };
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            onSongChange = (OnSongChange) context;
-        }
-        catch (ClassCastException  e){
+            mOnSongChange = (OnSongChange) context;
+        } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() + "must implement OnSongChange");
         }
     }
-    public MediaPlayerFragment(){
-        broadcastReceiver = new BroadcastReceiver() {
+
+    public MediaPlayerFragment() {
+        Timer timer = new Timer("UpdateTimer");
+        timer.schedule(mUpdateTask, 0L, 1L);
+        mBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                currentDuration = intent.getIntExtra(NotificationService.CURRENTPOSITION,currentDuration);
-                duration = intent.getIntExtra(NotificationService.DURATION,duration);
-                int songID = intent.getIntExtra("id", id);
-                if(intent.getIntExtra("play_pause",-1) != -1){
-                    if(intent.getIntExtra("play_pause",-1)==1) {
-                        playBtn.setImageResource(R.drawable.pause);
-                        isPlaying = true;
-                    }
-                    else{
-                        playBtn.setImageResource(R.drawable.play);
-                        isPlaying = false;
+                mCurrentDuration = intent.getIntExtra(MediaPlayerService.CURRENTPOSITION, mCurrentDuration);
+                mDuration = intent.getIntExtra(MediaPlayerService.DURATION, mDuration);
+                int songID = intent.getIntExtra("mId", mId);
+                if (intent.getIntExtra("play_pause", -1) != -1) {
+                    if (intent.getIntExtra("play_pause", -1) == 1) {
+                        mPlayBtn.setImageResource(R.drawable.pause);
+                        mIsPlaying = true;
+                    } else {
+                        mPlayBtn.setImageResource(R.drawable.play);
+                        mIsPlaying = false;
                     }
                 }
-                if(id != songID) {
-                    playBtn.setImageResource(R.drawable.pause);
-                    onSongChange.onChangeUI(songID);
-                    id = songID;
+                if (mId != songID) {
+                    mPlayBtn.setImageResource(R.drawable.pause);
+                    mOnSongChange.onChangeUI(songID);
+                    mId = songID;
                 }
             }
         };
@@ -80,49 +89,48 @@ public class MediaPlayerFragment extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
-        mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
+        mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 10);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        LocalBroadcastManager.getInstance(context).registerReceiver(broadcastReceiver,new IntentFilter(NotificationService.PROCESSED));
+        LocalBroadcastManager.getInstance(mContext).registerReceiver(mBroadcastReceiver, new IntentFilter(MediaPlayerService.PROCESSED));
     }
 
     @Override
     public void onStop() {
-        LocalBroadcastManager.getInstance(context).unregisterReceiver(broadcastReceiver);
+        LocalBroadcastManager.getInstance(mContext).unregisterReceiver(mBroadcastReceiver);
+        mUpdateTask.cancel();
         super.onStop();
     }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        final View rootView = inflater.inflate(R.layout.fragment_mediaplayer,container,false);
+        final View rootView = inflater.inflate(R.layout.fragment_mediaplayer, container, false);
         final SeekBar seekBar = rootView.findViewById(R.id.seekbar);
         final TextView timeCount = rootView.findViewById(R.id.tv_time_count);
         final TextView totalTime = rootView.findViewById(R.id.tv_total_time);
         int timeReTotal = 0;
-        seekBar.setMax(duration);
+        seekBar.setMax(mDuration);
         long min = TimeUnit.MILLISECONDS.toMinutes((long) timeReTotal);
         long sec = TimeUnit.MILLISECONDS.toSeconds((long) timeReTotal) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) timeReTotal));
-        totalTime.setText((min>=10)? String.valueOf(min) : "0"+ min +":" +( (sec>=10)? String.valueOf(sec) : "0"+ sec));
+        totalTime.setText((min >= 10) ? String.valueOf(min) : "0" + min + ":" + ((sec >= 10) ? String.valueOf(sec) : "0" + sec));
         //Run thread update UI of seek bar
-        mUpdateSeekbar = new Runnable() {
-            @Override
-            public void run() {
-                if(!isPause){
-                    updateSeekBar(seekBar,timeCount,totalTime);
-                    mSeekbarUpdateHandler.postDelayed(this, 50);
-                }
+        mUpdateSeekbar = () -> {
+            if (!mIsPause) {
+                updateSeekBar(seekBar, timeCount, totalTime);
+                mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 10);
             }
         };
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                        Intent intent = new Intent(NotificationService.RESTART);
-                        intent.putExtra("progress", progress);
-                        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
-                        localBroadcastManager.sendBroadcast(intent);
+                    Intent intent = new Intent(MediaPlayerService.RESTART);
+                    intent.putExtra("progress", progress);
+                    LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+                    localBroadcastManager.sendBroadcast(intent);
                 }
             }
 
@@ -133,117 +141,114 @@ public class MediaPlayerFragment extends Fragment{
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                updateSeekBar(seekBar, timeCount, totalTime);
             }
         });
-        playBtn = rootView.findViewById(R.id.btn_play);
-        playBtn.setImageResource(R.drawable.pause);
+        mPlayBtn = rootView.findViewById(R.id.btn_play);
+        mPlayBtn.setImageResource(R.drawable.pause);
         final ImageButton preBtn = rootView.findViewById(R.id.btn_pre);
         preBtn.setImageResource(R.drawable.pre);
         ImageButton nextBtn = rootView.findViewById(R.id.btn_next);
         nextBtn.setImageResource(R.drawable.next);
-        playBtn.setOnClickListener(v -> {
-            if(isPlaying){
-                onSongChange.onPauseMedia();
-                isPlaying = false;
-                playBtn.setImageResource(R.drawable.play);
-            }
-            else{
-                onSongChange.onPlay(seekBar.getProgress());
-                isPlaying = true;
-                playBtn.setImageResource(R.drawable.pause);
+        mPlayBtn.setOnClickListener(v -> {
+            if (mIsPlaying) {
+                mOnSongChange.onPauseMedia();
+                mIsPlaying = false;
+                mPlayBtn.setImageResource(R.drawable.play);
+            } else {
+                mOnSongChange.onPlay(seekBar.getProgress());
+                mIsPlaying = true;
+                mPlayBtn.setImageResource(R.drawable.pause);
             }
         });
         preBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!isResume) {
-                    playBtn.setImageResource(R.drawable.pause);
+                if (!isResume) {
+                    mPlayBtn.setImageResource(R.drawable.pause);
                 }
-                if(id == 1){
-                    id = 11;
+                if (mId == 1) {
+                    mId = 11;
                 }
-                id--;
-                if(id < 0){
-                    id = NotificationService.serviceIdSong;
-                    if(id == 1){
-                        id = 11;
+                mId--;
+                if (mId < 0) {
+                    mId = MediaPlayerService.sServiceIdSong;
+                    if (mId == 1) {
+                        mId = 11;
                     }
-                    id--;
+                    mId--;
                 }
                 //sent data to LyricFragment
-                onSongChange.onPreviousSong(id);
-                mUpdateSeekbar = new Runnable() {
-                    @Override
-                    public void run() {
-                        if(!isPause){
-                            updateSeekBar(seekBar,timeCount,totalTime);
-                            mSeekbarUpdateHandler.postDelayed(this, 50);
-                        }
-                    }
-                };
+                mOnSongChange.onPreviousSong(mId);
 
             }
         });
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!isResume) {
-                    playBtn.setImageResource(R.drawable.pause);
+                if (!isResume) {
+                    mPlayBtn.setImageResource(R.drawable.pause);
                 }
-                if(id == 0){
-                    id = NotificationService.serviceIdSong;
+                if (mId == 0) {
+                    mId = MediaPlayerService.sServiceIdSong;
                 }
-                if(id == 10){
-                    id = 0;
+                if (mId == 10) {
+                    mId = 0;
                 }
-                id++;
+                mId++;
                 //sent data to LyricFragment
-                onSongChange.onNextSong(id);
-                mUpdateSeekbar = new Runnable() {
-                    @Override
-                    public void run() {
-                        if(!isPause){
-                            updateSeekBar(seekBar,timeCount,totalTime);
-                            mSeekbarUpdateHandler.postDelayed(this, 50);
-                        }
-                    }
-                };
-
+                mOnSongChange.onNextSong(mId);
             }
         });
         return rootView;
     }
-    private void updateSeekBar(SeekBar seekBar, TextView timeCount, TextView totalTime){
-        seekBar.setMax(duration);
-        int timeRemaining = currentDuration;
+
+    @Override
+    public void onDestroy() {
+        mSeekbarUpdateHandler.removeCallbacks(mUpdateSeekbar);
+        super.onDestroy();
+    }
+
+    private void sentToUpdateUI() {
+        Intent intent = new Intent(MediaPlayerService.RESTART);
+        intent.putExtra("need_update",true);
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
+        localBroadcastManager.sendBroadcast(intent);
+    }
+    private void updateSeekBar(SeekBar seekBar, TextView timeCount, TextView totalTime) {
+        seekBar.setMax(mDuration);
+        int timeRemaining = mCurrentDuration;
         seekBar.setProgress(timeRemaining);
         long min = TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining);
         long sec = TimeUnit.MILLISECONDS.toSeconds((long) timeRemaining) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) timeRemaining));
-        timeCount.setText((min>=10)? String.valueOf(min) : "0"+ min +":" +( (sec>=10)? String.valueOf(sec) : "0"+ sec));
-        long min2 = TimeUnit.MILLISECONDS.toMinutes((long) duration);
-        long sec2 = TimeUnit.MILLISECONDS.toSeconds((long) duration) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) duration));
-        totalTime.setText((min>=10)? String.valueOf(min2) : "0"+ min2 +":" +( (sec2>=10)? String.valueOf(sec2) : "0"+ sec2));
+        timeCount.setText((min >= 10) ? String.valueOf(min) : "0" + min + ":" + ((sec >= 10) ? String.valueOf(sec) : "0" + sec));
+        long min2 = TimeUnit.MILLISECONDS.toMinutes((long) mDuration);
+        long sec2 = TimeUnit.MILLISECONDS.toSeconds((long) mDuration) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long) mDuration));
+        totalTime.setText((min >= 10) ? String.valueOf(min2) : "0" + min2 + ":" + ((sec2 >= 10) ? String.valueOf(sec2) : "0" + sec2));
     }
-    public void setMediaPlayer(MediaPlayer mediaPlayer) {
 
+    public void setContext(Context context) {
+        this.mContext = context;
     }
-    public void setContext(Context context){
-        this.context = context;
+
+    public void setmId(int mId) {
+        this.mId = mId;
     }
-    public void setId(int id) {
-        this.id = id;
-    }
-    private int getRawIDByName(String name){
-        return getResources().getIdentifier(name, "raw", context.getPackageName());
+
+    private int getRawIDByName(String name) {
+        return getResources().getIdentifier(name, "raw", mContext.getPackageName());
     }
 
     //Interface to transfer data between two fragment
     public interface OnSongChange {
         void onNextSong(int id);
+
         void onPauseMedia();
+
         void onPlay(int curr);
+
         void onPreviousSong(int id);
+
         void onChangeUI(int songID);
     }
 }

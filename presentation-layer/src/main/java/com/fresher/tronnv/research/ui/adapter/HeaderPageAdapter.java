@@ -16,21 +16,25 @@ import com.fresher.tronnv.research.R;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import jp.wasabeef.glide.transformations.gpu.VignetteFilterTransformation;
 
 public class HeaderPageAdapter extends PagerAdapter {
 
-    private LayoutInflater inflater;
-    private Activity context;
-    private List<Track> tracks;
+    private LayoutInflater mInflater;
+    private Activity mContext;
+    private List<Track> mTracks;
+
     public HeaderPageAdapter(Activity context) {
-        this.context = context;
-        inflater = context.getLayoutInflater();
-        tracks = new ArrayList<>();
+        this.mContext = context;
+        mInflater = context.getLayoutInflater();
+        mTracks = new ArrayList<>();
     }
+
     public void setTrackList(List<Track> trackList) {
-        this.tracks.addAll(trackList);
+        this.mTracks.addAll(trackList);
     }
+
     @Override
     public void destroyItem(ViewGroup container, int position, Object object) {
         container.removeView((View) object);
@@ -38,26 +42,26 @@ public class HeaderPageAdapter extends PagerAdapter {
 
     @Override
     public int getCount() {
-        return tracks.size();
+        return mTracks.size();
     }
 
     @Override
     public Object instantiateItem(ViewGroup view, int position) {
-        View myImageLayout = inflater.inflate(R.layout.slider_item, view, false);
-        ImageView myImage =  myImageLayout
+        View myImageLayout = mInflater.inflate(R.layout.slider_item, view, false);
+        ImageView myImage = myImageLayout
                 .findViewById(R.id.img_avatar);
 
-        Glide.with(context)
-                .load(tracks.get(position).getThumb())
+        Glide.with(mContext)
+                .load(mTracks.get(position).getThumb())
                 .apply(RequestOptions.bitmapTransform(
                         new VignetteFilterTransformation(
-                                new PointF(0.5f,0.5f),
-                                new float[]{0f,0f,0f},0.1f,0.75f)))
+                                new PointF(0.5f, 0.5f),
+                                new float[]{0f, 0f, 0f}, 0.1f, 0.75f)))
                 .into(myImage);
         TextView name = myImageLayout.findViewById(R.id.tv_title);
-        name.setText(tracks.get(position).getTitle());
+        name.setText(mTracks.get(position).getTitle());
         TextView des = myImageLayout.findViewById(R.id.tv_description);
-        des.setText(tracks.get(position).getDescription());
+        des.setText(mTracks.get(position).getDescription());
         view.addView(myImageLayout);
         Glide.get(view.getContext()).clearMemory();
         return myImageLayout;

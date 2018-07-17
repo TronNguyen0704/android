@@ -1,7 +1,6 @@
 package com.fresher.tronnv.research;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.persistence.room.PrimaryKey;
 import android.content.Context;
 
 
@@ -18,54 +17,54 @@ import com.fresher.tronnv.android_models.Track;
 import java.util.List;
 
 public class MainUseCases {
-    private MusicBusiness musicBusiness;
-    private RecordChartBusiness recordChartBusiness;
-    private TrackBusiness trackBusiness;
-    private Context context;
+    private MusicBusiness mMusicBusiness;
+    private RecordChartBusiness mRecordChartBusiness;
+    private TrackBusiness mTrackBusiness;
+    private Context mContext;
     public MainUseCases(Context context){
-        this.context = context;
-        if(musicBusiness == null)
-            this.musicBusiness = new MusicBusinessImpl(context);
-        if(recordChartBusiness == null)
-            this.recordChartBusiness = new RecordChartBusinessImpl(context);
-        if(trackBusiness == null)
-            this.trackBusiness = new TrackBusinessImpl(context);
+        this.mContext = context;
+        if(mMusicBusiness == null)
+            this.mMusicBusiness = new MusicBusinessImpl(context);
+        if(mRecordChartBusiness == null)
+            this.mRecordChartBusiness = new RecordChartBusinessImpl(context);
+        if(mTrackBusiness == null)
+            this.mTrackBusiness = new TrackBusinessImpl(context);
     }
     public void loadMusicData(){
-        musicBusiness.loadMusicData(context);
+        mMusicBusiness.loadMusicData(mContext);
     }
     public void loadTrackData(){
-        trackBusiness.loadTrackData(context);
+        mTrackBusiness.loadTrackData(mContext);
     }
     public void loadRecortChartData(){
-        recordChartBusiness.loadRecortChartData(context);
+        mRecordChartBusiness.loadRecortChartData(mContext);
     }
     public LiveData<List<MusicLyric>> getAllMusic() {
-        return musicBusiness.getAllMusicData();
+        return mMusicBusiness.getAllMusicData();
     }
     public LiveData<List<MusicLyric>> getMusicByName(String filter){
-        return musicBusiness.getMusicByName(filter);
+        return mMusicBusiness.getMusicByName(filter);
     }
     public LiveData<MusicLyric> getSongById(int id){
-        return musicBusiness.getSongById(id);
+        return mMusicBusiness.getSongById(id);
     }
     public LiveData<List<RecordChart>> getRecordChart(){
-        return recordChartBusiness.getRecordCharts();
+        return mRecordChartBusiness.getRecordCharts();
     }
     public LiveData<List<Track>> getTracks(){
-        return trackBusiness.getTracks();
+        return mTrackBusiness.getTracks();
     }
 
     public boolean isData(){
         return isRecordChartData() && isMusicData() && isTrackData();
     }
     public boolean isRecordChartData() {
-        return recordChartBusiness.isData();
+        return mRecordChartBusiness.isData();
     }
     public boolean isMusicData() {
-        return musicBusiness.isData();
+        return mMusicBusiness.isData();
     }
     public boolean isTrackData() {
-        return trackBusiness.isData();
+        return mTrackBusiness.isData();
     }
 }

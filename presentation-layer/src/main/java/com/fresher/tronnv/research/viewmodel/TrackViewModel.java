@@ -18,18 +18,18 @@ import java.util.List;
  */
 public class TrackViewModel extends AndroidViewModel {
 
-    private final MediatorLiveData<List<Track>> observableTrack;
+    private final MediatorLiveData<List<Track>> mObservableTrack;
 
     public TrackViewModel(Application application) {
         super(application);
-        observableTrack = new MediatorLiveData<>();
+        mObservableTrack = new MediatorLiveData<>();
 
-        observableTrack.setValue(null);
+        mObservableTrack.setValue(null);
         ApplicationPresenter applicationPresenter = new ApplicationPresenterImpl(application.getBaseContext());
         LiveData<List<Track>> tracks = applicationPresenter.getTracks();
-        observableTrack.addSource(tracks,observableTrack::setValue);
+        mObservableTrack.addSource(tracks, mObservableTrack::setValue);
     }
     public LiveData<List<Track>> getTracks(){
-        return  observableTrack;
+        return mObservableTrack;
     }
 }
