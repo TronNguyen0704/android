@@ -15,14 +15,14 @@ import com.fresher.tronnv.android_models.RecordChart;
 import java.util.List;
 
 public class RecordChartBusinessImpl implements RecordChartBusiness {
-    private AppExecutors appExecutors;
-    private Context context;
+    private AppExecutors mAppExecutors;
+    private Context mContext;
     public RecordChartBusinessImpl(Context context){
-        this.context = context;
-        appExecutors = new AppExecutors();
+        this.mContext = context;
+        mAppExecutors = new AppExecutors();
     }
     public MusicDatabase getMusicDatabase(){
-        return MusicDatabase.getInstance(context,appExecutors);
+        return MusicDatabase.getInstance(mContext,mAppExecutors);
     }
     public DataRepository getMusicRepository(){
         return DataRepository.getsInstance(getMusicDatabase());

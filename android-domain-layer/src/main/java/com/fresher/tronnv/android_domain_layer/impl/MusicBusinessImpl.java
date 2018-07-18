@@ -13,15 +13,15 @@ import com.fresher.tronnv.android_models.MusicLyric;
 import java.util.List;
 
 public class MusicBusinessImpl implements MusicBusiness {
-    private AppExecutors appExecutors;
-    private Context context;
+    private AppExecutors mAppExecutors;
+    private Context mContext;
     public MusicBusinessImpl(Context context){
-        this.context = context;
-        appExecutors = new AppExecutors();
+        this.mContext = context;
+        mAppExecutors = new AppExecutors();
 
     }
     private MusicDatabase getMusicDatabase(){
-        return MusicDatabase.getInstance(context,appExecutors);
+        return MusicDatabase.getInstance(mContext,mAppExecutors);
     }
     private DataRepository getMusicRepository(){
         return DataRepository.getsInstance(getMusicDatabase());

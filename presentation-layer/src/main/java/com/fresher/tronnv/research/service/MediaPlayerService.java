@@ -10,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -50,12 +51,9 @@ public class MediaPlayerService extends Service{
     private int mId;
     private int mDuration = 0;
     private int mCurr = 0;
-    private Handler mHandlerCompletion;
-    private Runnable mRunnableCompletion;
     @Override
     public void onCreate() {
         sServiceState = true;
-        mHandlerCompletion = new Handler(getMainLooper());
         mBroadcastReceiver = LocalBroadcastManager.getInstance(this);
         mMediaPlayer = new MediaPlayerCustom(getApplicationContext());
         mNames = new ArrayList<>();
@@ -71,12 +69,6 @@ public class MediaPlayerService extends Service{
                 if (progress != mCurr) {
                     mProgressMediaPlayer = progress;
                     mMediaPlayer.seekTo(mProgressMediaPlayer);
-                    int time = mMediaPlayer.getDuration() - mProgressMediaPlayer;
-                    mRunnableCompletion = ()->{
-                        theNextSong();
-                    };
-                    mHandlerCompletion.removeCallbacksAndMessages(null);
-                    mHandlerCompletion.postDelayed(mRunnableCompletion, TimeUnit.MILLISECONDS.toMillis((long) time));
                 }
                 if (intent.getBooleanExtra("need_update",false)) {
                     mCurr = (mMediaPlayer != null) ? mMediaPlayer.getCurrentPosition() : mCurr;
@@ -110,15 +102,13 @@ public class MediaPlayerService extends Service{
                     sServiceIdSong = mId;
                     mMediaPlayer.stopPlayback();
                     mMediaPlayer.setId(getRawIDByName("mp" + String.valueOf(3100 + mId))); //= MediaPlayer.create(getBaseContext(), getRawIDByName("mp" + String.valueOf(3100 + mId)));
+                    mMediaPlayer.setOnCompletionListener(mp -> {
+                        theNextSong();
+                    });
                     mMediaPlayer.start();
                     sServiceState = true;
                     mIsPlaying = true;
                     mDuration = mMediaPlayer.getDuration();
-                    mRunnableCompletion = ()->{
-                        theNextSong();
-                    };
-                    mHandlerCompletion.removeCallbacksAndMessages(null);
-                    mHandlerCompletion.postDelayed(mRunnableCompletion, TimeUnit.MILLISECONDS.toMillis((long) mDuration));
                     Handler handler = new Handler(getMainLooper());
                     handler.postDelayed(() -> notificationChange(), 500L);
                     notificationChange();
@@ -132,16 +122,10 @@ public class MediaPlayerService extends Service{
                     mIsPlaying = true;
                     mMediaPlayer.start();
                     sServiceState = true;
-                    int time = mMediaPlayer.getDuration();
+                    mDuration = mMediaPlayer.getDuration();
                     if (intent.getIntExtra("currSaved", -1) != -1) {
                         mMediaPlayer.seekTo(intent.getIntExtra("currSaved", 0));
-                        time = time - intent.getIntExtra("currSaved", 0);
                     }
-                    mRunnableCompletion = ()->{
-                        theNextSong();
-                    };
-                    mHandlerCompletion.removeCallbacksAndMessages(null);
-                    mHandlerCompletion.postDelayed(mRunnableCompletion, TimeUnit.MILLISECONDS.toMillis((long) time));
                     Handler handler = new Handler(getMainLooper());
                     handler.postDelayed(() -> notificationChange(), 500L);
                     notificationChange();
@@ -156,7 +140,6 @@ public class MediaPlayerService extends Service{
                     mMediaPlayer.pause();
                     mIsPlaying = false;
                     sServiceState = false;
-                    mHandlerCompletion.removeCallbacksAndMessages(null);
                     stopForeground(true);
                 }
             }
@@ -165,7 +148,6 @@ public class MediaPlayerService extends Service{
     }
 
     private void theNextSong() {
-
         if (mId == 10) {
             mId = 0;
         }
@@ -175,15 +157,13 @@ public class MediaPlayerService extends Service{
             mMediaPlayer.stopPlayback();
         }
         mMediaPlayer.setId(getRawIDByName("mp" + String.valueOf(3100 + mId))); // = MediaPlayer.create(getApplication(), getRawIDByName("mp" + String.valueOf(3100 + mId)));
+        mMediaPlayer.setOnCompletionListener(mp -> {
+            theNextSong();
+        });
         mMediaPlayer.start();
         mIsPlaying = true;
         sServiceState = true;
         mDuration = mMediaPlayer.getDuration();
-        mRunnableCompletion = ()->{
-            theNextSong();
-        };
-        mHandlerCompletion.removeCallbacksAndMessages(null);
-        mHandlerCompletion.postDelayed(mRunnableCompletion, TimeUnit.MILLISECONDS.toMillis((long) mDuration));
         mViews.setImageViewResource(R.id.btn_play,
                 android.R.drawable.ic_media_pause);
         mExpandedViews.setImageViewResource(R.id.status_bar_play,
@@ -219,7 +199,6 @@ public class MediaPlayerService extends Service{
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mHandlerCompletion.removeCallbacksAndMessages(null);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
         if (mMediaPlayer != null)
             mMediaPlayer.stopPlayback();
@@ -239,12 +218,11 @@ public class MediaPlayerService extends Service{
             notificationChange();
             mMediaPlayer.stopPlayback();
             mMediaPlayer.setId(getRawIDByName("mp" + String.valueOf(3100 + mId))); //= MediaPlayer.create(this, getRawIDByName("mp" + String.valueOf(3100 + mId)));
+            mMediaPlayer.setOnCompletionListener(mp -> {
+                theNextSong();
+            });
             mMediaPlayer.start();
             mDuration = mMediaPlayer.getDuration();
-            mRunnableCompletion = ()->{
-                theNextSong();
-            };
-            mHandlerCompletion.postDelayed(mRunnableCompletion, TimeUnit.MILLISECONDS.toMillis((long) mDuration));
             sServiceState = true;
             mIsPlaying = true;
             //Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
@@ -258,13 +236,11 @@ public class MediaPlayerService extends Service{
             sServiceIdSong = mId;
             mMediaPlayer.stopPlayback();
             mMediaPlayer.setId(getRawIDByName("mp" + String.valueOf(3100 + mId))); //mMediaPlayer = MediaPlayer.create(this, getRawIDByName("mp" + String.valueOf(3100 + mId)));
+            mMediaPlayer.setOnCompletionListener(mp -> {
+                theNextSong();
+            });
             mMediaPlayer.start();
             mDuration = mMediaPlayer.getDuration();
-            mRunnableCompletion = ()->{
-                theNextSong();
-            };
-            mHandlerCompletion.removeCallbacksAndMessages(null);
-            mHandlerCompletion.postDelayed(mRunnableCompletion, TimeUnit.MILLISECONDS.toMillis((long) mDuration));
             mViews.setImageViewResource(R.id.btn_play,
                     android.R.drawable.ic_media_pause);
             mExpandedViews.setImageViewResource(R.id.status_bar_play,
@@ -291,7 +267,6 @@ public class MediaPlayerService extends Service{
                 mViews.setViewVisibility(R.id.btn_collapse_bar, View.VISIBLE);
                 mExpandedViews.setViewVisibility(R.id.btn_collapse, View.VISIBLE);
                 mMediaPlayer.pause();
-                mHandlerCompletion.removeCallbacksAndMessages(null);
                 mIsPlaying = false;
             } else {
                 mViews.setImageViewResource(R.id.btn_play,
@@ -302,12 +277,7 @@ public class MediaPlayerService extends Service{
                 mExpandedViews.setViewVisibility(R.id.btn_collapse, View.GONE);
                 mIsPlaying = true;
                 mMediaPlayer.start();
-                int  time= mMediaPlayer.getDuration()  - mMediaPlayer.getCurrentPosition();
-                mRunnableCompletion = ()->{
-                    theNextSong();
-                };
-                mHandlerCompletion.removeCallbacksAndMessages(null);
-                mHandlerCompletion.postDelayed(mRunnableCompletion, TimeUnit.MILLISECONDS.toMillis((long) time));
+                mDuration = mMediaPlayer.getDuration();
             }
             Handler handler = new Handler(getMainLooper());
             handler.postDelayed(() -> notificationChange(), 500L);
@@ -330,7 +300,6 @@ public class MediaPlayerService extends Service{
             mMediaPlayer.stopPlayback();
             sServiceState = false;
             LocalBroadcastManager.getInstance(this).unregisterReceiver(mReceiver);
-            mHandlerCompletion.removeCallbacksAndMessages(null);
             stopForeground(true);
             stopSelf();
         }

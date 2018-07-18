@@ -6,28 +6,28 @@ import com.fresher.tronnv.android_data_layer.DataManager;
 import com.fresher.tronnv.android_data_layer.json.JSONManager;
 
 public class LoadDataSource {
-    private static LoadDataSource instance;
-    private DataManager dataManager;
+    private static LoadDataSource sInstance;
+    private DataManager mDataManager;
     private LoadDataSource(){
-        dataManager = new DataManager();
+        mDataManager = new DataManager();
     }
 
     private void setContext(Context context){
-        dataManager.setContext(context);
+        mDataManager.setContext(context);
     }
 
     private DataManager getDataManager() {
-        return dataManager;
+        return mDataManager;
     }
     public void LoadData(Context context){
         setContext(context);
         getDataManager().loadDataFromServer();
     }
     public static LoadDataSource getInstance() {
-        if(instance == null){
-            instance = new LoadDataSource();
+        if(sInstance == null){
+            sInstance = new LoadDataSource();
         }
-        return instance;
+        return sInstance;
     }
     public boolean isData(){
         return JSONManager.isDataPlaylistExist();

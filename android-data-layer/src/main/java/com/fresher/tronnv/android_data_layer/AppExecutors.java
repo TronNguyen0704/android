@@ -9,14 +9,14 @@ import java.util.concurrent.Executors;
 import io.reactivex.annotations.NonNull;
 
 public class AppExecutors {
-    private final Executor diskIO;
-    private final Executor netWorkIO;
-    private final Executor mainThread;
+    private final Executor mDiskIO;
+    private final Executor mNetWorkIO;
+    private final Executor mMainThread;
 
     private AppExecutors(Executor diskIO, Executor netWorkIO, Executor mainThread) {
-        this.diskIO = diskIO;
-        this.netWorkIO = netWorkIO;
-        this.mainThread = mainThread;
+        this.mDiskIO = diskIO;
+        this.mNetWorkIO = netWorkIO;
+        this.mMainThread = mainThread;
     }
     public AppExecutors(){
         this(Executors.newSingleThreadExecutor(), Executors.newFixedThreadPool(3),
@@ -24,15 +24,15 @@ public class AppExecutors {
     }
 
     public Executor getDiskIO() {
-        return diskIO;
+        return mDiskIO;
     }
 
     public Executor getNetWorkIO() {
-        return netWorkIO;
+        return mNetWorkIO;
     }
 
     public Executor getMainThread() {
-        return mainThread;
+        return mMainThread;
     }
     private static class MainThreadExecutor implements Executor {
         private Handler mainThreadHandler = new Handler(Looper.getMainLooper());

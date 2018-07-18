@@ -14,14 +14,14 @@ import com.fresher.tronnv.android_models.Track;
 import java.util.List;
 
 public class TrackBusinessImpl implements TrackBusiness {
-    private AppExecutors appExecutors;
-    private Context context;
+    private AppExecutors mAppExecutors;
+    private Context mContext;
     public TrackBusinessImpl(Context context){
-        this.context = context;
-        appExecutors = new AppExecutors();
+        this.mContext = context;
+        mAppExecutors = new AppExecutors();
     }
     public MusicDatabase getMusicDatabase(){
-        return MusicDatabase.getInstance(context,appExecutors);
+        return MusicDatabase.getInstance(mContext,mAppExecutors);
     }
     public DataRepository getMusicRepository(){
         return DataRepository.getsInstance(getMusicDatabase());

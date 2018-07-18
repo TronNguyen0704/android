@@ -20,33 +20,33 @@ import io.reactivex.annotations.NonNull;
 public class DataRepository {
 
     private static DataRepository sInstance;
-    private final MusicDatabase musicDatabase;
+    private final MusicDatabase mMusicDatabase;
 
-    private MediatorLiveData<List<RecordChart>> observableRecordChart;
-    private MediatorLiveData<List<Track>> observableTrack;
-    private MediatorLiveData<List<MusicLyric>> observableMusic;
+    private MediatorLiveData<List<RecordChart>> mObservableRecordChart;
+    private MediatorLiveData<List<Track>> mObservableTrack;
+    private MediatorLiveData<List<MusicLyric>> mObservableMusic;
     private DataRepository(final MusicDatabase database) {
-        this.musicDatabase = database;
-        observableRecordChart = new MediatorLiveData<>();
-        observableRecordChart.addSource(musicDatabase.rankDao().getRanks(),
+        this.mMusicDatabase = database;
+        mObservableRecordChart = new MediatorLiveData<>();
+        mObservableRecordChart.addSource(mMusicDatabase.rankDao().getRanks(),
                 recordChartEntities -> {
-                    if(musicDatabase.getDatabaseCreated().getValue() != null){
-                        observableRecordChart.postValue(recordChartEntities);
+                    if(mMusicDatabase.getDatabaseCreated().getValue() != null){
+                        mObservableRecordChart.postValue(recordChartEntities);
                     }
                 });
 
-        observableTrack = new MediatorLiveData<>();
-        observableTrack.addSource(musicDatabase.trackDao().getTracks(),
+        mObservableTrack = new MediatorLiveData<>();
+        mObservableTrack.addSource(mMusicDatabase.trackDao().getTracks(),
                 trackEntities -> {
-                    if(musicDatabase.getDatabaseCreated().getValue() != null){
-                        observableTrack.postValue(trackEntities);
+                    if(mMusicDatabase.getDatabaseCreated().getValue() != null){
+                        mObservableTrack.postValue(trackEntities);
                     }
                 });
-        observableMusic = new MediatorLiveData<>();
-        observableMusic.addSource(musicDatabase.musicDao().getAllMusic(),
+        mObservableMusic = new MediatorLiveData<>();
+        mObservableMusic.addSource(mMusicDatabase.musicDao().getAllMusic(),
                 musicEntities -> {
-                    if(musicDatabase.getDatabaseCreated().getValue() != null){
-                        observableMusic.postValue(musicEntities);
+                    if(mMusicDatabase.getDatabaseCreated().getValue() != null){
+                        mObservableMusic.postValue(musicEntities);
                     }
                 });
     }
@@ -63,21 +63,21 @@ public class DataRepository {
     }
 
     public LiveData<RecordChart> getSong(@NonNull Long id) {
-        return musicDatabase.rankDao().getRecordChartById(id);
+        return mMusicDatabase.rankDao().getRecordChartById(id);
     }
     public LiveData<MusicLyric> getSongById(@NonNull Integer id) {
-        return musicDatabase.musicDao().getSongById(id);
+        return mMusicDatabase.musicDao().getSongById(id);
     }
     public LiveData<List<MusicLyric>> getSong(@NonNull String filter) {
-        return musicDatabase.musicDao().getMusicByName(filter);
+        return mMusicDatabase.musicDao().getMusicByName(filter);
     }
     public LiveData<List<RecordChart>> getAllRank() {
-        return observableRecordChart;
+        return mObservableRecordChart;
     }
     public LiveData<List<Track>> getAllTrack() {
-        return observableTrack;
+        return mObservableTrack;
     }
     public LiveData<List<MusicLyric>> getMusic() {
-        return observableMusic;
+        return mObservableMusic;
     }
 }

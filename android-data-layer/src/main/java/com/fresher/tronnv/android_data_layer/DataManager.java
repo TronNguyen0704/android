@@ -33,47 +33,47 @@ import static com.fresher.tronnv.android_data_layer.Constants.BASE_URL;
  */
 @Singleton
 public class DataManager {
-    private List<MusicLyric> musicLyrics = null;
-    private List<Track> tracks = null;
-    private List<RecordChart> recordCharts = null;
-    private RequestLyricInterface requestLyricInterface;
-    private Context context;
-    private NetComponent netComponent;
+    private List<MusicLyric> mMusicLyrics = null;
+    private List<Track> mTracks = null;
+    private List<RecordChart> mRecordCharts = null;
+    private RequestLyricInterface mRequestLyricInterface;
+    private Context mContext;
+    private NetComponent mNetComponent;
 
     public void setContext(Context context) {
-        this.context = context;
+        this.mContext = context;
     }
     @Inject
     public DataManager(){
-       if( musicLyrics == null){
-           musicLyrics = new ArrayList<>();
+       if( mMusicLyrics == null){
+           mMusicLyrics = new ArrayList<>();
        }
-        if( tracks == null){
-            tracks = new ArrayList<>();
+        if( mTracks == null){
+            mTracks = new ArrayList<>();
         }
-        if( recordCharts == null){
-            recordCharts = new ArrayList<>();
+        if( mRecordCharts == null){
+            mRecordCharts = new ArrayList<>();
         }
     }
     public List<MusicLyric> getMusicLyrics() {
-        if(musicLyrics!= null && (musicLyrics.size() > 0))
-            return musicLyrics;
+        if(mMusicLyrics != null && (mMusicLyrics.size() > 0))
+            return mMusicLyrics;
         if(JSONManager.isDataPlaylistExist()) { //if file is exist -> continue read data
             return JSONManager.JsonSimpleReader();
         }
         return null;
     }
     public List<Track> getTracks() {
-        if(tracks!= null && (tracks.size() > 0))
-            return tracks;
+        if(mTracks != null && (mTracks.size() > 0))
+            return mTracks;
         if(JSONManager.isDataTrackExist()) { //if file is exist -> continue read data
             return JSONManager.JsonTrackReader();
         }
         return null;
     }
     public List<RecordChart> getRecordCharts() {
-        if(recordCharts!= null && (recordCharts.size() > 0))
-            return recordCharts;
+        if(mRecordCharts != null && (mRecordCharts.size() > 0))
+            return mRecordCharts;
         if(JSONManager.isDataRankExist()) { //if file is exist -> continue read data
             return JSONManager.JsonRecordChartReader();
         }
@@ -81,12 +81,12 @@ public class DataManager {
     }
     public List<MusicLyric> getMusicByName(String filter) {
         List<MusicLyric> filterList = new ArrayList<>();
-        musicLyrics.addAll(getMusicLyrics());
+        mMusicLyrics.addAll(getMusicLyrics());
             if (filter.endsWith("null") || filter.endsWith("")){
-                return musicLyrics;
+                return mMusicLyrics;
             }
             else {
-                for (MusicLyric musicLyric : musicLyrics) {
+                for (MusicLyric musicLyric : mMusicLyrics) {
                     if (filter.toLowerCase().contains(musicLyric.getName().toLowerCase())) {
                         filterList.add(musicLyric);
                     }
@@ -95,8 +95,8 @@ public class DataManager {
             }
     }
     public MusicLyric getSongById(int id) {
-        musicLyrics.addAll(getMusicLyrics());
-        for (MusicLyric musicLyric : musicLyrics){
+        mMusicLyrics.addAll(getMusicLyrics());
+        for (MusicLyric musicLyric : mMusicLyrics){
             if(musicLyric.getId() == id){
                 return musicLyric;
             }
@@ -104,33 +104,33 @@ public class DataManager {
         return null;
     }
     public void setMusicLyrics(List<MusicLyric> lyrics){
-         this.musicLyrics.addAll(lyrics);
+         this.mMusicLyrics.addAll(lyrics);
     }
     public void setTracks(List<Track> tracks){
-        this.tracks.addAll(tracks);
+        this.mTracks.addAll(tracks);
     }
     public void setRecordCharts(List<RecordChart> recordCharts){
-        this.recordCharts.addAll(recordCharts);
+        this.mRecordCharts.addAll(recordCharts);
     }
     public void loadDataFromServer(){
         if(!JSONManager.isDataPlaylistExist()) { //!JSONManager.isDataPlaylistExist()
-            if (!(musicLyrics != null && musicLyrics.size() > 0)) {
+            if (!(mMusicLyrics != null && mMusicLyrics.size() > 0)) {
                     RetrofitClient retrofitClient = new RetrofitClient();
-                    if(netComponent == null){
-                        netComponent = DaggerNetComponent
+                    if(mNetComponent == null){
+                        mNetComponent = DaggerNetComponent
                                 .builder()
                                 .netModule(new NetModule(retrofitClient))
                                 .build();
                     }
-                netComponent.getDataManager().restAPIToGetData(retrofitClient);
+                mNetComponent.getDataManager().restAPIToGetData(retrofitClient);
                     //restAPIToGetData(retrofitClient);
             }
         }
     }
     //Use RxJava and Retrofit to get data from server
     public void restAPIToGetData(RetrofitClient retrofit) {
-        requestLyricInterface = retrofit.getClientRxJava(BASE_URL).create(RequestLyricInterface.class);
-        requestLyricInterface.register()
+        mRequestLyricInterface = retrofit.getClientRxJava(BASE_URL).create(RequestLyricInterface.class);
+        mRequestLyricInterface.register()
                 .observeOn(Schedulers.newThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe((new Observer<List<MusicLyric>>(){
@@ -153,12 +153,12 @@ public class DataManager {
                     @Override
                     public void onNext(List<MusicLyric> musicLyric) {
                         setMusicLyrics(musicLyric);
-                        //Log.i("Debug", "post submitted to API: " + musicLyrics.toString());
+                        //Log.i("Debug", "post submitted to API: " + mMusicLyrics.toString());
                         //Save file By FileWriter
-                        JSONManager.JsonSimpleWriter(musicLyrics);
+                        JSONManager.JsonSimpleWriter(mMusicLyrics);
                     }
                 })) ;
-        requestLyricInterface.recorchart()
+        mRequestLyricInterface.recorchart()
                 .observeOn(Schedulers.newThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe((new Observer<List<RecordChart>>(){
@@ -180,12 +180,12 @@ public class DataManager {
 
                     @Override
                     public void onNext(List<RecordChart> recordCharts) {
-                        //Log.i("Debug", "post submitted to API: " + recordCharts.get(0).getName());
+                        //Log.i("Debug", "post submitted to API: " + mRecordCharts.get(0).getName());
                         //Save file By FileWriter
                         JSONManager.JsonRecordChartWriter(recordCharts);
                     }
                 })) ;
-        requestLyricInterface.track()
+        mRequestLyricInterface.track()
                 .observeOn(Schedulers.newThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe((new Observer<List<Track>>(){
@@ -207,7 +207,7 @@ public class DataManager {
 
                     @Override
                     public void onNext(List<Track> tracks) {
-                        //Log.i("Debug", "post submitted to API: " + tracks.get(0).getDescription());
+                        //Log.i("Debug", "post submitted to API: " + mTracks.get(0).getDescription());
                         //Save file By FileWriter
                         JSONManager.JsonTrackWriter(tracks);
                     }
@@ -216,7 +216,7 @@ public class DataManager {
 
     public void loadMusicData() {
         if(!JSONManager.isDataPlaylistExist()) { //!JSONManager.isDataPlaylistExist()
-            if (!(musicLyrics != null && musicLyrics.size() > 0)) {
+            if (!(mMusicLyrics != null && mMusicLyrics.size() > 0)) {
                 RetrofitClient retrofitClient = new RetrofitClient();
                 restAPIToGetMusicData(retrofitClient);
             }
@@ -224,8 +224,8 @@ public class DataManager {
     }
 
     private void restAPIToGetMusicData(RetrofitClient retrofitClient) {
-        requestLyricInterface = retrofitClient.getClientRxJava(BASE_URL).create(RequestLyricInterface.class);
-        requestLyricInterface.register()
+        mRequestLyricInterface = retrofitClient.getClientRxJava(BASE_URL).create(RequestLyricInterface.class);
+        mRequestLyricInterface.register()
                 .observeOn(Schedulers.newThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe((new Observer<List<MusicLyric>>(){
@@ -248,16 +248,16 @@ public class DataManager {
                     @Override
                     public void onNext(List<MusicLyric> musicLyric) {
                         setMusicLyrics(musicLyric);
-                        //Log.i("Debug", "post submitted to API: " + musicLyrics.toString());
+                        //Log.i("Debug", "post submitted to API: " + mMusicLyrics.toString());
                         //Save file By FileWriter
-                        JSONManager.JsonSimpleWriter(musicLyrics);
+                        JSONManager.JsonSimpleWriter(mMusicLyrics);
                     }
                 })) ;
     }
 
     public void loadRecordChartData() {
         if(!JSONManager.isDataRankExist()) { //!JSONManager.isDataPlaylistExist()
-            if (!(musicLyrics != null && musicLyrics.size() > 0)) {
+            if (!(mMusicLyrics != null && mMusicLyrics.size() > 0)) {
                 RetrofitClient retrofitClient = new RetrofitClient();
                 restAPIToGetRecordChartData(retrofitClient);
             }
@@ -265,8 +265,8 @@ public class DataManager {
     }
 
     private void restAPIToGetRecordChartData(RetrofitClient retrofitClient) {
-        requestLyricInterface = retrofitClient.getClientRxJava(BASE_URL).create(RequestLyricInterface.class);
-        requestLyricInterface.recorchart()
+        mRequestLyricInterface = retrofitClient.getClientRxJava(BASE_URL).create(RequestLyricInterface.class);
+        mRequestLyricInterface.recorchart()
                 .observeOn(Schedulers.newThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe((new Observer<List<RecordChart>>(){
@@ -289,7 +289,7 @@ public class DataManager {
                     @Override
                     public void onNext(List<RecordChart> recordCharts) {
                         setRecordCharts(recordCharts);
-                        //Log.i("Debug", "post submitted to API: " + recordCharts.get(0).getName());
+                        //Log.i("Debug", "post submitted to API: " + mRecordCharts.get(0).getName());
                         //Save file By FileWriter
                         JSONManager.JsonRecordChartWriter(recordCharts);
                     }
@@ -298,7 +298,7 @@ public class DataManager {
 
     public void loadTrackData() {
         if(!JSONManager.isDataTrackExist()) { //!JSONManager.isDataPlaylistExist()
-            if (!(tracks != null && tracks.size() > 0)) {
+            if (!(mTracks != null && mTracks.size() > 0)) {
                 RetrofitClient retrofitClient = new RetrofitClient();
                 restAPIToGetTrackData(retrofitClient);
             }
@@ -306,8 +306,8 @@ public class DataManager {
     }
 
     private void restAPIToGetTrackData(RetrofitClient retrofitClient) {
-        requestLyricInterface = retrofitClient.getClientRxJava(BASE_URL).create(RequestLyricInterface.class);
-        requestLyricInterface.track()
+        mRequestLyricInterface = retrofitClient.getClientRxJava(BASE_URL).create(RequestLyricInterface.class);
+        mRequestLyricInterface.track()
                 .observeOn(Schedulers.newThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe((new Observer<List<Track>>(){
@@ -330,7 +330,7 @@ public class DataManager {
                     @Override
                     public void onNext(List<Track> tracks) {
                         setTracks(tracks);
-                        //Log.i("Debug", "post submitted to API: " + tracks.get(0).getDescription());
+                        //Log.i("Debug", "post submitted to API: " + mTracks.get(0).getDescription());
                         //Save file By FileWriter
                         JSONManager.JsonTrackWriter(tracks);
                     }

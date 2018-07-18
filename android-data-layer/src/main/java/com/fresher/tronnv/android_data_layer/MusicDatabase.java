@@ -21,24 +21,24 @@ import com.fresher.tronnv.android_models.Track;
 import java.util.List;
 @Database(entities = {RecordChart.class, Track.class, MusicLyric.class}, version = 1)
 public abstract class MusicDatabase extends RoomDatabase {
-    private static MusicDatabase instance;
+    private static MusicDatabase sInstance;
     @VisibleForTesting
-    public static final String DATABASE_NAME = "music-db";
+    static final String DATABASE_NAME = "music-db";
     public abstract RecordChartDao rankDao();
     public abstract TrackDao trackDao();
     public abstract MusicDao musicDao();
-    private final MutableLiveData<Boolean> isDatabaseCreated = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> mIsDatabaseCreated = new MutableLiveData<>();
 
     public static MusicDatabase getInstance(final Context context, final AppExecutors executors){
-        if(instance == null){
+        if(sInstance == null){
             synchronized (MusicDatabase.class){
-                if(instance == null){
-                    instance = buildDatabase(context.getApplicationContext(),executors);
-                    instance.updateDatabaseCreated(context.getApplicationContext());
+                if(sInstance == null){
+                    sInstance = buildDatabase(context.getApplicationContext(),executors);
+                    sInstance.updateDatabaseCreated(context.getApplicationContext());
                 }
             }
         }
-        return instance;
+        return sInstance;
     }
     private static void addDelay() {
         try {
@@ -81,9 +81,9 @@ public abstract class MusicDatabase extends RoomDatabase {
         }
     }
     private void  setDatabaseCreated(){
-        isDatabaseCreated.postValue(true);
+        mIsDatabaseCreated.postValue(true);
     }
     public LiveData<Boolean> getDatabaseCreated(){
-        return isDatabaseCreated;
+        return mIsDatabaseCreated;
     }
 }

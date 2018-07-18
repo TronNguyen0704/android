@@ -7,8 +7,6 @@ import android.widget.MediaController;
 public class MediaPlayerCustom implements MediaController.MediaPlayerControl {
 
     private static final String LOG_TAG = "MediaPlayerCustom";
-
-    // all possible internal states
     private static final int STATE_ERROR = -1;
     private static final int STATE_IDLE = 0;
     private static final int STATE_PREPARING = 1;
@@ -56,7 +54,7 @@ public class MediaPlayerCustom implements MediaController.MediaPlayerControl {
         try {
             mMediaPlayer = MediaPlayer.create(mContext, mId);
 //            mMediaPlayer.setOnPreparedListener(mPreparedListener);
-//            mMediaPlayer.setOnCompletionListener(mCompletionListener);
+            mMediaPlayer.setOnCompletionListener(mCompletionListener);
 //            mMediaPlayer.setOnErrorListener(mErrorListener);
 //            mMediaPlayer.setOnInfoListener(mInfoListener);
 //            mMediaPlayer.setOnBufferingUpdateListener(mBufferingUpdateListener);

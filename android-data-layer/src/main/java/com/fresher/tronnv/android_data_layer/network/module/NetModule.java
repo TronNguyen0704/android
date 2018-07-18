@@ -26,13 +26,13 @@ import dagger.Provides;
  */
 @Module
 public class NetModule{
-    private RetrofitClient retrofitClient;
+    private RetrofitClient mRetrofitClient;
     public NetModule(RetrofitClient retrofitClient){
-        this.retrofitClient = retrofitClient;
+        this.mRetrofitClient = retrofitClient;
     }
     @Provides
     @Singleton
     public RetrofitClient provideRetro(){
-        return retrofitClient;
+        return mRetrofitClient;
     }
 }

@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * Creating the Retrofit instance
  */
 public class RetrofitClient {
-    private static Retrofit retrofit = null;
+    private static Retrofit mRetrofit = null;
 
     public RetrofitClient(){
 
@@ -22,22 +22,22 @@ public class RetrofitClient {
      * we need to use the Retrofit builder class and specify the base URL for the service.
      */
     public static Retrofit getClient(String baseUrl) {
-        if (retrofit==null) {
-            retrofit = new Retrofit.Builder()
+        if (mRetrofit ==null) {
+            mRetrofit = new Retrofit.Builder()
                     .baseUrl(baseUrl)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
-        return retrofit;
+        return mRetrofit;
     }
     public static Retrofit getClientRxJava(String baseUrl) {
-        if (retrofit==null) {
-            retrofit = new Retrofit.Builder()
+        if (mRetrofit ==null) {
+            mRetrofit = new Retrofit.Builder()
                     .baseUrl(baseUrl)
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }
-        return retrofit;
+        return mRetrofit;
     }
 }
