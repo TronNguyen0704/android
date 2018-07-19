@@ -22,6 +22,7 @@ import com.fresher.tronnv.research.R;
 import com.fresher.tronnv.research.presenters.ApplicationPresenter;
 import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
 import com.fresher.tronnv.research.ui.adapter.HeaderPageAdapter;
+import com.fresher.tronnv.research.ui.adapter.PageAdapter;
 import com.fresher.tronnv.research.ui.adapter.RecordChartAdapter;
 import com.fresher.tronnv.research.viewmodel.RecordChartViewModel;
 import com.fresher.tronnv.research.viewmodel.TrackViewModel;
@@ -50,6 +51,7 @@ public class HomeFragment extends Fragment {
     List<Track> mTracks;
     private RecordChartAdapter mRecordChartAdapter;
     private HeaderPageAdapter mHeaderPageAdapter;
+    private PageAdapter mPageAdapter;
     private Loadfinish mContext;
     private ApplicationPresenter mApplicationPresenter;
     private Handler mHandler;
@@ -61,7 +63,6 @@ public class HomeFragment extends Fragment {
         mApplicationPresenter.loadTrackData();
         mApplicationPresenter.loadRecordChartData();
     }
-
     public boolean isLoading() {
         return !(mIsLoading || mIsLoadingPagerView);
     }
@@ -86,7 +87,7 @@ public class HomeFragment extends Fragment {
                     mRecordChartAdapter.notifyDataSetChanged();
                     mIsLoading = false;
                     if (isLoading()) {
-                        ((Loadfinish) mContext).onFinish();
+                        mContext.onFinish();
                     }
                 } else {
                     mIsLoading = true;
@@ -100,11 +101,13 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChanged(@Nullable List<Track> tracks) {
                 if (tracks != null) {
-                    mHeaderPageAdapter.setTrackList(tracks);
-                    mHeaderPageAdapter.notifyDataSetChanged();
+                    mPageAdapter.setmTracks(tracks);
+                    mPageAdapter.notifyDataSetChanged();
+//                    mHeaderPageAdapter.setTrackList(tracks);
+//                    mHeaderPageAdapter.notifyDataSetChanged();
                     mIsLoadingPagerView = false;
                     if (isLoading()) {
-                        ((Loadfinish) mContext).onFinish();
+                       mContext.onFinish();
                     }
                 } else {
                     mIsLoadingPagerView = true;
@@ -130,10 +133,41 @@ public class HomeFragment extends Fragment {
         mViewPager = rootView.findViewById(R.id.view_pager);
         mViewPager.setClipToPadding(false);
         mViewPager.setPadding(0, 0, 0, 0);
-        mHeaderPageAdapter = new HeaderPageAdapter(getActivity());
-        //mHeaderPageAdapter.setTrackList(mApplicationPresenter.getTracks());
-        mViewPager.setAdapter(mHeaderPageAdapter);
+        //mHeaderPageAdapter = new HeaderPageAdapter(getActivity());
+        mPageAdapter = new PageAdapter(getFragmentManager());
+        //mViewPager.setAdapter(mHeaderPageAdapter);
+        mViewPager.setAdapter(mPageAdapter);
         mViewPager.setCurrentItem(0, true);
+        mViewPager.setPageTransformer(false, (page, position) -> {
+            int pageWidth = page.getWidth();
+            float pageWidthTimesPosition = pageWidth * position;
+            float absPosition = Math.abs(position);
+            if (position <= -1.0f || position >= 1.0f) {
+
+
+            } else if (position == 0.0f) {
+
+
+            } else {
+
+                View title = page.findViewById(R.id.tv_title);
+                title.setAlpha(1.0f - absPosition);
+                View description = page.findViewById(R.id.tv_description);
+                description.setTranslationY(-pageWidthTimesPosition / 2f);
+                description.setAlpha(1.0f - absPosition);
+                View computer = page.findViewById(R.id.img_play);
+                computer.setAlpha(1.0f - absPosition);
+                computer.setTranslationX(-pageWidthTimesPosition * 1.5f);
+                View avatar = page.findViewById(R.id.img_avatar);
+                avatar.setAlpha(1.0f - absPosition);
+                if (position < 0) {
+                    // Create your out animation here
+                } else {
+                    // Create your in animation here
+                }
+            }
+
+        });
         final RecyclerView listView = rootView.findViewById(R.id.recycler_view);
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
@@ -147,13 +181,11 @@ public class HomeFragment extends Fragment {
 
         // Auto start of viewpager
         mHandler = new Handler();
-        mUpdate = new Runnable() {
-            public void run() {
-                if (mCurrentPage == mHeaderPageAdapter.getCount()) {
-                    mCurrentPage = 0;
-                }
-                mViewPager.setCurrentItem(mCurrentPage++, true);
+        mUpdate = () -> {
+            if (mCurrentPage == mPageAdapter.getCount()) {
+                mCurrentPage = 0;
             }
+            mViewPager.setCurrentItem(mCurrentPage++, true);
         };
         Timer swipeTimer = new Timer();
         swipeTimer.schedule(new TimerTask() {
