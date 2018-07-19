@@ -159,11 +159,18 @@ public class HomeFragment extends Fragment {
                 computer.setAlpha(1.0f - absPosition);
                 computer.setTranslationX(-pageWidthTimesPosition * 1.5f);
                 View avatar = page.findViewById(R.id.img_avatar);
-                avatar.setAlpha(1.0f - absPosition);
+                avatar.setScaleX(1.0f - absPosition);
+                avatar.setScaleY(1.0f - absPosition);
+                avatar.setTranslationX(-pageWidthTimesPosition);
                 if (position < 0) {
                     // Create your out animation here
+                    avatar.setTranslationX(pageWidthTimesPosition*0.0f);
+                    avatar.setScaleX(1.0f);
+                    avatar.setScaleY(1.0f);
                 } else {
                     // Create your in animation here
+                    avatar.setScaleX(1.0f + absPosition);
+                    avatar.setScaleY(1.0f + absPosition);
                 }
             }
 

@@ -60,7 +60,8 @@ public class PageFragment extends Fragment {
         ImageView img = rootView.findViewById(R.id.img_avatar);
         textView.setText(mName);
         textDes.setText(mDescription);
-        Glide.with(getActivity()).load(mThumb)
+        Glide.with(getActivity())
+                .load(mThumb)
                 .apply(RequestOptions.bitmapTransform(
                 new VignetteFilterTransformation(
                         new PointF(0.5f, 0.5f),
