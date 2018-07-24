@@ -2,7 +2,6 @@ package com.fresher.tronnv.research.ui.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
@@ -17,7 +16,6 @@ import com.bumptech.glide.request.RequestOptions;
 import com.fresher.tronnv.android_models.RecordChart;
 import com.fresher.tronnv.android_models.Track;
 import com.fresher.tronnv.research.R;
-import com.fresher.tronnv.research.ui.PageFragment;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +24,7 @@ import java.util.Objects;
 
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
-public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.RecyclerViewHolder> {
+public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.RecyclerViewHolder> {
     private List<RecordChart> mRecordCharts;
     private Context mContext;
     private static HashMap<String,RecyclerViewHolder> sViewCache;
@@ -66,7 +64,7 @@ public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.
             result.dispatchUpdatesTo(this);
         }
     }
-    RecordChartAdapter(Context context) {
+    public RecentAdapter(Context context) {
         this.mContext = context;
         mRecordCharts = new ArrayList<>();
         if(sViewCache == null){
@@ -83,16 +81,15 @@ public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.
                 sViewCache = new HashMap<>();
             }
         }
-        View view = inflater.inflate(R.layout.rank_item, parent, false);
+        View view = inflater.inflate(R.layout.recent_item, parent, false);
         return new RecyclerViewHolder(view);
     }
-
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
-        if(!sViewCache.containsKey(mRecordCharts.get(position).getName())) {
-            holder.bindList(mRecordCharts,mContext,position);
-            sViewCache.put(mRecordCharts.get(position).getName(), holder);
-        }
+           if(!sViewCache.containsKey(mRecordCharts.get(position).getName())) {
+               holder.bindList(mRecordCharts,mContext,position);
+               sViewCache.put(mRecordCharts.get(position).getName(), holder);
+           }
     }
 
     @Override
@@ -103,29 +100,23 @@ public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.
     }
 
      static class  RecyclerViewHolder extends RecyclerView.ViewHolder {
-        TextView txtRank;
         ImageView iv_avatar;
         TextView txtSongName;
         TextView txtAuthor;
-
         RecyclerViewHolder(View itemView) {
             super(itemView);
-            txtRank = itemView.findViewById(R.id.tv_rank);
             iv_avatar = itemView.findViewById(R.id.img_avatar);
             txtSongName = itemView.findViewById(R.id.tv_name);
             txtAuthor = itemView.findViewById(R.id.tv_author);
         }
-         void bindList(List<RecordChart> recordCharts, Context context,int position){
-             int[] cols = new int[]{Color.BLUE, Color.GREEN, Color.RED, Color.WHITE};
-             txtRank.setText(recordCharts.get(position).getRank() + "");
-             txtRank.setTextColor(cols[(position < 3) ? position : 3]);
-             txtSongName.setText(recordCharts.get(position).getName() + "");
-             txtAuthor.setText(recordCharts.get(position).getAuthor() + "");
-             Glide.with(context)
-                     .load(recordCharts.get(position).getAvatar())
-                     .apply(RequestOptions.bitmapTransform(
-                             new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL)))
-                     .into(iv_avatar);
-         }
+        void bindList(List<RecordChart> recordCharts, Context context,int position){
+            txtSongName.setText(recordCharts.get(position).getName() + "");
+            txtAuthor.setText(recordCharts.get(position).getAuthor() + "");
+            Glide.with(context)
+                    .load(recordCharts.get(position).getAvatar())
+                    .apply(RequestOptions.bitmapTransform(
+                            new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL)))
+                    .into(iv_avatar);
+        }
     }
 }

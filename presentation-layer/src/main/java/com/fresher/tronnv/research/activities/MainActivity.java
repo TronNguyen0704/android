@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements PlayListFragment.
     private ProgressBar mProgressBar;
     private SearchView mSearchView;
     private HomeFragment mHomeFragment;
+    private PlayListFragment mPlayListFragment;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -31,11 +32,9 @@ public class MainActivity extends AppCompatActivity implements PlayListFragment.
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
                 case R.id.navigation_home: {
-                    //HomeFragment mHomeFragment = new HomeFragment();
                     if (mIsChange) {
                         mSearchView.setVisibility(View.VISIBLE);
                         FragmentManager fragmentManager = getSupportFragmentManager();
-
                         fragmentManager.beginTransaction()
                                 .replace(R.id.frame, mHomeFragment)
                                 .commit();
@@ -45,12 +44,14 @@ public class MainActivity extends AppCompatActivity implements PlayListFragment.
                 }
                 case R.id.navigation_my_music: {
                     if (!mIsChange) {
-                        PlayListFragment playListFragment = new PlayListFragment();
-                        playListFragment.setmSearchView(mSearchView);
+                        if(mPlayListFragment == null) {
+                            mPlayListFragment = new PlayListFragment();
+                            mPlayListFragment.setmSearchView(mSearchView);
+                        }
                         FragmentManager fragmentManager = getSupportFragmentManager();
 
                         fragmentManager.beginTransaction()
-                                .replace(R.id.frame, playListFragment)
+                                .replace(R.id.frame, mPlayListFragment)
                                 .commit();
                         //mSearchView.setVisibility(View.GONE);
                         mIsChange = true;

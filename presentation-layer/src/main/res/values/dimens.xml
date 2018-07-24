@@ -13,6 +13,7 @@
     <dimen name="media_margin">20dp</dimen>
     <dimen name="dimen_temp">10dp</dimen>
     <dimen name="avatar">64dp</dimen>
+    <dimen name="big_avatar">160dp</dimen>
     <dimen name="dimen_album_art">64dp</dimen>
     <dimen name="dimen_button_info">11dp</dimen>
     <dimen name="notification_expanded_height">128dip</dimen>

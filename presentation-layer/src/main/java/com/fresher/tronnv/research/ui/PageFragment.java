@@ -2,6 +2,7 @@ package com.fresher.tronnv.research.ui;
 
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,6 +16,8 @@ import com.bumptech.glide.request.RequestOptions;
 import com.fresher.tronnv.research.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import jp.wasabeef.glide.transformations.gpu.VignetteFilterTransformation;
 
@@ -26,17 +29,24 @@ public class PageFragment extends Fragment {
     private String mName;
     private String mDescription;
     private String mThumb;
+    private static HashMap<String,View> sViewCache;
     public PageFragment(){
 
     }
-    public static PageFragment sInstance(String name,String desc,String thumb ){
-        PageFragment fragment = new PageFragment();
-        Bundle args = new Bundle();
-        args.putString(NAME,name);
-        args.putString(DESCRIPTION,desc);
-        args.putString(THUMB,thumb);
-        fragment.setArguments(args);
-        return fragment;
+    public static PageFragment sInstance(String name,String desc,String thumb ) {
+        if(sViewCache == null){
+            sViewCache = new HashMap<>();
+        }
+//        if(!sViewCache.containsKey(name)) {
+            PageFragment fragment = new PageFragment();
+            Bundle args = new Bundle();
+            args.putString(NAME, name);
+            args.putString(DESCRIPTION, desc);
+            args.putString(THUMB, thumb);
+            fragment.setArguments(args);
+            return fragment;
+//        }
+//        return null;
     }
 
     @Override
@@ -50,23 +60,37 @@ public class PageFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout resource file
         final View rootView = inflater.inflate(R.layout.slider_item, container, false);
-        TextView textView = rootView.findViewById(R.id.tv_title);
-        TextView textDes = rootView.findViewById(R.id.tv_description);
-        ImageView img = rootView.findViewById(R.id.img_avatar);
-        textView.setText(mName);
-        textDes.setText(mDescription);
-        Glide.with(getActivity())
-                .load(mThumb)
-                .apply(RequestOptions.bitmapTransform(
-                new VignetteFilterTransformation(
-                        new PointF(0.5f, 0.5f),
-                        new float[]{0f, 0f, 0f}, 0.1f, 0.75f)))
-                .into(img);
-        return rootView;
+        if(!sViewCache.containsKey(mName)) {
+            TextView textView = rootView.findViewById(R.id.tv_title);
+            TextView textDes = rootView.findViewById(R.id.tv_description);
+            ImageView img = rootView.findViewById(R.id.img_avatar);
+            textView.setText(mName);
+            textDes.setText(mDescription);
+            Glide.with(getActivity())
+                    .load(mThumb)
+                    .apply(RequestOptions.bitmapTransform(
+                            new VignetteFilterTransformation(
+                                    new PointF(0.5f, 0.5f),
+                                    new float[]{0f, 0f, 0f}, 0.1f, 0.75f)))
+                    .into(img);
+            sViewCache.put(mName,rootView);
+            return rootView;
+        }
+        return sViewCache.get(mName);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        sViewCache.clear();
     }
 }

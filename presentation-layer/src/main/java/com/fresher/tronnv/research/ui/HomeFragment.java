@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +23,7 @@ import com.fresher.tronnv.research.R;
 import com.fresher.tronnv.research.presenters.ApplicationPresenter;
 import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
 import com.fresher.tronnv.research.ui.adapter.HeaderPageAdapter;
+import com.fresher.tronnv.research.ui.adapter.MultiRecyclerViewAdapter;
 import com.fresher.tronnv.research.ui.adapter.PageAdapter;
 import com.fresher.tronnv.research.ui.adapter.RecordChartAdapter;
 import com.fresher.tronnv.research.viewmodel.RecordChartViewModel;
@@ -51,6 +53,7 @@ public class HomeFragment extends Fragment {
     List<Track> mTracks;
     private RecordChartAdapter mRecordChartAdapter;
     private HeaderPageAdapter mHeaderPageAdapter;
+    private MultiRecyclerViewAdapter mMultiRecyclerViewAdapter;
     private PageAdapter mPageAdapter;
     private Loadfinish mContext;
     private ApplicationPresenter mApplicationPresenter;
@@ -63,6 +66,7 @@ public class HomeFragment extends Fragment {
         mApplicationPresenter.loadTrackData();
         mApplicationPresenter.loadRecordChartData();
     }
+
     public boolean isLoading() {
         return !(mIsLoading || mIsLoadingPagerView);
     }
@@ -83,10 +87,13 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChanged(@Nullable List<RecordChart> recordCharts) {
                 if (recordCharts != null) {
-                    mRecordChartAdapter.setRecordChartList(recordCharts);
-                    mRecordChartAdapter.notifyDataSetChanged();
+//                    mRecordChartAdapter.setRecordChartList(recordCharts);
+//                    mRecordChartAdapter.notifyDataSetChanged();
+                    mMultiRecyclerViewAdapter.setRecordChartList(recordCharts);
+                    mMultiRecyclerViewAdapter.notifyDataSetChanged();
                     mIsLoading = false;
                     if (isLoading()) {
+                        mMultiRecyclerViewAdapter.setCount(4);
                         mContext.onFinish();
                     }
                 } else {
@@ -101,12 +108,15 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChanged(@Nullable List<Track> tracks) {
                 if (tracks != null) {
-                    mPageAdapter.setmTracks(tracks);
-                    mPageAdapter.notifyDataSetChanged();
+                    mMultiRecyclerViewAdapter.setTracks(tracks);
+                    mMultiRecyclerViewAdapter.notifyDataSetChanged();
+//                    mPageAdapter.setTracks(tracks);
+//                    mPageAdapter.notifyDataSetChanged();
 //                    mHeaderPageAdapter.setTrackList(tracks);
 //                    mHeaderPageAdapter.notifyDataSetChanged();
                     mIsLoadingPagerView = false;
                     if (isLoading()) {
+                        mMultiRecyclerViewAdapter.setCount(4);
                        mContext.onFinish();
                     }
                 } else {
@@ -123,90 +133,93 @@ public class HomeFragment extends Fragment {
             this.mContext = (Loadfinish)context;
         }
     }
-
+    public FragmentManager getFragment(){
+        return getFragmentManager();
+    }
     @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         final View rootView = inflater.inflate(R.layout.fragment_record_chart, container, false);
-
-        mViewPager = rootView.findViewById(R.id.view_pager);
-        mViewPager.setClipToPadding(false);
-        mViewPager.setPadding(0, 0, 0, 0);
-        //mHeaderPageAdapter = new HeaderPageAdapter(getActivity());
-        mPageAdapter = new PageAdapter(getFragmentManager());
-        //mViewPager.setAdapter(mHeaderPageAdapter);
-        mViewPager.setAdapter(mPageAdapter);
-        mViewPager.setCurrentItem(0, true);
-        mViewPager.setPageTransformer(false, (page, position) -> {
-            int pageWidth = page.getWidth();
-            float pageWidthTimesPosition = pageWidth * position;
-            float absPosition = Math.abs(position);
-            if (position <= -1.0f || position >= 1.0f) {
-
-
-            } else if (position == 0.0f) {
-
-
-            } else {
-
-                View title = page.findViewById(R.id.tv_title);
-                title.setAlpha(1.0f - absPosition);
-                View description = page.findViewById(R.id.tv_description);
-                description.setTranslationY(-pageWidthTimesPosition / 2f);
-                description.setAlpha(1.0f - absPosition);
-                View computer = page.findViewById(R.id.img_play);
-                computer.setAlpha(1.0f - absPosition);
-                computer.setTranslationX(-pageWidthTimesPosition * 1.5f);
-                View avatar = page.findViewById(R.id.img_avatar);
-                avatar.setScaleX(1.0f - absPosition);
-                avatar.setScaleY(1.0f - absPosition);
-                avatar.setTranslationX(-pageWidthTimesPosition);
-                if (position < 0) {
-                    // Create your out animation here
-                    avatar.setTranslationX(pageWidthTimesPosition*0.0f);
-                    avatar.setScaleX(1.0f);
-                    avatar.setScaleY(1.0f);
-                } else {
-                    // Create your in animation here
-                    avatar.setScaleX(1.0f + absPosition);
-                    avatar.setScaleY(1.0f + absPosition);
-                }
-            }
-
-        });
+//        mViewPager = rootView.findViewById(R.id.view_pager);
+//        mViewPager.setClipToPadding(false);
+//        mViewPager.setPadding(0, 0, 0, 0);
+//        //mHeaderPageAdapter = new HeaderPageAdapter(getActivity());
+//        //mPageAdapter = new PageAdapter(getFragmentManager());
+//        //mViewPager.setAdapter(mHeaderPageAdapter);
+//        mViewPager.setAdapter(mPageAdapter);
+//        mViewPager.setCurrentItem(0, true);
+//        mViewPager.setPageTransformer(false, (page, position) -> {
+//            int pageWidth = page.getWidth();
+//            float pageWidthTimesPosition = pageWidth * position;
+//            float absPosition = Math.abs(position);
+//            if (position <= -1.0f || position >= 1.0f) {
+//
+//
+//            } else if (position == 0.0f) {
+//
+//
+//            } else {
+//                View title = page.findViewById(R.id.tv_title);
+//                title.setAlpha(1.0f - absPosition);
+//                View description = page.findViewById(R.id.tv_description);
+//                description.setTranslationY(-pageWidthTimesPosition / 2f);
+//                description.setAlpha(1.0f - absPosition);
+//                View computer = page.findViewById(R.id.img_play);
+//                computer.setAlpha(1.0f - absPosition);
+//                computer.setTranslationX(-pageWidthTimesPosition * 1.5f);
+//                View avatar = page.findViewById(R.id.img_avatar);
+//                avatar.setScaleX(1.0f - absPosition);
+//                avatar.setScaleY(1.0f - absPosition);
+//                avatar.setTranslationX(-pageWidthTimesPosition);
+//                if (position < 0) {
+//                    // Create your out animation here
+//                    avatar.setTranslationX(pageWidthTimesPosition*0.0f);
+//                    avatar.setScaleX(1.0f);
+//                    avatar.setScaleY(1.0f);
+//                } else {
+//                    // Create your in animation here
+//                    avatar.setScaleX(1.0f + absPosition);
+//                    avatar.setScaleY(1.0f + absPosition);
+//                }
+//            }
+//
+//        });
         final RecyclerView listView = rootView.findViewById(R.id.recycler_view);
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
+        llm.setSmoothScrollbarEnabled(true);
         listView.setLayoutManager(llm);
-        mRecordChartAdapter = new RecordChartAdapter(getContext());
+        //mRecordChartAdapter = new RecordChartAdapter(getContext());
         //mRecordChartAdapter.setRecordChartList(mApplicationPresenter.getRecordCharts());
         //listView.setDivider(null);
-        listView.setAdapter(mRecordChartAdapter);
+        mMultiRecyclerViewAdapter = new MultiRecyclerViewAdapter(getContext());
+        mMultiRecyclerViewAdapter.setFragmentManager(getFragmentManager());
+        listView.setAdapter(mMultiRecyclerViewAdapter);
         //mRecordChartAdapter.notifyDataSetChanged();
 
         // Auto start of viewpager
-        mHandler = new Handler();
-        mUpdate = () -> {
-            if (mCurrentPage == mPageAdapter.getCount()) {
-                mCurrentPage = 0;
-            }
-            mViewPager.setCurrentItem(mCurrentPage++, true);
-        };
-        Timer swipeTimer = new Timer();
-        swipeTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                mHandler.post(mUpdate);
-            }
-        }, 5000, 5000);
+//        mHandler = new Handler();
+//        mUpdate = () -> {
+//            if (mCurrentPage == mPageAdapter.getCount()) {
+//                mCurrentPage = 0;
+//            }
+//            mViewPager.setCurrentItem(mCurrentPage++, true);
+//        };
+//        Timer swipeTimer = new Timer();
+//        swipeTimer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                mHandler.post(mUpdate);
+//            }
+//        }, 5000, 5000);
         return rootView;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mHandler.removeCallbacks(mUpdate);
+        //mHandler.removeCallbacks(mUpdate);
     }
 }
