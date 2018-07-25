@@ -11,7 +11,7 @@
         android:id="@+id/tv_title_record_chart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="#Record chart"
+        android:text="@string/record_chart"
         android:textSize="@dimen/text_size_over"
         android:fontFamily="@font/vagrundschriftbq"
         android:textColor="@color/White"/>
@@ -20,7 +20,8 @@
         android:id="@+id/recycler_view"
         android:layout_marginLeft="@dimen/dimen_temp1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:descendantFocusability="blocksDescendants">
     </android.support.v7.widget.RecyclerView>
 
 </LinearLayout>

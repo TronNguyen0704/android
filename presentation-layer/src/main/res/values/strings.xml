@@ -23,4 +23,6 @@
     <string name="image5">https://zmp3-photo.zadn.vn/banner/b/5/3/6/b53667f4f3659a76d7d3d82da6526171.jpg</string>
     <string name="cd_play">Play and Pause</string>
     <string name="cd_next">Skip forwards</string>
+    <string name="record_chart">#Record chart</string>
+    <string name="recent_listen">#NGHE GẦN ĐÂY</string>
 </resources>

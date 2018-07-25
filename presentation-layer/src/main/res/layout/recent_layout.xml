@@ -11,7 +11,7 @@
             android:id="@+id/tv_title_record_chart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="#NGHE GẦN ĐÂY"
+            android:text="@string/recent_listen"
             android:textSize="@dimen/text_size_over"
             android:fontFamily="@font/vagrundschriftbq"
             android:textColor="@color/White"/>

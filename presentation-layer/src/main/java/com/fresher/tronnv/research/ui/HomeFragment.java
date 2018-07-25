@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,7 +22,7 @@ import com.fresher.tronnv.research.R;
 import com.fresher.tronnv.research.presenters.ApplicationPresenter;
 import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
 import com.fresher.tronnv.research.ui.adapter.HeaderPageAdapter;
-import com.fresher.tronnv.research.ui.adapter.MultiRecyclerViewAdapter;
+import com.fresher.tronnv.research.ui.adapter.MultiViewAdapter;
 import com.fresher.tronnv.research.ui.adapter.PageAdapter;
 import com.fresher.tronnv.research.ui.adapter.RecordChartAdapter;
 import com.fresher.tronnv.research.viewmodel.RecordChartViewModel;
@@ -31,8 +30,6 @@ import com.fresher.tronnv.research.viewmodel.TrackViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 /**
  * Created by NGUYEN VAN TRON on 05/16/18.
  */
@@ -44,21 +41,13 @@ public class HomeFragment extends Fragment {
     public interface Loadfinish {
         void onFinish();
     }
-
-    private int mCurrentPage = 0;
-    private ViewPager mViewPager;
     private boolean mIsLoading = true;
     private boolean mIsLoadingPagerView = true;
     List<RecordChart> mRecordChartList;
     List<Track> mTracks;
-    private RecordChartAdapter mRecordChartAdapter;
-    private HeaderPageAdapter mHeaderPageAdapter;
-    private MultiRecyclerViewAdapter mMultiRecyclerViewAdapter;
-    private PageAdapter mPageAdapter;
+    private MultiViewAdapter mMultiRecyclerViewAdapter;
     private Loadfinish mContext;
     private ApplicationPresenter mApplicationPresenter;
-    private Handler mHandler;
-    private Runnable mUpdate;
     public HomeFragment() {
         mRecordChartList = new ArrayList<>();
         mTracks = new ArrayList<>();
@@ -83,45 +72,35 @@ public class HomeFragment extends Fragment {
     }
 
     private void subscribeUI(RecordChartViewModel viewModel) {
-        viewModel.getRecordChart().observe(this, new Observer<List<RecordChart>>() {
-            @Override
-            public void onChanged(@Nullable List<RecordChart> recordCharts) {
-                if (recordCharts != null) {
+        viewModel.getRecordChart().observe(this, recordCharts -> {
+            if (recordCharts != null) {
 //                    mRecordChartAdapter.setRecordChartList(recordCharts);
 //                    mRecordChartAdapter.notifyDataSetChanged();
-                    mMultiRecyclerViewAdapter.setRecordChartList(recordCharts);
-                    mMultiRecyclerViewAdapter.notifyDataSetChanged();
-                    mIsLoading = false;
-                    if (isLoading()) {
-                        mMultiRecyclerViewAdapter.setCount(4);
-                        mContext.onFinish();
-                    }
-                } else {
-                    mIsLoading = true;
+                mMultiRecyclerViewAdapter.setRecordChartList(recordCharts);
+                mMultiRecyclerViewAdapter.notifyDataSetChanged();
+                mIsLoading = false;
+                if (isLoading()) {
+                    mMultiRecyclerViewAdapter.setCount(5);
+                    mContext.onFinish();
                 }
+            } else {
+                mIsLoading = true;
             }
         });
     }
 
     private void subscribeUI(TrackViewModel viewModel) {
-        viewModel.getTracks().observe(this, new Observer<List<Track>>() {
-            @Override
-            public void onChanged(@Nullable List<Track> tracks) {
-                if (tracks != null) {
-                    mMultiRecyclerViewAdapter.setTracks(tracks);
-                    mMultiRecyclerViewAdapter.notifyDataSetChanged();
-//                    mPageAdapter.setTracks(tracks);
-//                    mPageAdapter.notifyDataSetChanged();
-//                    mHeaderPageAdapter.setTrackList(tracks);
-//                    mHeaderPageAdapter.notifyDataSetChanged();
-                    mIsLoadingPagerView = false;
-                    if (isLoading()) {
-                        mMultiRecyclerViewAdapter.setCount(4);
-                       mContext.onFinish();
-                    }
-                } else {
-                    mIsLoadingPagerView = true;
+        viewModel.getTracks().observe(this, tracks -> {
+            if (tracks != null) {
+                mMultiRecyclerViewAdapter.setTracks(tracks);
+                mMultiRecyclerViewAdapter.notifyDataSetChanged();
+                mIsLoadingPagerView = false;
+                if (isLoading()) {
+                    mMultiRecyclerViewAdapter.setCount(5);
+                   mContext.onFinish();
                 }
+            } else {
+                mIsLoadingPagerView = true;
             }
         });
     }
@@ -132,9 +111,6 @@ public class HomeFragment extends Fragment {
         if (context instanceof Loadfinish) {
             this.mContext = (Loadfinish)context;
         }
-    }
-    public FragmentManager getFragment(){
-        return getFragmentManager();
     }
     @NonNull
     @Override
@@ -185,20 +161,40 @@ public class HomeFragment extends Fragment {
 //            }
 //
 //        });
-        final RecyclerView listView = rootView.findViewById(R.id.recycler_view);
+        final RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view);
 
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         llm.setSmoothScrollbarEnabled(true);
-        listView.setLayoutManager(llm);
-        //mRecordChartAdapter = new RecordChartAdapter(getContext());
-        //mRecordChartAdapter.setRecordChartList(mApplicationPresenter.getRecordCharts());
-        //listView.setDivider(null);
-        mMultiRecyclerViewAdapter = new MultiRecyclerViewAdapter(getContext());
-        mMultiRecyclerViewAdapter.setFragmentManager(getFragmentManager());
-        listView.setAdapter(mMultiRecyclerViewAdapter);
-        //mRecordChartAdapter.notifyDataSetChanged();
+        recyclerView.setLayoutManager(llm);
+        recyclerView.setItemViewCacheSize(4);
+        recyclerView.setClipToPadding(true);
+        mMultiRecyclerViewAdapter = new MultiViewAdapter(getContext());
+        recyclerView.setAdapter(mMultiRecyclerViewAdapter);
 
+//        RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
+//        recycledViewPool.setMaxRecycledViews(0,5);
+//        recycledViewPool.setMaxRecycledViews(1,5);
+//        recycledViewPool.setMaxRecycledViews(2,10);
+//        recycledViewPool.setMaxRecycledViews(3,5);
+//        recyclerView.setRecycledViewPool(recycledViewPool);
+//        recyclerView.setViewCacheExtension(new RecyclerView.ViewCacheExtension() {
+//            @Override
+//            public View getViewForPositionAndType(RecyclerView.Recycler recycler, int position, int type) {
+//                return (type >= 0 && type <=3) ? mMultiRecyclerViewAdapter.getSparseArray().get(position) : null;
+//            }
+//        });
+//        mMultiRecyclerViewAdapter.notifyDataSetChanged();
+//        new Handler().post(() -> {
+//            recyclerView.getRecycledViewPool()
+//                    .setMaxRecycledViews(0, 1);
+//            recyclerView.getRecycledViewPool()
+//                    .setMaxRecycledViews(1, 1);
+//            recyclerView.getRecycledViewPool()
+//                    .setMaxRecycledViews(2, 1);
+//            recyclerView.getRecycledViewPool()
+//                    .setMaxRecycledViews(3, 1);
+//        });
         // Auto start of viewpager
 //        mHandler = new Handler();
 //        mUpdate = () -> {
@@ -220,6 +216,5 @@ public class HomeFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //mHandler.removeCallbacks(mUpdate);
     }
 }

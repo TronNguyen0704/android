@@ -29,7 +29,6 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.RecyclerViewHolder> {
     private List<RecordChart> mRecordCharts;
     private Context mContext;
-    private static HashMap<String,RecyclerViewHolder> sViewCache;
     public void setRecordChartList(List<RecordChart> recordChart) {
         if (this.mRecordCharts == null) {
             this.mRecordCharts.addAll(recordChart);
@@ -69,30 +68,18 @@ public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.
     RecordChartAdapter(Context context) {
         this.mContext = context;
         mRecordCharts = new ArrayList<>();
-        if(sViewCache == null){
-            sViewCache = new HashMap<>();
-        }
     }
     @NonNull
     @Override
     public RecyclerViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        if(parent.getChildCount()==0){
-            sViewCache.clear();
-            if(sViewCache == null){
-                sViewCache = new HashMap<>();
-            }
-        }
         View view = inflater.inflate(R.layout.rank_item, parent, false);
         return new RecyclerViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerViewHolder holder, int position) {
-        if(!sViewCache.containsKey(mRecordCharts.get(position).getName())) {
-            holder.bindList(mRecordCharts,mContext,position);
-            sViewCache.put(mRecordCharts.get(position).getName(), holder);
-        }
+        holder.bindList(mRecordCharts,mContext,position);
     }
 
     @Override
@@ -117,10 +104,10 @@ public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.
         }
          void bindList(List<RecordChart> recordCharts, Context context,int position){
              int[] cols = new int[]{Color.BLUE, Color.GREEN, Color.RED, Color.WHITE};
-             txtRank.setText(recordCharts.get(position).getRank() + "");
+             txtRank.setText(String.valueOf(recordCharts.get(position).getRank()));
              txtRank.setTextColor(cols[(position < 3) ? position : 3]);
-             txtSongName.setText(recordCharts.get(position).getName() + "");
-             txtAuthor.setText(recordCharts.get(position).getAuthor() + "");
+             txtSongName.setText(recordCharts.get(position).getName());
+             txtAuthor.setText(recordCharts.get(position).getAuthor());
              Glide.with(context)
                      .load(recordCharts.get(position).getAvatar())
                      .apply(RequestOptions.bitmapTransform(

@@ -32,14 +32,10 @@ public class HeaderPageAdapter extends PagerAdapter {
     private LayoutInflater mInflater;
     private Context mContext;
     private List<Track> mTracks;
-    private static HashMap<String,View> sViewCache;
     public HeaderPageAdapter(Activity context) {
         this.mContext = context;
         mInflater = context.getLayoutInflater();
         mTracks = new ArrayList<>();
-        if(sViewCache == null){
-            sViewCache = new HashMap<>();
-        }
     }
     public void setTrackList(List<Track> trackList) {
         this.mTracks.addAll(trackList);
@@ -57,89 +53,25 @@ public class HeaderPageAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup view, int position) {
         View myImageLayout = mInflater.inflate(R.layout.slider_item, view, false);
-        if(!sViewCache.containsKey(mTracks.get(position).getTitle())) {
-            ImageView myImage = myImageLayout
-                    .findViewById(R.id.img_avatar);
-            Glide.with(mContext)
-                    .load(mTracks.get(position).getThumb())
-                    .apply(RequestOptions.bitmapTransform(
-                            new VignetteFilterTransformation(
-                                    new PointF(0.5f, 0.5f),
-                                    new float[]{0f, 0f, 0f}, 0.1f, 0.75f)))
-                    .into(myImage);
-            TextView name = myImageLayout.findViewById(R.id.tv_title);
-            name.setText(mTracks.get(position).getTitle());
-            TextView des = myImageLayout.findViewById(R.id.tv_description);
-            des.setText(mTracks.get(position).getDescription());
-            view.addView(myImageLayout);
-            sViewCache.put(mTracks.get(position).getTitle(),myImageLayout);
-            return myImageLayout;
-        }
-        if(view.indexOfChild(sViewCache.get(mTracks.get(position).getTitle())) == -1){
-            view.addView(sViewCache.get(mTracks.get(position).getTitle()));
-        }
-        return sViewCache.get(mTracks.get(position).getTitle());
+        ImageView myImage = myImageLayout
+                .findViewById(R.id.img_avatar);
+        Glide.with(mContext)
+                .load(mTracks.get(position).getThumb())
+                .apply(RequestOptions.bitmapTransform(
+                        new VignetteFilterTransformation(
+                                new PointF(0.5f, 0.5f),
+                                new float[]{0f, 0f, 0f}, 0.1f, 0.75f)))
+                .into(myImage);
+        TextView name = myImageLayout.findViewById(R.id.tv_title);
+        name.setText(mTracks.get(position).getTitle());
+        TextView des = myImageLayout.findViewById(R.id.tv_description);
+        des.setText(mTracks.get(position).getDescription());
+        view.addView(myImageLayout);
+        return myImageLayout;
     }
 
     @Override
     public boolean isViewFromObject(View view, Object object) {
         return view.equals(object);
-    }
-
-    @Override
-    public void setPrimaryItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-        super.setPrimaryItem(container, position, object);
-    }
-
-    @Override
-    public void startUpdate(@NonNull ViewGroup container) {
-        super.startUpdate(container);
-    }
-
-    @Override
-    public void finishUpdate(@NonNull ViewGroup container) {
-        super.finishUpdate(container);
-    }
-
-    @Nullable
-    @Override
-    public Parcelable saveState() {
-        return super.saveState();
-    }
-
-    @Override
-    public void restoreState(@Nullable Parcelable state, @Nullable ClassLoader loader) {
-        super.restoreState(state, loader);
-    }
-
-    @Nullable
-    @Override
-    public CharSequence getPageTitle(int position) {
-        return super.getPageTitle(position);
-    }
-
-    @Override
-    public int getItemPosition(@NonNull Object object) {
-        return super.getItemPosition(object);
-    }
-
-    @Override
-    public void registerDataSetObserver(@NonNull DataSetObserver observer) {
-        super.registerDataSetObserver(observer);
-    }
-
-    @Override
-    public void unregisterDataSetObserver(@NonNull DataSetObserver observer) {
-        super.unregisterDataSetObserver(observer);
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        super.finalize();
-    }
-
-    @Override
-    public void notifyDataSetChanged() {
-        super.notifyDataSetChanged();
     }
 }
