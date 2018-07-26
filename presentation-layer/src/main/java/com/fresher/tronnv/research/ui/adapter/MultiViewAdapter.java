@@ -3,6 +3,7 @@ package com.fresher.tronnv.research.ui.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,18 +25,12 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private List<Track> mTracks;
     private Context mContext;
     private int mCount = 0;
-    private static SparseArray<View> sSparseArray;
+    private FragmentManager mFragmentManager;
+
     public MultiViewAdapter(Context context){
         mContext = context;
         mTracks = new ArrayList<>();
         mRecordCharts = new ArrayList<>();
-        if(sSparseArray == null)
-            sSparseArray = new SparseArray<>();
-        else
-            sSparseArray.clear();
-    }
-    public static SparseArray<View> getSparseArray() {
-        return sSparseArray;
     }
     public void setRecordChartList(List<RecordChart> recordChart) {
         if (this.mRecordCharts == null) {
@@ -112,7 +107,11 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 View view = inflater.inflate(R.layout.recent_layout, parent, false);
                 return new RecentViewHolder(view);
             }
-            default: return null;
+            default:{
+                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+                View view = inflater.inflate(R.layout.recent_layout, parent, false);
+                return new RecyclerViewHolder(view);
+            }
         }
     }
     @Override
@@ -143,6 +142,11 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 holder.bindTo(position);
                 break;
             }
+            default:{
+                onBindRecyclerViewHolder(holder);
+                holder.bindTo(position);
+                break;
+            }
         }
 
     }
@@ -150,25 +154,15 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     public int getItemCount() {
         return mCount;
     }
-/*
-Đặt số trang cần được giữ lại ở hai bên của trang hiện tại trong cấu trúc phân cấp chế độ xem ở trạng thái không hoạt động.
-Các trang vượt quá giới hạn này sẽ được tạo lại từ bộ điều hợp khi cần.
-Điều này được cung cấp dưới dạng tối ưu hóa. Nếu bạn biết trước số lượng trang bạn sẽ cần hỗ trợ hoặc có cơ chế tải chậm ở vị trí trên các trang của mình,
-việc tinh chỉnh cài đặt này có thể có lợi ích trong cảm giác mượt mà của hoạt ảnh và tương tác trên phân trang.
-Nếu bạn có một số lượng nhỏ các trang (3-4) mà bạn có thể tiếp tục hoạt động cùng một lúc,
-ít thời gian hơn sẽ được chi tiêu trong bố cục cho các chế độ xem chế độ xem mới được tạo thành các trang người dùng qua lại.
-Bạn nên giữ giới hạn này thấp, đặc biệt nếu các trang của bạn có bố cục phức tạp. Cài đặt này mặc định là 1.
-Thông số:
-giới hạn - Số lượng trang sẽ được giữ kín ở trạng thái không hoạt động.
- */
+
     private void onBindPageViewHolder(BaseViewHolder holder){
         PageViewHolder pageViewHolder = (PageViewHolder) holder;
         ViewPager mViewPager = pageViewHolder.viewPager;
         mViewPager.setPadding(0, 0, 0, 0);
-        HeaderPageAdapter mHeaderPageAdapter = new HeaderPageAdapter((Activity) mContext);
-        mHeaderPageAdapter.setTrackList(mTracks);
+        PageAdapter pageAdapter = new PageAdapter(mFragmentManager);
+        pageAdapter.setTracks(mTracks);
         mViewPager.setOffscreenPageLimit(4);
-        mViewPager.setAdapter(mHeaderPageAdapter);
+        mViewPager.setAdapter(pageAdapter);
         mViewPager.setPageTransformer(false, (page, position) -> {
             int pageWidth = page.getWidth();
             float pageWidthTimesPosition = pageWidth * position;
@@ -176,6 +170,15 @@ giới hạn - Số lượng trang sẽ được giữ kín ở trạng thái kh
             if (position <= -1.0f || position >= 1.0f) {
             } else if (position == 0.0f) {
             } else {
+                View title = page.findViewById(R.id.tv_title);
+                title.setAlpha(1.0f - absPosition);
+                title.setTranslationY(-pageWidthTimesPosition / 2f);
+                View description = page.findViewById(R.id.tv_description);
+                description.setTranslationY(-pageWidthTimesPosition / 2f);
+                description.setAlpha(1.0f - absPosition);
+                View imgPlay = page.findViewById(R.id.img_play);
+                imgPlay.setAlpha(1.0f - absPosition);
+                imgPlay.setTranslationX(-pageWidthTimesPosition * 1.5f);
                 View avatar = page.findViewById(R.id.img_avatar);
                 avatar.setScaleX(1.0f - absPosition);
                 avatar.setScaleY(1.0f - absPosition);
@@ -214,13 +217,11 @@ giới hạn - Số lượng trang sẽ được giữ kín ở trạng thái kh
         recentAdapter.setRecordChartList(mRecordCharts);
         recyclerViewHolder.recyclerView.setAdapter(recentAdapter);
     }
-/*
-Đặt số lần xem màn hình ngoài để giữ lại trước khi thêm chúng vào hồ bơi chế độ xem được tái chế có khả năng chia sẻ.
-Bộ nhớ cache của chế độ xem ngoại tuyến vẫn nhận thức được những thay đổi trong bộ điều hợp kèm theo,
-cho phép Trình quản lý bố cục sử dụng lại các chế độ xem đó chưa được sửa đổi mà không cần phải quay lại bộ điều hợp để kết nối lại chúng.
-Thông số:
-size - Số lượt xem cho bộ nhớ cache tắt màn hình trước khi đưa chúng trở lại chế độ xem chung được tái chế
- */
+
+    public void setFragmentManager(FragmentManager fragmentManager) {
+        this.mFragmentManager = fragmentManager;
+    }
+
     final class  RecentViewHolder extends BaseViewHolder {
         RecyclerView recyclerView;
 
@@ -231,7 +232,7 @@ size - Số lượt xem cho bộ nhớ cache tắt màn hình trước khi đưa
         }
         @Override
         void bindTo(int position){
-            sSparseArray.put(position,itemView);
+
         }
     }
     final class  RecyclerViewHolder extends BaseViewHolder {
@@ -244,7 +245,7 @@ size - Số lượt xem cho bộ nhớ cache tắt màn hình trước khi đưa
         }
         @Override
         void bindTo(int position){
-            sSparseArray.put(position,itemView);
+
         }
     }
     final class  PageViewHolder extends BaseViewHolder {
@@ -255,7 +256,7 @@ size - Số lượt xem cho bộ nhớ cache tắt màn hình trước khi đưa
         }
         @Override
         void bindTo(int position){
-            sSparseArray.put(position,itemView);
+
         }
     }
 }

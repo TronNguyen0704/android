@@ -11,30 +11,18 @@ import java.util.List;
 
 public class PageAdapter extends FragmentPagerAdapter{
     private List<Track> mTracks;
-    private List<PageFragment> mPageFragments;
     public PageAdapter(FragmentManager fragmentManager){
         super(fragmentManager);
         mTracks = new ArrayList<>();
-        mPageFragments = new ArrayList<>();
     }
     public void setTracks(List<Track> mTracks) {
         this.mTracks = mTracks;
-        cachePageFrament();
-    }
-    private void cachePageFrament(){
-        Track track;
-        for (int i = 0; i < mTracks.size(); i++) {
-            track = mTracks.get(i);
-            PageFragment pageFragment = PageFragment.sInstance(track.getTitle(),
-                    track.getDescription(),
-                    track.getThumb());
-            if (pageFragment != null)
-                mPageFragments.add(pageFragment);
-        }
     }
     @Override
     public Fragment getItem(int position) {
-        return mPageFragments.get(position);
+        return PageFragment.sInstance(mTracks.get(position).getTitle(),
+                mTracks.get(position).getDescription(),
+                mTracks.get(position).getThumb());
     }
 
     @Override

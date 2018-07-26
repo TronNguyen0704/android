@@ -33,9 +33,6 @@ import java.util.List;
 /**
  * Created by NGUYEN VAN TRON on 05/16/18.
  */
-/**dùng service để chạy MediaPlayer và dùng BroadcastReceiver để cập nhật giao diện của notification cũng như là UI nên tốc độ còn hơi chậm
- * A class PlayListFragment
- */
 public class HomeFragment extends Fragment {
 
     public interface Loadfinish {
@@ -80,7 +77,7 @@ public class HomeFragment extends Fragment {
                 mMultiRecyclerViewAdapter.notifyDataSetChanged();
                 mIsLoading = false;
                 if (isLoading()) {
-                    mMultiRecyclerViewAdapter.setCount(5);
+                    mMultiRecyclerViewAdapter.setCount(30);
                     mContext.onFinish();
                 }
             } else {
@@ -96,7 +93,7 @@ public class HomeFragment extends Fragment {
                 mMultiRecyclerViewAdapter.notifyDataSetChanged();
                 mIsLoadingPagerView = false;
                 if (isLoading()) {
-                    mMultiRecyclerViewAdapter.setCount(5);
+                    mMultiRecyclerViewAdapter.setCount(30);
                    mContext.onFinish();
                 }
             } else {
@@ -112,6 +109,12 @@ public class HomeFragment extends Fragment {
             this.mContext = (Loadfinish)context;
         }
     }
+    /*
+    Dạ em có đọc được trong ViewPager nó có cái hàm setOffscreenPageLimit cho phép đặt số cái trang cần cache lại
+    Trong RecyclerView thì có hàm setItemViewCacheSize để đặt một size giữ lại các view
+    Em đã chỉnh sửa lại em có cài lên máy sáng anh đưa em, để em mang qua cho anh xem ạ
+     */
+
     @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -167,9 +170,10 @@ public class HomeFragment extends Fragment {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         llm.setSmoothScrollbarEnabled(true);
         recyclerView.setLayoutManager(llm);
-        recyclerView.setItemViewCacheSize(4);
+        recyclerView.setItemViewCacheSize(30);
         recyclerView.setClipToPadding(true);
         mMultiRecyclerViewAdapter = new MultiViewAdapter(getContext());
+        mMultiRecyclerViewAdapter.setFragmentManager(getFragmentManager());
         recyclerView.setAdapter(mMultiRecyclerViewAdapter);
 
 //        RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
