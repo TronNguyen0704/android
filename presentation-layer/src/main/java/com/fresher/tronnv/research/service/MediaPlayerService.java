@@ -25,6 +25,7 @@ import android.widget.RemoteViews;
 
 import com.fresher.tronnv.research.Constants;
 import com.fresher.tronnv.research.R;
+import com.fresher.tronnv.research.Utils;
 import com.fresher.tronnv.research.activities.LyricActivity;
 import com.fresher.tronnv.research.usercontrol.MediaPlayerCustom;
 
@@ -316,9 +317,9 @@ public class MediaPlayerService extends Service{
         mViews.setViewVisibility(R.id.img_status_bar_icon, View.VISIBLE);
         mViews.setViewVisibility(R.id.img_album_art, View.GONE);
         if (mAvatars != null && mAvatars.size() > 0) {
-            mExpandedViews.setImageViewBitmap(R.id.status_bar_album_art, Constants.getBitmapFromURL(mAvatars.get(mId), getBaseContext()));
+            mExpandedViews.setImageViewBitmap(R.id.status_bar_album_art, Utils.getBitmapFromURL(mAvatars.get(mId), getBaseContext()));
         } else {
-            mExpandedViews.setImageViewBitmap(R.id.status_bar_album_art, Constants.getDefaultAlbumArt(getBaseContext()));
+            mExpandedViews.setImageViewBitmap(R.id.status_bar_album_art, Utils.getDefaultAlbumArt(getBaseContext()));
         }
         mViews.setImageViewResource(R.id.btn_play,
                 android.R.drawable.ic_media_pause);
@@ -406,10 +407,10 @@ public class MediaPlayerService extends Service{
         mViews.setTextViewText(R.id.tv_art_name, mAuthors.get(mId - 1));
         mExpandedViews.setTextViewText(R.id.status_bar_artist_name, mAuthors.get(mId - 1));
         if (mAvatars != null && mAvatars.size() > 0) {
-            mExpandedViews.setImageViewBitmap(R.id.status_bar_album_art, Constants.getBitmapFromURL(mAvatars.get(mId - 1), getBaseContext()));
-            mViews.setImageViewBitmap(R.id.img_status_bar_icon, Constants.getBitmapFromURL(mAvatars.get(mId - 1), getBaseContext()));
+            mExpandedViews.setImageViewBitmap(R.id.status_bar_album_art, Utils.getBitmapFromURL(mAvatars.get(mId - 1), getBaseContext()));
+            mViews.setImageViewBitmap(R.id.img_status_bar_icon, Utils.getBitmapFromURL(mAvatars.get(mId - 1), getBaseContext()));
         } else {
-            mExpandedViews.setImageViewBitmap(R.id.status_bar_album_art, Constants.getDefaultAlbumArt(getBaseContext()));
+            mExpandedViews.setImageViewBitmap(R.id.status_bar_album_art, Utils.getDefaultAlbumArt(getBaseContext()));
         }
         mStatus.contentView = mViews;
         mStatus.bigContentView = mExpandedViews;

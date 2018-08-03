@@ -25,4 +25,6 @@
     <string name="cd_next">Skip forwards</string>
     <string name="record_chart">#Record chart</string>
     <string name="recent_listen">#NGHE GẦN ĐÂY</string>
+    <string name="hot_likes">#Được yêu thích nhất</string>
+    <string name="zingchart_week">#Nổi bật</string>
 </resources>

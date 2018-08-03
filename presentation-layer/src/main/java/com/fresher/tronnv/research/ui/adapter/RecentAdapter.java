@@ -83,7 +83,12 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.RecyclerVi
         return 0;
     }
 
-     static class  RecyclerViewHolder extends RecyclerView.ViewHolder {
+    @Override
+    public boolean onFailedToRecycleView(@NonNull RecyclerViewHolder holder) {
+        return super.onFailedToRecycleView(holder);
+    }
+
+    static class  RecyclerViewHolder extends RecyclerView.ViewHolder {
         ImageView iv_avatar;
         TextView txtSongName;
         TextView txtAuthor;

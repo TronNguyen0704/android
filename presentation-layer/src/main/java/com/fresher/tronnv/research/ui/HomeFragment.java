@@ -1,34 +1,37 @@
 package com.fresher.tronnv.research.ui;
 
-
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import com.fresher.tronnv.android_models.RecordChart;
 import com.fresher.tronnv.android_models.Track;
+import com.fresher.tronnv.research.Constants;
 import com.fresher.tronnv.research.R;
+import com.fresher.tronnv.research.Utils;
 import com.fresher.tronnv.research.presenters.ApplicationPresenter;
 import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
-import com.fresher.tronnv.research.ui.adapter.HeaderPageAdapter;
 import com.fresher.tronnv.research.ui.adapter.MultiViewAdapter;
-import com.fresher.tronnv.research.ui.adapter.PageAdapter;
-import com.fresher.tronnv.research.ui.adapter.RecordChartAdapter;
 import com.fresher.tronnv.research.viewmodel.RecordChartViewModel;
 import com.fresher.tronnv.research.viewmodel.TrackViewModel;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 /**
  * Created by NGUYEN VAN TRON on 05/16/18.
@@ -77,7 +80,7 @@ public class HomeFragment extends Fragment {
                 mMultiRecyclerViewAdapter.notifyDataSetChanged();
                 mIsLoading = false;
                 if (isLoading()) {
-                    mMultiRecyclerViewAdapter.setCount(30);
+                    mMultiRecyclerViewAdapter.updateItems(Constants.generatorIntegers());
                     mContext.onFinish();
                 }
             } else {
@@ -93,7 +96,7 @@ public class HomeFragment extends Fragment {
                 mMultiRecyclerViewAdapter.notifyDataSetChanged();
                 mIsLoadingPagerView = false;
                 if (isLoading()) {
-                    mMultiRecyclerViewAdapter.setCount(30);
+                    mMultiRecyclerViewAdapter.updateItems(Constants.generatorIntegers());
                    mContext.onFinish();
                 }
             } else {
@@ -109,12 +112,6 @@ public class HomeFragment extends Fragment {
             this.mContext = (Loadfinish)context;
         }
     }
-    /*
-    Dạ em có đọc được trong ViewPager nó có cái hàm setOffscreenPageLimit cho phép đặt số cái trang cần cache lại
-    Trong RecyclerView thì có hàm setItemViewCacheSize để đặt một size giữ lại các view
-    Em đã chỉnh sửa lại em có cài lên máy sáng anh đưa em, để em mang qua cho anh xem ạ
-     */
-
     @NonNull
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -165,27 +162,47 @@ public class HomeFragment extends Fragment {
 //
 //        });
         final RecyclerView recyclerView = rootView.findViewById(R.id.recycler_view);
-
+        SwipeRefreshLayout swipeRefreshLayout =rootView.findViewById(R.id.swipeRefreshLayout);
         LinearLayoutManager llm = new LinearLayoutManager(getContext());
         llm.setOrientation(LinearLayoutManager.VERTICAL);
-        llm.setSmoothScrollbarEnabled(true);
+        //llm.setExtraLayoutSpace(Utils.getScreenHight(getActivity()));
+//        llm.setSmoothScrollbarEnabled(true);
+//        llm.setItemPrefetchEnabled(false);
+//        llm.scrollToPosition(0);
         recyclerView.setLayoutManager(llm);
-        recyclerView.setItemViewCacheSize(30);
-        recyclerView.setClipToPadding(true);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+//        recyclerView.setItemViewCacheSize(30);
+//        recyclerView.setClipToPadding(true);
         mMultiRecyclerViewAdapter = new MultiViewAdapter(getContext());
-        mMultiRecyclerViewAdapter.setFragmentManager(getFragmentManager());
         recyclerView.setAdapter(mMultiRecyclerViewAdapter);
-
-//        RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
-//        recycledViewPool.setMaxRecycledViews(0,5);
-//        recycledViewPool.setMaxRecycledViews(1,5);
-//        recycledViewPool.setMaxRecycledViews(2,10);
-//        recycledViewPool.setMaxRecycledViews(3,5);
-//        recyclerView.setRecycledViewPool(recycledViewPool);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.scrollToPosition(30);
+//        mMultiRecyclerViewAdapter.setmRecycledViewPool(recyclerView.getRecycledViewPool());
+        recyclerView.setRecycledViewPool(mMultiRecyclerViewAdapter.getRecycledViewPool());
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            mMultiRecyclerViewAdapter.updateItems(Constants.generatorIntegers2());
+//            mMultiRecyclerViewAdapter.notifyItemRangeChanged(0,2);
+//            mMultiRecyclerViewAdapter.notifyItemChanged(1);
+            swipeRefreshLayout.setRefreshing(false);
+        });
+//        recyclerView.setViewCacheExtension(new RecyclerView.ViewCacheExtension() {
+//            @Override
+//            public View getViewForPositionAndType(RecyclerView.Recycler recycler,
+//                                                  int position, int type) {
+//                return type == 0 ? mMultiRecyclerViewAdapter.getSpecials().get(position) : null;
+//            }
+//        });
 //        recyclerView.setViewCacheExtension(new RecyclerView.ViewCacheExtension() {
 //            @Override
 //            public View getViewForPositionAndType(RecyclerView.Recycler recycler, int position, int type) {
-//                return (type >= 0 && type <=3) ? mMultiRecyclerViewAdapter.getSparseArray().get(position) : null;
+//
+//                if (type >= 0 && type <=30) {
+//                   View view =  mMultiRecyclerViewAdapter.getSparseArray().get(position);
+//                   if(view == null) {return null;}
+//                   recyclerView.getLayoutManager().addView(view);
+//                   return view;
+//                }
+//                return null;
 //            }
 //        });
 //        mMultiRecyclerViewAdapter.notifyDataSetChanged();
@@ -221,4 +238,37 @@ public class HomeFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
     }
+//    public class PreCachingLayoutManager extends LinearLayoutManager {
+//        private static final int DEFAULT_EXTRA_LAYOUT_SPACE = 600;
+//        private int extraLayoutSpace = -1;
+//        private Context context;
+//
+//        public PreCachingLayoutManager(Context context) {
+//            super(context);
+//            this.context = context;
+//        }
+//
+//        public PreCachingLayoutManager(Context context, int extraLayoutSpace) {
+//            super(context);
+//            this.context = context;
+//            this.extraLayoutSpace = extraLayoutSpace;
+//        }
+//
+//        public PreCachingLayoutManager(Context context, int orientation, boolean reverseLayout) {
+//            super(context, orientation, reverseLayout);
+//            this.context = context;
+//        }
+//
+//        public void setExtraLayoutSpace(int extraLayoutSpace) {
+//            this.extraLayoutSpace = extraLayoutSpace;
+//        }
+//
+//        @Override
+//        protected int getExtraLayoutSpace(RecyclerView.State state) {
+//            if (extraLayoutSpace > 0) {
+//                return extraLayoutSpace;
+//            }
+//            return DEFAULT_EXTRA_LAYOUT_SPACE;
+//        }
+//    }
 }

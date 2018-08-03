@@ -126,13 +126,7 @@ public class PlayListFragment extends Fragment {
                 return true;
             }
         });
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mCallback.onItemSelected(position, mMusicLyricsShow.get(position).getId(),filter[0]);
-
-            }
-        });
+        listView.setOnItemClickListener((parent, view, position, id) -> mCallback.onItemSelected(position, mMusicLyricsShow.get(position).getId(),filter[0]));
         return rootView;
     }
 }

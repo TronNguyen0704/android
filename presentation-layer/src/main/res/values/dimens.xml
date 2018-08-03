@@ -26,4 +26,5 @@
     <dimen name="dimen_view_witdh">50dp</dimen>
     <dimen name="dimen_magrin_button">40dp</dimen>
     <dimen name="dimen_seekbar">5dp</dimen>
+    <dimen name="image_chart">200dp</dimen>
 </resources>

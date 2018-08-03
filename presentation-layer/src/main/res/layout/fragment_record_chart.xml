@@ -21,7 +21,10 @@
             <!--android:fontFamily="@font/vagrundschriftbq"-->
             <!--android:textColor="@color/White"/>-->
     <!--</RelativeLayout>-->
-
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"
         android:layout_marginLeft="@dimen/dimen_temp1"
@@ -29,4 +32,5 @@
         android:layout_height="match_parent"
         android:descendantFocusability="blocksDescendants">
     </android.support.v7.widget.RecyclerView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

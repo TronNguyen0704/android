@@ -9,6 +9,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArgument "listener", "com.squareup.leakcanary.FailTestOnLeakRunListener"
     }
     buildTypes {
         release {
@@ -92,4 +93,9 @@ dependencies {
     // Modules
     implementation project(':android-domain-layer')
     implementation project(':android-models')
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
+    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+    // Optional, if you use support library fragments:
+    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
+    androidTestImplementation "com.squareup.leakcanary:leakcanary-android-instrumentation:1.6.1"
 }

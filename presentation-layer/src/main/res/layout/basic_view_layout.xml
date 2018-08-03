@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/transparent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_title_record_chart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hot_likes"
+            android:textSize="@dimen/text_size_over"
+            android:fontFamily="@font/vagrundschriftbq"
+            android:textColor="@color/White"/>
+    </RelativeLayout>
+    <ImageView
+        android:id="@+id/img_avatar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/big_avatar"
+        android:padding="@dimen/dimen_temp1"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_74"/>
+
+</LinearLayout>

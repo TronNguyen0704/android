@@ -18,6 +18,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
@@ -37,32 +40,77 @@ public class Constants {
     public interface NOTIFICATION_ID {
         public static int FOREGROUND_SERVICE = 101;
     }
-
-    //Util
-    public static Bitmap getDefaultAlbumArt(Context context) {
-        Bitmap bm = null;
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        try {
-            bm = BitmapFactory.decodeResource(context.getResources(),
-                    R.drawable.icon_lyrics, options);
-        } catch (Error ee) {
-        } catch (Exception e) {
-        }
-        return bm;
+    public static List<String> generatorIntegers(){
+        List<String> items = new ArrayList<>();
+        items.add("0");
+        items.add("1");
+        items.add("2");
+        items.add("3");
+        items.add("4");
+        items.add("5");
+        items.add("6");
+        items.add("7");
+        items.add("8");
+        items.add("9");
+        items.add("10");
+        items.add("11");
+        items.add("71");
+        items.add("82");
+        items.add("93");
+        items.add("104");
+        items.add("115");
+        items.add("30");
+        items.add("14");
+        items.add("24");
+        items.add("34");
+        items.add("44");
+        items.add("54");
+        items.add("64");
+        items.add("74");
+        items.add("84");
+        items.add("94");
+        items.add("102");
+        items.add("114");
+        items.add("471");
+        items.add("842");
+        items.add("943");
+        return items;
     }
-
-    public static Bitmap getBitmapFromURL(String src, Context context) {
-        try {
-            Bitmap bitmap = Glide.with(context)
-                    .asBitmap()
-                    .load(src)
-                    .submit(512, 512)
-                    .get();
-            return bitmap;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-
+    public static List<String> generatorIntegers2(){
+        List<String> items = new ArrayList<>();
+        items.add("0");
+        items.add("1");
+        items.add("2");
+        items.add("3");
+        items.add("4");
+        items.add("5");
+        items.add("6");
+        items.add("7");
+        items.add("8");
+        items.add("9");
+        items.add("10");
+        items.add("11");
+        items.add("71");
+        items.add("82");
+        items.add("93");
+        items.add("104");
+        items.add("115");
+        items.add("30");
+        items.add("14");
+        items.add("24");
+        items.add("34");
+        items.add("44");
+        items.add("54");
+        items.add("64");
+        items.add("74");
+        items.add("84");
+        items.add("94");
+        items.add("102");
+        items.add("114");
+        items.add("471");
+        items.add("842");
+        items.add("943");
+        items.set(new Random().nextInt(11), "1111");
+        return items;
     }
 }
