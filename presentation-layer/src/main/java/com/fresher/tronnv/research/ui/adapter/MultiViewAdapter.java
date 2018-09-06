@@ -2,13 +2,12 @@ package com.fresher.tronnv.research.ui.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,63 +17,40 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.fresher.tronnv.android_models.DataType;
 import com.fresher.tronnv.android_models.RecordChart;
 import com.fresher.tronnv.android_models.Track;
-import com.fresher.tronnv.research.Constants;
+import com.fresher.tronnv.research.GlideHelper;
+import com.fresher.tronnv.research.MainUseCases;
 import com.fresher.tronnv.research.R;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.MissingFormatArgumentException;
 import java.util.Objects;
 import java.util.Random;
 
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
-
 public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private List<RecordChart> mRecordCharts;
     private List<Track> mTracks;
-    private List<String> mDataList;
+    private List<DataType> mDataList;
     private Context mContext;
-    private List<String> mImages;
-    private RecyclerView.RecycledViewPool mRecycledViewPool;
+    private boolean mIsCreated;
+    private SparseArray<BaseViewHolder> sSpecials ;
+    private RecyclerView.RecycledViewPool mPool;
+    private int mCount = 0;
 
-    private static SparseArray<View> sSpecials = new SparseArray<>();
     public MultiViewAdapter(Context context){
         mContext = context;
         mTracks = new ArrayList<>();
         mRecordCharts = new ArrayList<>();
-        mImages = new ArrayList<>();
         mDataList = new ArrayList<>();
-        mImages.add("https://zmp3-photo.zadn.vn/covers/e/9/e92910699de0aeee9f1587e0425d8a7c_1514894974.png");
-        mImages.add("https://zmp3-photo.zadn.vn/covers/c/5/c5360ad3d2e28b5bb5f0d0930a6a6a6f_1499827454.jpg");
-        mImages.add("https://zmp3-photo.zadn.vn/covers/9/5/95488ad8d45bd69ef83e9403c4114375_1499827707.jpg");
-        mImages.add("https://zmp3-photo.zadn.vn/covers/7/0/702ed1b745f1b326f4fc07e8b60afea4_1499828300.jpg");
-        mImages.add("https://zmp3-photo.zadn.vn/cover/5/5/5/e/555e1711704ed04400cce99ffbccc8b1.jpg");
-        mImages.add("https://zmp3-photo.zadn.vn/covers/d/1/d1c2738deec7efd1942a3027a1c436b0_1499828277.jpg");
-        mRecycledViewPool = new RecyclerView.RecycledViewPool();
-//        mRecycledViewPool.setMaxRecycledViews(0,0);
-//        mRecycledViewPool.setMaxRecycledViews(1,1);
-//        mRecycledViewPool.setMaxRecycledViews(2,1);
-//        mRecycledViewPool.setMaxRecycledViews(3,0);
-//        mRecycledViewPool.setMaxRecycledViews(4,1);
-//        mRecycledViewPool.setMaxRecycledViews(5,1);
-//        mRecycledViewPool.setMaxRecycledViews(6,6);
+        sSpecials = new SparseArray<>();
     }
-    public void setmRecycledViewPool(RecyclerView.RecycledViewPool r){
-        this.mRecycledViewPool = r;
-    }
-    public SparseArray<View> getSpecials() {
-        return sSpecials;
-    }
-    public RecyclerView.RecycledViewPool getRecycledViewPool() {
-        return mRecycledViewPool;
-    }
-
     public void setRecordChartList(List<RecordChart> recordChart) {
         if (this.mRecordCharts == null) {
             this.mRecordCharts.addAll(recordChart);
@@ -118,115 +94,108 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     public int getItemViewType(int position) {
         if (position <=11)
             return position;
-        else if(position < 20)
+        else if(position < 21)
             return 12;
-        else if(position < 25)
+        else if(position < 66)
             return 13;
-        else
+        else if(position < 70)
             return 14;
-    }
-
-    @Override
-    public boolean onFailedToRecycleView(@NonNull BaseViewHolder holder) {
-        return super.onFailedToRecycleView(holder);
-    }
-
-    @Override
-    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-    }
-
-    @Override
-    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView);
+        if(position == 0)
+            return position;
+        return 20;
     }
     @NonNull
     @Override
     public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+//        for(int i = 0; i < sSpecials.size(); i++){
+//            BaseViewHolder baseViewHolder = sSpecials.get(sSpecials.keyAt(i));
+//            if( baseViewHolder != null && baseViewHolder.getItemViewType() == viewType){
+//                sSpecials.remove(sSpecials.keyAt(i));
+//                return baseViewHolder;
+//            }
+//        }
+
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch (viewType) {
             case 0: {
                 Log.e("Debug", "OnCreateViewHolder");
-                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                 View view = inflater.inflate(R.layout.slider_layout, parent, false);
                 return new PageViewHolder(view);
             }
             case 1:{
-                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-                View view = inflater.inflate(R.layout.rank_layout, parent, false);
-                return new RecyclerViewHolder(view);
+                View view = inflater.inflate(R.layout.basic_view_layout, parent, false);
+                return new ImageViewHolder(view);
             }
             case 2:{
-                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                 View view = inflater.inflate(R.layout.recent_layout, parent, false);
                 return new RecentViewHolder(view);
             }
             case 3:{
-                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                 View view = inflater.inflate(R.layout.basic_view_layout, parent, false);
                 return new ImageViewHolder(view);
             }
             case 4:{
-                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-                View view = inflater.inflate(R.layout.grid_view_layout, parent, false);
-                return new GridViewHolder(view);
-            }
-            case 5:{
-                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                 View view = inflater.inflate(R.layout.recent_layout, parent, false);
                 return new RecentViewHolder(view);
             }
+            case 5:{
+                View view = inflater.inflate(R.layout.basic_view_layout, parent, false);
+                return new ImageViewHolder(view);
+            }
             case 6:{
-                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                 View view = inflater.inflate(R.layout.grid_view_layout, parent, false);
                 return new GridViewHolder(view);
             }
             case 7:{
-                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                 View view = inflater.inflate(R.layout.basic_view_layout, parent, false);
                 return new ImageViewHolder(view);
             }
             case 8:{
-                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-                View view = inflater.inflate(R.layout.grid_view_layout, parent, false);
-                return new GridViewHolder(view);
-            }
-            case 9:{
-                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                 View view = inflater.inflate(R.layout.recent_layout, parent, false);
                 return new RecentViewHolder(view);
             }
+            case 9:{
+                View view = inflater.inflate(R.layout.basic_view_layout, parent, false);
+                return new ImageViewHolder(view);
+            }
             case 10:{
-                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                 View view = inflater.inflate(R.layout.grid_view_layout, parent, false);
                 return new GridViewHolder(view);
             }
             case 11:{
-                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-                View view = inflater.inflate(R.layout.rank_layout, parent, false);
-                return new RecyclerViewHolder(view);
-            }
-            case 12:{
-                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                 View view = inflater.inflate(R.layout.basic_view_layout, parent, false);
                 return new ImageViewHolder(view);
             }
+            case 12:{
+                View view = inflater.inflate(R.layout.rank_item, parent, false);
+                return new ItemViewHolder(view);
+            }
             case 13:{
-                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-                View view = inflater.inflate(R.layout.rank_layout, parent, false);
-                return new RecyclerViewHolder(view);
+                View view = inflater.inflate(R.layout.basic_view_layout, parent, false);
+                return new ImageViewHolder(view);
             }
             case 14:{
-                LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                 View view = inflater.inflate(R.layout.grid_view_layout, parent, false);
                 return new GridViewHolder(view);
             }
+            case 20:{
+                View view = inflater.inflate(R.layout.newfeed_layout, parent, false);
+                return new ConstraintViewHolder(view);
+            }
             default:{
-                return null;
+                View view = inflater.inflate(R.layout.grid_view_layout, parent, false);
+                return new GridViewHolder(view);
             }
         }
     }
     @Override
     public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
+        if(mPool!= null)
+            Log.e("onBindViewHolder",String.valueOf(mPool.getRecycledViewCount(20)));
+        onBindBaseViewHolder(holder,position);
+
+    }
+    private void onBindBaseViewHolder(BaseViewHolder holder,int position){
         switch (holder.getItemViewType()) {
             case 0: {
                 onBindPageViewHolder(holder);
@@ -234,7 +203,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 break;
             }
             case 1: {
-                onBindRecyclerViewHolder(holder);
+                onBindImageViewHolder(holder,true);
                 holder.bindTo(position);
                 break;
             }
@@ -249,12 +218,12 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 break;
             }
             case 4: {
-                onBindGridViewHolder(holder);
+                onBindRecentViewHolder(holder);
                 holder.bindTo(position);
                 break;
             }
             case 5: {
-                onBindRecentViewHolder(holder);
+                onBindImageViewHolder(holder,true);
                 holder.bindTo(position);
                 break;
             }
@@ -269,12 +238,12 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 break;
             }
             case 8: {
-                onBindGridViewHolder(holder);
+                onBindRecentViewHolder(holder);
                 holder.bindTo(position);
                 break;
             }
             case 9: {
-                onBindRecentViewHolder(holder);
+                onBindImageViewHolder(holder,true);
                 holder.bindTo(position);
                 break;
             }
@@ -284,11 +253,16 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 break;
             }
             case 11: {
-                onBindRecyclerViewHolder(holder);
+                onBindImageViewHolder(holder,true);
                 holder.bindTo(position);
                 break;
             }
             case 12: {
+                onBindItemViewHolder(holder);
+                holder.bindTo(position);
+                break;
+            }
+            case 13: {
                 onBindImageViewHolder(holder,true);
                 holder.bindTo(position);
                 break;
@@ -298,8 +272,8 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 holder.bindTo(position);
                 break;
             }
-            case 13: {
-                onBindRecyclerViewHolder(holder);
+            case 20: {
+                onBindConstraintViewHolder(holder);
                 holder.bindTo(position);
                 break;
             }
@@ -307,39 +281,21 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
                 break;
             }
         }
-
     }
-/*
- */
 //    @Override
 //    public void onBindViewHolder(@NonNull BaseViewHolder holder, int position, @NonNull List<Object> payloads) {
 //        if(payloads.isEmpty()) {// if empty, do full binding
-//            if(!isCreated) {
+//            if(!mIsCreated && position == mDataList.size() - 1){
+//                mIsCreated = true;
+//            }
+//            if(!mIsCreated)
 //                onBindViewHolder(holder, position);
-//            }
-//            if(position == mDataList.size() - 1 && !isCreated){
-//                isCreated = true;
-//            }
-//            return;
+////            return;
 //        }
 //        Bundle bundle = (Bundle) payloads.get(0);
-//        if(bundle.getString("POSITION_CHANGE").endsWith("1111")){
-//            if(position > 5) {
-//                onBindImageViewHolder(holder, true);
-//            }
-//        }
+//        Log.e(getClass().getSimpleName(),"POSITION_CHANGE" + bundle.getInt("POSITION_CHANGE"));
 //    }
 
-
-    @Override
-    public void onViewAttachedToWindow(@NonNull BaseViewHolder holder) {
-        super.onViewAttachedToWindow(holder);
-    }
-
-    @Override
-    public void onViewDetachedFromWindow(@NonNull BaseViewHolder holder) {
-        super.onViewDetachedFromWindow(holder);
-    }
 
     @Override
     public int getItemCount() {
@@ -349,101 +305,107 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         return 0;
     }
 
-    @Override
-    public void onViewRecycled(@NonNull BaseViewHolder holder) {
-        super.onViewRecycled(holder);
-        if(mRecycledViewPool!= null && mRecycledViewPool.getRecycledViewCount(0) >= 0){
-            Log.e("View 0",String.valueOf(mRecycledViewPool.getRecycledViewCount(0)) );
-            Log.e("View 1",String.valueOf(mRecycledViewPool.getRecycledViewCount(1)) );
-            Log.e("View 2",String.valueOf(mRecycledViewPool.getRecycledViewCount(2)) );
-            Log.e("View 3",String.valueOf(mRecycledViewPool.getRecycledViewCount(3)) );
-            Log.e("View 4",String.valueOf(mRecycledViewPool.getRecycledViewCount(4)) );
-            Log.e("View 5",String.valueOf(mRecycledViewPool.getRecycledViewCount(5)) );
-        }
-    }
-
     private void onBindPageViewHolder(BaseViewHolder holder){
         PageViewHolder pageViewHolder = (PageViewHolder) holder;
-        ViewPager mViewPager = pageViewHolder.viewPager;
-        mViewPager.setPadding(0, 0, 0, 0);
-//        PageAdapter pageAdapter = new PageAdapter(sFragmentManager);
-//        pageAdapter.setTracks(mTracks);
-        mViewPager.setOffscreenPageLimit(4);
-//        mViewPager.setAdapter(pageAdapter);
-        HeaderPageAdapter headerPageAdapter = new HeaderPageAdapter((Activity)mContext);
-        headerPageAdapter.setTrackList(mTracks);
-        mViewPager.setAdapter(headerPageAdapter);
-        mViewPager.setPageTransformer(false, (page, position) -> {
-            int pageWidth = page.getWidth();
-            float pageWidthTimesPosition = pageWidth * position;
-            float absPosition = Math.abs(position);
-            if (position <= -1.0f || position >= 1.0f) {
-            } else if (position == 0.0f) {
-            } else {
-                View title = page.findViewById(R.id.tv_title);
-                title.setTranslationY(-pageWidthTimesPosition / 2f);
-                title.setAlpha(1.0f - absPosition);
-                View description = page.findViewById(R.id.tv_description);
-                description.setTranslationY(-pageWidthTimesPosition / 2f);
-                description.setAlpha(1.0f - absPosition);
-                View imgPlay = page.findViewById(R.id.img_play);
-                imgPlay.setTranslationY(-pageWidthTimesPosition / 2f);
-                imgPlay.setAlpha(1.0f - absPosition);
-                View avatar = page.findViewById(R.id.img_avatar);
-                avatar.setScaleX(1.0f - absPosition);
-                avatar.setScaleY(1.0f - absPosition);
-                avatar.setTranslationX(-pageWidthTimesPosition);
-                if (position < 0) {
-                    // Create your out animation here
-                    avatar.setTranslationX(pageWidthTimesPosition * 0.0f);
-                    avatar.setScaleX(1.0f);
-                    avatar.setScaleY(1.0f);
-                } else {
-                    // Create your in animation here
-                    avatar.setScaleX(1.0f + absPosition);
-                    avatar.setScaleY(1.0f + absPosition);
-                }
-            }
-        });
-        mViewPager.setCurrentItem(new Random().nextInt(5), true);
     }
     private void onBindRecyclerViewHolder(BaseViewHolder holder){
         RecyclerViewHolder recyclerViewHolder = (RecyclerViewHolder) holder;
         LinearLayoutManager llm = new LinearLayoutManager(mContext);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
-        llm.setSmoothScrollbarEnabled(true);
         recyclerViewHolder.recyclerView.setLayoutManager(llm);
         RecordChartAdapter mRecordChartAdapter = new RecordChartAdapter(mContext);
         mRecordChartAdapter.setRecordChartList(mRecordCharts.subList(0,5));
-//        recyclerViewHolder.recyclerView.addItemDecoration(new DividerItemDecoration(mContext, LinearLayout.VERTICAL));
         recyclerViewHolder.recyclerView.setAdapter(mRecordChartAdapter);
+        recyclerViewHolder.recyclerView.setHasFixedSize(true);
+        recyclerViewHolder.recyclerView.setNestedScrollingEnabled(false);
     }
     private void onBindRecentViewHolder(BaseViewHolder holder){
         RecentViewHolder recyclerViewHolder = (RecentViewHolder) holder;
-        LinearLayoutManager llm = new LinearLayoutManager(mContext);
-        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
-        llm.setSmoothScrollbarEnabled(true);
-        recyclerViewHolder.recyclerView.setLayoutManager(llm);
-        RecentAdapter recentAdapter = new RecentAdapter(mContext);
-        recentAdapter.setRecordChartList(mRecordCharts);
-        recyclerViewHolder.recyclerView.setAdapter(recentAdapter);
     }
     private void onBindImageViewHolder(BaseViewHolder holder, boolean flag){
         ImageViewHolder imageViewHolder = (ImageViewHolder) holder;
-        imageViewHolder.imageView.setOnClickListener(v -> {
-            this.notifyItemChanged(3);
-        });
-        Glide.with(mContext)
-                .load((!flag) ? imageViewHolder.images[0] : imageViewHolder.images[new Random().nextInt(5)])
-                .apply(RequestOptions.bitmapTransform(
-                        new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL)))
-                .into(imageViewHolder.imageView);
+//        Glide.with(mContext)
+//                .load((!flag) ? imageViewHolder.images[0] : imageViewHolder.images[new Random().nextInt(5)])
+//                .apply(RequestOptions.bitmapTransform(
+//                        new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL)))
+//                .into(imageViewHolder.imageView);
+        GlideHelper.requestBuilderImage((!flag) ? imageViewHolder.images[0] : imageViewHolder.images[new Random().nextInt(5)],
+                imageViewHolder.imageView).into(imageViewHolder.imageView);
+    }
+    private void onBindConstraintViewHolder(BaseViewHolder holder){
+        ConstraintViewHolder constraintViewHolder = (ConstraintViewHolder)holder;
+        constraintViewHolder.imageViewContent.setImageResource(R.drawable.oldmusic);
+    }
+    private void onBindItemViewHolder(BaseViewHolder holder){
+        ItemViewHolder itemViewHolder = (ItemViewHolder) holder;
+        int[] cols = new int[]{Color.BLUE, Color.GREEN, Color.RED, Color.WHITE};
+        itemViewHolder.textViewRank.setText(String.valueOf(mRecordCharts.get(mCount).getRank()));
+        itemViewHolder.textViewRank.setTextColor(cols[(mCount < 3) ? mCount : 3]);
+        itemViewHolder.textViewName.setText(mRecordCharts.get(mCount).getName());
+        itemViewHolder.textViewAuthor.setText(mRecordCharts.get(mCount).getAuthor());
+//        Glide.with(mContext)
+//                .load(mRecordCharts.get(mCount).getAvatar())
+//                .apply(RequestOptions.bitmapTransform(
+//                        new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL)))
+//                .into(itemViewHolder.imageView);
+        GlideHelper.requestBuilderAvatar(mRecordCharts.get(mCount).getAvatar(),itemViewHolder.imageView).into(itemViewHolder.imageView);
+        mCount = (mCount + 1) % 10;
     }
     private void onBindGridViewHolder(BaseViewHolder holder){
         GridViewHolder gridViewHolder = (GridViewHolder) holder;
-        GridAdapter gridAdapter = new GridAdapter(mContext);
-        gridAdapter.setImages(mImages);
-        gridViewHolder.gridView.setAdapter(gridAdapter);
+    }
+
+    public void setPool(RecyclerView.RecycledViewPool pool) {
+        this.mPool = pool;
+    }
+
+    @Override
+    public void onViewRecycled(@NonNull BaseViewHolder holder) {
+//        int viewType = holder.getItemViewType();
+//        if(4 == mPool.getRecycledViewCount(viewType)){
+//            sSpecials.put(holder.getAdapterPosition(),(BaseViewHolder) mPool.getRecycledView(viewType));
+//        }
+//        if(5 <= mPool.getRecycledViewCount(viewType)){
+//            sSpecials.put(holder.getAdapterPosition(),holder);
+//        }
+        super.onViewRecycled(holder);
+    }
+
+    final class ItemViewHolder extends BaseViewHolder {
+        ImageView imageView;
+        TextView textViewAuthor;
+        TextView textViewName;
+        TextView textViewRank;
+        ItemViewHolder(View itemView) {
+            super(itemView);
+            imageView = itemView.findViewById(R.id.img_avatar);
+            textViewAuthor = itemView.findViewById(R.id.tv_author);
+            textViewName = itemView.findViewById(R.id.tv_name);
+            textViewRank = itemView.findViewById(R.id.tv_rank);
+        }
+        @Override
+        void bindTo(int position){
+        }
+    }
+    final class ConstraintViewHolder extends BaseViewHolder {
+        ImageView imageViewAdmin;
+        ImageView imageViewContent;
+        TextView textViewShare;
+        TextView textViewTime;
+        TextView textViewContent;
+        TextView textViewDetail;
+        ConstraintViewHolder(View itemView) {
+            super(itemView);
+            imageViewAdmin = itemView.findViewById(R.id.img_admin);
+            imageViewContent = itemView.findViewById(R.id.img_content);
+            textViewShare = itemView.findViewById(R.id.tv_share_content);
+            textViewTime = itemView.findViewById(R.id.tv_share_time);
+            textViewContent = itemView.findViewById(R.id.tv_content);
+            textViewDetail = itemView.findViewById(R.id.tv_detail);
+        }
+        @Override
+        void bindTo(int position){
+        }
     }
     final class ImageViewHolder extends BaseViewHolder {
         ImageView imageView;
@@ -456,6 +418,13 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         ImageViewHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.img_avatar);
+            imageView.setOnClickListener(v -> {
+                Glide.with(mContext)
+                        .load(images[new Random().nextInt(5)])
+                        .apply(RequestOptions.bitmapTransform(
+                                new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL)))
+                        .into(imageView);
+            });
         }
         @Override
         void bindTo(int position){
@@ -463,11 +432,16 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     }
     final class  RecentViewHolder extends BaseViewHolder {
         RecyclerView recyclerView;
-
         RecentViewHolder(View itemView) {
             super(itemView);
             recyclerView = itemView.findViewById(R.id.recycler_view);
-//            recyclerView.setItemViewCacheSize(9);
+            LinearLayoutManager llm = new LinearLayoutManager(mContext);
+            llm.setOrientation(LinearLayoutManager.HORIZONTAL);
+            recyclerView.setLayoutManager(llm);
+            RecentAdapter recentAdapter = new RecentAdapter(mContext);
+            recentAdapter.setRecordChartList(mRecordCharts);
+           recyclerView.setAdapter(recentAdapter);
+           recyclerView.setHasFixedSize(true);
         }
         @Override
         void bindTo(int position){
@@ -479,7 +453,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         RecyclerViewHolder(View itemView) {
             super(itemView);
             recyclerView = itemView.findViewById(R.id.recycler_view);
-//            recyclerView.setItemViewCacheSize(5);
+            recyclerView.setItemViewCacheSize(5);
         }
         @Override
         void bindTo(int position){
@@ -487,14 +461,52 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         }
     }
     final class  PageViewHolder extends BaseViewHolder {
-        ViewPager viewPager;
+        ViewPager mViewPager;
         PageViewHolder(View itemView) {
             super(itemView);
-            viewPager = itemView.findViewById(R.id.view_pager);
+            mViewPager = itemView.findViewById(R.id.view_pager);
+            mViewPager.setPadding(0, 0, 0, 0);
+            mViewPager.setOffscreenPageLimit(5);
+            HeaderPageAdapter headerPageAdapter = new HeaderPageAdapter((Activity)mContext);
+            headerPageAdapter.setTrackList(mTracks);
+            mViewPager.setAdapter(headerPageAdapter);
+            mViewPager.setPageTransformer(false, (page, position) -> {
+                int pageWidth = page.getWidth();
+                float pageWidthTimesPosition = pageWidth * position;
+                float absPosition = Math.abs(position);
+                if (position <= -1.0f || position >= 1.0f) {
+                } else if (position == 0.0f) {
+                } else {
+                    View title = page.findViewById(R.id.tv_title);
+                    title.setTranslationY(-pageWidthTimesPosition / 2f);
+                    title.setAlpha(1.0f - absPosition);
+                    View description = page.findViewById(R.id.tv_description);
+                    description.setTranslationY(-pageWidthTimesPosition / 2f);
+                    description.setAlpha(1.0f - absPosition);
+                    View imgPlay = page.findViewById(R.id.img_play);
+                    imgPlay.setAlpha(1.0f - absPosition);
+                    imgPlay.setTranslationX(-pageWidthTimesPosition * 1.5f);
+                    View avatar = page.findViewById(R.id.img_avatar);
+                    avatar.setScaleX(1.0f - absPosition);
+                    avatar.setScaleY(1.0f - absPosition);
+                    avatar.setTranslationX(-pageWidthTimesPosition);
+                    if (position < 0) {
+                        // Create your out animation here
+                        avatar.setTranslationX(pageWidthTimesPosition * 0.0f);
+                        avatar.setScaleX(1.0f);
+                        avatar.setScaleY(1.0f);
+                    } else {
+                        // Create your in animation here
+                        avatar.setScaleX(1.0f + absPosition);
+                        avatar.setScaleY(1.0f + absPosition);
+                    }
+                }
+            });
+            mViewPager.setCurrentItem(new Random().nextInt(5), true);
+            mViewPager.setNestedScrollingEnabled(true);
         }
         @Override
         void bindTo(int position){
-            sSpecials.put(position,itemView);
         }
     }
     final class  GridViewHolder extends BaseViewHolder {
@@ -503,13 +515,16 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
             super(itemView);
             gridView = itemView.findViewById(R.id.gv_week_chart);
             gridView.setNumColumns(2);
+            GridAdapter gridAdapter = new GridAdapter(mContext);
+            gridAdapter.setImages(new MainUseCases(null).getImages());
+            gridView.setAdapter(gridAdapter);
         }
         @Override
         void bindTo(int position){
 
         }
     }
-    public void updateItems(List<String> newItems) {
+    public void updateItems(List<DataType> newItems) {
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new AwesomeCallback(newItems, mDataList));
         diffResult.dispatchUpdatesTo(this);
 
@@ -519,10 +534,10 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     }
     static class AwesomeCallback extends DiffUtil.Callback {
 
-        private List<String> oldList;
-        private List<String> newList;
+        private List<DataType> oldList;
+        private List<DataType> newList;
 
-        public AwesomeCallback(List<String> oldList, List<String> newList) {
+        public AwesomeCallback(List<DataType> oldList, List<DataType> newList) {
             this.oldList = oldList;
             this.newList = newList;
         }
@@ -545,7 +560,7 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         @Override
         public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
             boolean s;
-            s = oldList.get(oldItemPosition).endsWith(newList.get(newItemPosition));
+            s = oldList.get(oldItemPosition).equals(newList.get(newItemPosition));
             return s;
 
         }
@@ -553,12 +568,12 @@ public class MultiViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         @Nullable
         @Override
         public Object getChangePayload(int oldItemPosition, int newItemPosition) {
-            String oldData = oldList.get(oldItemPosition);
-            String newData = newList.get(newItemPosition);
+            DataType oldData = oldList.get(oldItemPosition);
+            DataType newData = newList.get(newItemPosition);
 
             Bundle payload = new Bundle();
             if (!(oldData.equals(newData))) {
-                payload.putString("POSITION_CHANGE", newData);
+                payload.putInt("POSITION_CHANGE", newData.getType());
             }
 
             if (payload.isEmpty()) {

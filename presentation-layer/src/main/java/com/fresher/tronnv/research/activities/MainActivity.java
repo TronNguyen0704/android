@@ -1,6 +1,5 @@
 package com.fresher.tronnv.research.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
@@ -10,28 +9,27 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.support.design.widget.BottomNavigationView;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ProgressBar;
 import android.widget.SearchView;
 
 import com.fresher.tronnv.research.R;
+import com.fresher.tronnv.research.ui.NewsFeedFragment;
 import com.fresher.tronnv.research.ui.PlayListFragment;
 import com.fresher.tronnv.research.ui.HomeFragment;
 import com.fresher.tronnv.research.ui.adapter.ViewPagerAdapter;
 
 
-public class MainActivity extends AppCompatActivity implements PlayListFragment.OnItemLyricClickListener, HomeFragment.Loadfinish {
+public class MainActivity extends AppCompatActivity implements PlayListFragment.OnItemLyricClickListener, HomeFragment.Loadfinish{
 
     private ProgressBar mProgressBar;
     private SearchView mSearchView;
     private HomeFragment mHomeFragment;
     private PlayListFragment mPlayListFragment;
     private ViewPager mViewPager;
+    private NewsFeedFragment mNewsFeedFragment;
     MenuItem mPrevMenuItem;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
@@ -45,7 +43,8 @@ public class MainActivity extends AppCompatActivity implements PlayListFragment.
                     break;
                 }
                 case R.id.navigation_more_setting:
-                    return true;
+                    mViewPager.setCurrentItem(2);
+                    break;
             }
             return false;
         }
@@ -68,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements PlayListFragment.
         mSearchView.clearFocus();
         mHomeFragment = new HomeFragment();
         mPlayListFragment = new PlayListFragment();
+        mNewsFeedFragment = new NewsFeedFragment();
         mPlayListFragment.setmSearchView(mSearchView);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -95,22 +95,19 @@ public class MainActivity extends AppCompatActivity implements PlayListFragment.
             }
         });
         setupViewPager(mViewPager);
+        if (android.os.Build.VERSION.SDK_INT >= 28) {
+            mProgressBar.setVisibility(View.GONE);
+            mViewPager.setCurrentItem(2);
+        }
     }
     private void setupViewPager(ViewPager viewPager)
     {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(mHomeFragment);
         adapter.addFragment(mPlayListFragment);
+        adapter.addFragment(mNewsFeedFragment);
         viewPager.setAdapter(adapter);
-        viewPager.setOffscreenPageLimit(2);
-    }
-
-    private void hideViews() {
-        mSearchView.animate().translationY(-mSearchView.getHeight()).setInterpolator(new AccelerateInterpolator(2));
-    }
-
-    private void showViews() {
-        mSearchView.animate().translationY(0).setInterpolator(new DecelerateInterpolator(2));
+        viewPager.setOffscreenPageLimit(3);
     }
 
     //Event when click on a item in playlist

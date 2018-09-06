@@ -27,4 +27,14 @@
     <string name="recent_listen">#NGHE GẦN ĐÂY</string>
     <string name="hot_likes">#Được yêu thích nhất</string>
     <string name="zingchart_week">#Nổi bật</string>
+    <string name="shared_a_mv">shared a MV</string>
+    <string name="_1_day_ago">1 day ago</string>
+    <string name="mp3dev">MP3Dev</string>
+    <string name="tv_content">\'Góc Nhạc Cũ\' sẽ đưa bạn quay ngược thời gian trở lại với những ca khúc Việt một thời quen thuộc ngày nào. Thời gian sẽ trôi qua, nhưng những ca khúc này ...</string>
+    <string name="zingmp3">By Zing MP3</string>
+    <string name="likes">❤100</string>
+    <string name="views">100 Views</string>
+    <string name="comment">Comment</string>
+    <string name="share">Share</string>
+    <string name="view_more">View more</string>
 </resources>

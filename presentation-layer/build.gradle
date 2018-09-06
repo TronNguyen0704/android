@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     defaultConfig {
         applicationId "com.fresher.tronnv.research"
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -26,26 +26,28 @@ android {
         }
     }
     compileOptions {
-        targetCompatibility 1.8
-        sourceCompatibility 1.8
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
     }
+//    dataBinding {
+//        enabled true
+//    }
 }
-
 dependencies {
-    def room_version = "1.1.0"
+    def room_version = "1.1.1"
     def lifecycle_version = "1.1.1"
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support:recyclerview-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
-    implementation 'com.android.support:design:27.1.1'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "com.android.support:appcompat-v7:28.0.0-rc01"
+    implementation 'com.android.support:recyclerview-v7:28.0.0-rc01'
+    implementation 'com.android.support:design:28.0.0-rc01'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
-    implementation 'io.reactivex.rxjava2:rxjava:2.0.6'
-    implementation 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.0'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
     implementation 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
     implementation 'com.google.dagger:dagger-android:2.16'
     implementation 'com.google.dagger:dagger-android-support:2.16'
@@ -53,8 +55,8 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.16'
     compileOnly 'javax.annotation:jsr250-api:1.0'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
-    implementation 'com.github.bumptech.glide:glide:4.7.1'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.7.1'
+    implementation 'com.github.bumptech.glide:glide:4.8.0'
+//    annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
     implementation 'jp.wasabeef:glide-transformations:3.3.0'
     implementation 'jp.co.cyberagent.android.gpuimage:gpuimage-library:1.4.1'
     implementation 'com.google.code.gson:gson:2.8.4'
@@ -72,15 +74,18 @@ dependencies {
     // Test helpers
     testImplementation "android.arch.persistence.room:testing:$room_version"
 
-// ViewModel and LiveData
+    // ViewModel and LiveData
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+
     // alternatively - just LiveData
     implementation "android.arch.lifecycle:livedata:$lifecycle_version"
+
     // alternatively - Lifecycles only (no ViewModel or LiveData).
+
     //     Support library depends on this lightweight import
     implementation "android.arch.lifecycle:runtime:$lifecycle_version"
-
     annotationProcessor "android.arch.lifecycle:compiler:$lifecycle_version"
+
     // alternately - if using Java8, use the following instead of compiler
     implementation "android.arch.lifecycle:common-java8:$lifecycle_version"
 
@@ -95,7 +100,16 @@ dependencies {
     implementation project(':android-models')
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+
     // Optional, if you use support library fragments:
     debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.1'
-    androidTestImplementation "com.squareup.leakcanary:leakcanary-android-instrumentation:1.6.1"
+    androidTestImplementation 'com.squareup.leakcanary:leakcanary-android-instrumentation:1.6.1'
+    implementation("com.github.bumptech.glide:recyclerview-integration:4.8.0") {
+        // Excludes the support library because it's already included by Glide.
+        transitive = false
+    }
+    //    implementation 'com.android.databinding:compiler:3.1.4'
+
+    //        implementation group: 'androidx.core', name: 'core', version: '1.0.0-rc01'
+//    implementation 'androidx.appcompat:appcompat:1.0.0-alpha1'
 }

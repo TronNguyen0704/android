@@ -4,12 +4,14 @@ import android.arch.lifecycle.LiveData;
 import android.content.Context;
 
 
+import com.fresher.tronnv.android_domain_layer.DataTypeBusiness;
 import com.fresher.tronnv.android_domain_layer.base.MusicBusiness;
 import com.fresher.tronnv.android_domain_layer.base.RecordChartBusiness;
 import com.fresher.tronnv.android_domain_layer.base.TrackBusiness;
 import com.fresher.tronnv.android_domain_layer.impl.MusicBusinessImpl;
 import com.fresher.tronnv.android_domain_layer.impl.RecordChartBusinessImpl;
 import com.fresher.tronnv.android_domain_layer.impl.TrackBusinessImpl;
+import com.fresher.tronnv.android_models.DataType;
 import com.fresher.tronnv.android_models.MusicLyric;
 import com.fresher.tronnv.android_models.RecordChart;
 import com.fresher.tronnv.android_models.Track;
@@ -67,4 +69,7 @@ public class MainUseCases {
     public boolean isTrackData() {
         return mTrackBusiness.isData();
     }
+    public List<DataType> getDataTypes(){return DataTypeBusiness.getDataTypes();}
+    public List<DataType> getDataTypes2(){return DataTypeBusiness.getDataTypes2();}
+    public List<String> getImages(){return DataTypeBusiness.getImages();}
 }

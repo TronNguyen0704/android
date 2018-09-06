@@ -31,7 +31,15 @@ import com.fresher.tronnv.research.usercontrol.MediaPlayerCustom;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
+/*
+Nó mở rộng lớp RecyclerView.Adapter và xử lý các đối tượng RecyclerItem. Rất nhiều phương thức tiện lợi đã được thêm vào để thêm / chèn hoặc xóa các mục. Bạn chỉ cần ghi đè getHolderClassForViewType (). Xem ví dụ bên dưới.
 
+ RecyclerItem
+Mục được sử dụng bởi RecyclerAdapter. Tùy thuộc vào nội dung bạn muốn hiển thị (tức là Sản phẩm hoặc Quảng cáo), bạn sẽ tạo các mục đơn giản khác nhau. Bạn chỉ phải ghi đè lên updateView (). Xem ví dụ bên dưới.
+
+ RecyclerHolder
+Giữ Chế độ xem. Nó giống với lớp RecyclerView.ViewHolder nhưng sẵn sàng sử dụng với RecyclerAdapter.
+ */
 public class MediaPlayerService extends Service{
     public static final String RESTART = "MY_SERVICE_REPLACED";
     public static final String PROCESSED = "com.fresher.tronnv.research.service.REQUEST_PROCESSED";

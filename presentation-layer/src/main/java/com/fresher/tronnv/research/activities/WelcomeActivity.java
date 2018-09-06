@@ -9,13 +9,24 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.annotation.GlideModule;
+import com.bumptech.glide.module.AppGlideModule;
 import com.fresher.tronnv.research.R;
 import com.fresher.tronnv.research.service.NetworkChangeReceiver;
 import com.fresher.tronnv.research.presenters.ApplicationPresenter;
 import com.fresher.tronnv.research.presenters.ApplicationPresenterImpl;
+import com.fresher.tronnv.research.ui.ExpandableTextView;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.Maybe;
+import io.reactivex.ObservableEmitter;
+import rx.Observable;
+import rx.Single;
 
 
 /**
@@ -25,6 +36,7 @@ public class WelcomeActivity extends AppCompatActivity{
 
     private NetworkChangeReceiver mReceiver;
     private ApplicationPresenter mApplicationPresenter;
+    enum Irrelevant { INSTANCE; }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +63,9 @@ public class WelcomeActivity extends AppCompatActivity{
     }
 
     public void goToMain(View v) {
+        if (android.os.Build.VERSION.SDK_INT >= 28) {
+            startActivity(new Intent(this, MainActivity.class));
+        }
         //Checking network
         if(mReceiver.isConnected(getBaseContext())) {
             if(mApplicationPresenter.isData()) {
@@ -70,5 +85,4 @@ public class WelcomeActivity extends AppCompatActivity{
             }
         }
     }
-
 }

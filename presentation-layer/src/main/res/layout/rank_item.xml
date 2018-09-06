@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -7,40 +9,53 @@
 
     <TextView
         android:id="@+id/tv_rank"
-        android:fontFamily="@font/vagrundschriftbq"
         android:layout_width="@dimen/dimen_view_witdh"
-        android:textSize="@dimen/text_size_over"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:fontFamily="@font/vagrundschriftbq"
         android:textAlignment="center"
-        android:layout_marginTop="@dimen/media_margin"
-        android:layout_height="wrap_content" />
+        android:textSize="@dimen/text_size_over"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/img_avatar"
         android:layout_width="@dimen/avatar"
         android:layout_height="@dimen/avatar"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:padding="@dimen/dimen_temp1"
         android:scaleType="centerCrop"
-        android:src="@drawable/ic_74"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/dimen_temp1"
-        android:layout_marginTop="@dimen/dimen_temp">
-        <TextView
-            android:id="@+id/tv_name"
-            android:textStyle="bold"
-            android:textColor="@color/White"
-            android:textSize="@dimen/text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"/>
-        <TextView
-            android:id="@+id/tv_author"
-            android:textSize="@dimen/text_size_small"
-            android:textColor="@color/White"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"/>
-    </LinearLayout>
+        android:src="@drawable/ic_74"
+        app:layout_constraintStart_toEndOf="@+id/tv_rank"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/tv_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="16dp"
+        android:maxLines="1"
+        android:textColor="@color/White"
+        android:textSize="@dimen/text"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/img_avatar"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_author"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:maxLines="1"
+        android:textColor="@color/White"
+        android:textSize="@dimen/text_size_small"
+        app:layout_constraintStart_toEndOf="@+id/img_avatar"
+        app:layout_constraintTop_toBottomOf="@+id/tv_name" />
+
+</android.support.constraint.ConstraintLayout>

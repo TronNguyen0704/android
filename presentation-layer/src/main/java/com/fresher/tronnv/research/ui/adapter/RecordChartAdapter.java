@@ -2,7 +2,6 @@ package com.fresher.tronnv.research.ui.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
@@ -15,12 +14,10 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.fresher.tronnv.android_models.RecordChart;
-import com.fresher.tronnv.android_models.Track;
+import com.fresher.tronnv.research.GlideHelper;
 import com.fresher.tronnv.research.R;
-import com.fresher.tronnv.research.ui.PageFragment;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -108,11 +105,12 @@ public class RecordChartAdapter extends RecyclerView.Adapter<RecordChartAdapter.
              txtRank.setTextColor(cols[(position < 3) ? position : 3]);
              txtSongName.setText(recordCharts.get(position).getName());
              txtAuthor.setText(recordCharts.get(position).getAuthor());
-             Glide.with(context)
-                     .load(recordCharts.get(position).getAvatar())
-                     .apply(RequestOptions.bitmapTransform(
-                             new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL)))
-                     .into(iv_avatar);
+//             Glide.with(context)
+//                     .load(recordCharts.get(position).getAvatar())
+//                     .apply(RequestOptions.bitmapTransform(
+//                             new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL)))
+//                     .into(iv_avatar);
+             GlideHelper.requestBuilderAvatar(recordCharts.get(position).getAvatar(),iv_avatar);
          }
     }
 }

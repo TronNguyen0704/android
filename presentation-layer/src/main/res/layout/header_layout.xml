@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView
+        android:id="@+id/img_admin"
+        android:layout_width="@dimen/avatar48"
+        android:layout_height="@dimen/avatar48"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:padding="@dimen/dimen_temp1"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_74"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_admin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/mp3dev"
+        android:textColor="@color/White"
+        android:textSize="@dimen/text_size_medium"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@+id/img_admin"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_share_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/shared_a_mv"
+        android:textColor="@color/gray_text"
+        android:textSize="@dimen/text_size_medium"
+        app:layout_constraintStart_toEndOf="@+id/tv_admin"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_share_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/_1_day_ago"
+        android:textColor="@color/gray_text"
+        android:textSize="@dimen/text_size_small"
+        app:layout_constraintStart_toEndOf="@+id/img_admin"
+        app:layout_constraintTop_toBottomOf="@+id/tv_admin" />
+</android.support.constraint.ConstraintLayout>

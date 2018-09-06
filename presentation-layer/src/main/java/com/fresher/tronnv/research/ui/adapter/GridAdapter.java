@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.fresher.tronnv.research.GlideHelper;
 import com.fresher.tronnv.research.R;
 
 import java.util.ArrayList;
@@ -54,11 +55,12 @@ public class GridAdapter extends BaseAdapter {
         convertView  = inflater.inflate(R.layout.grid_item, null);
         ImageView imageView = convertView.findViewById(R.id.img_chart);
         imageView.setPadding(8, 8, 0, 8);
-        Glide.with(parent.getContext())
-                .load(mImages.get(position))
-                .apply(RequestOptions.bitmapTransform(
-                        new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL)))
-                .into(imageView);
+//        Glide.with(mContext)
+//                .load(mImages.get(position))
+//                .apply(RequestOptions.bitmapTransform(
+//                        new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL)))
+//                .into(imageView);
+        GlideHelper.requestBuilderImage(mImages.get(position),imageView).into(imageView);
         return convertView;
     }
 }

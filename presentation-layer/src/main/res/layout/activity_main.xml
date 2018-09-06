@@ -40,13 +40,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true" />
-
-<!--<fragment-->
-    <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--android:id="@+id/play_list_fragment"-->
-    <!--android:name="com.fresher.tronnv.research.ui.PlayListFragment"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent" />-->
     <android.support.design.widget.BottomNavigationView
 
         android:id="@+id/navigation"

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.fresher.tronnv.android_models.RecordChart;
+import com.fresher.tronnv.research.GlideHelper;
 import com.fresher.tronnv.research.R;
 
 import java.util.ArrayList;
@@ -83,11 +84,6 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.RecyclerVi
         return 0;
     }
 
-    @Override
-    public boolean onFailedToRecycleView(@NonNull RecyclerViewHolder holder) {
-        return super.onFailedToRecycleView(holder);
-    }
-
     static class  RecyclerViewHolder extends RecyclerView.ViewHolder {
         ImageView iv_avatar;
         TextView txtSongName;
@@ -101,11 +97,12 @@ public class RecentAdapter extends RecyclerView.Adapter<RecentAdapter.RecyclerVi
         void bindList(List<RecordChart> recordCharts, Context context,int position){
             txtSongName.setText(recordCharts.get(position).getName());
             txtAuthor.setText(recordCharts.get(position).getAuthor());
-            Glide.with(context)
-                    .load(recordCharts.get(position).getAvatar())
-                    .apply(RequestOptions.bitmapTransform(
-                            new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL)))
-                    .into(iv_avatar);
+//            Glide.with(context)
+//                    .load(recordCharts.get(position).getAvatar())
+//                    .apply(RequestOptions.bitmapTransform(
+//                            new RoundedCornersTransformation(10, 0, RoundedCornersTransformation.CornerType.ALL)))
+//                    .into(iv_avatar);
+            GlideHelper.requestBuilderImage(recordCharts.get(position).getAvatar(),iv_avatar).into(iv_avatar);
         }
     }
 }

@@ -15,8 +15,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Registry;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.annotation.GlideModule;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.module.AppGlideModule;
 import com.bumptech.glide.request.RequestOptions;
 import com.fresher.tronnv.android_models.Track;
+import com.fresher.tronnv.research.GlideHelper;
 import com.fresher.tronnv.research.R;
 
 import java.util.ArrayList;
@@ -24,7 +31,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import jp.wasabeef.glide.transformations.gpu.VignetteFilterTransformation;
-
 /**
  */
 public class HeaderPageAdapter extends PagerAdapter {
@@ -55,13 +61,15 @@ public class HeaderPageAdapter extends PagerAdapter {
         View myImageLayout = mInflater.inflate(R.layout.slider_item, view, false);
         ImageView myImage = myImageLayout
                 .findViewById(R.id.img_avatar);
-        Glide.with(mContext)
-                .load(mTracks.get(position).getThumb())
-                .apply(RequestOptions.bitmapTransform(
-                        new VignetteFilterTransformation(
-                                new PointF(0.5f, 0.5f),
-                                new float[]{0f, 0f, 0f}, 0.1f, 0.75f)))
-                .into(myImage);
+
+//        Glide.with(mContext)
+//                .load(mTracks.get(position).getThumb())
+//                .apply(RequestOptions.bitmapTransform(
+//                        new VignetteFilterTransformation(
+//                                new PointF(0.5f, 0.5f),
+//                                new float[]{0f, 0f, 0f}, 0.1f, 0.75f)))
+//                .into(myImage);
+        GlideHelper.requestBuilderForHeader(mTracks.get(position).getThumb(),myImage).into(myImage);
         TextView name = myImageLayout.findViewById(R.id.tv_title);
         name.setText(mTracks.get(position).getTitle());
         TextView des = myImageLayout.findViewById(R.id.tv_description);
@@ -69,7 +77,6 @@ public class HeaderPageAdapter extends PagerAdapter {
         view.addView(myImageLayout);
         return myImageLayout;
     }
-
     @Override
     public boolean isViewFromObject(View view, Object object) {
         return view.equals(object);
