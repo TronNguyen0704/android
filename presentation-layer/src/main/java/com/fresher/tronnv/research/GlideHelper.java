@@ -60,6 +60,7 @@ public class GlideHelper {
                 return false;
             }
         };
+        //Hello
         RequestOptions requestOptions = RequestOptions.placeholderOf(R.drawable.ic_home_black_24dp)
                 .centerCrop()
                 .placeholder(R.drawable.ic_74)
