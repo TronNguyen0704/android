@@ -7,3 +7,6 @@ local.properties
 /.idea/libraries
 .DS_Store
 /build
+!.idea/codeStyles/codeStyleConfig.xml
+!.idea/codeStyles/Project.xml
+!.idea/fileTemplates/includes/File Header.xml
